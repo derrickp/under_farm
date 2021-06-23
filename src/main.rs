@@ -4,10 +4,12 @@ mod sprite_handles;
 mod systems;
 
 use app_state::AppState;
-use bevy::prelude::*;
+use bevy::{input::system::exit_on_esc_system, prelude::*};
 use sprite_handles::{LoadedTextures, Sprites};
 use systems::{
     initial_spawns::spawn_opening_bundles,
+    inputs::keyboard_input_system,
+    player_movement::calculate_movement,
     textures::{check_textures, load_sprites, load_textures},
 };
 
@@ -23,5 +25,16 @@ fn main() {
         .add_system_set(
             SystemSet::on_enter(AppState::Playing).with_system(spawn_opening_bundles.system()),
         )
+        .add_system_set(
+            SystemSet::on_update(AppState::Playing)
+                .with_system(keyboard_input_system.system().label("input"))
+                .with_system(
+                    calculate_movement
+                        .system()
+                        .label("player_movement")
+                        .after("input"),
+                ),
+        )
+        .add_system(exit_on_esc_system.system())
         .run();
 }
