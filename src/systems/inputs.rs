@@ -1,5 +1,6 @@
 use bevy::{
     input::Input,
+    math::Vec2,
     prelude::{KeyCode, Query, Res},
 };
 
@@ -11,34 +12,21 @@ pub fn keyboard_input_system(
 ) {
     let (_, mut speed) = query.single_mut().unwrap();
 
-    let mut moving_left_or_right = false;
-    let mut moving_up_or_down = false;
+    speed.current = Vec2::ZERO;
 
     if keyboard_input.pressed(KeyCode::Left) {
-        moving_left_or_right = true;
-        speed.current.x = -1.0;
+        speed.current -= Vec2::new(5.0, 0.0);
     }
 
     if keyboard_input.pressed(KeyCode::Right) {
-        moving_left_or_right = true;
-        speed.current.x = 1.0;
+        speed.current += Vec2::new(5.0, 0.0);
     }
 
     if keyboard_input.pressed(KeyCode::Up) {
-        moving_up_or_down = true;
-        speed.current.y = 1.0;
+        speed.current += Vec2::new(0.0, 5.0);
     }
 
     if keyboard_input.pressed(KeyCode::Down) {
-        moving_up_or_down = true;
-        speed.current.y = -1.0;
-    }
-
-    if !moving_left_or_right {
-        speed.current.x = 0.0;
-    }
-
-    if !moving_up_or_down {
-        speed.current.y = 0.0;
+        speed.current -= Vec2::new(0.0, 5.0);
     }
 }
