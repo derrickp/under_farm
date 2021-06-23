@@ -1,11 +1,14 @@
 use bevy::{
-    math::Vec3,
+    math::{Vec2, Vec3},
     prelude::{Assets, Commands, OrthographicCameraBundle, Res, SpriteSheetBundle, Transform},
     sprite::{TextureAtlas, TextureAtlasSprite},
 };
 
 use crate::{
-    components::{player::Player, player_name::PlayerName},
+    components::{
+        player::{Player, PlayerBundle, PlayerName},
+        speed::Speed,
+    },
     sprite_handles::Sprites,
 };
 
@@ -34,8 +37,11 @@ pub fn spawn_opening_bundles(
         ..Default::default()
     });
 
-    commands.spawn_bundle(Player {
+    commands.spawn_bundle(PlayerBundle {
         name: PlayerName("Goblin?".to_string()),
+        speed: Speed {
+            current: Vec2::new(0.0, 0.0),
+        },
         sprite: SpriteSheetBundle {
             sprite: TextureAtlasSprite::new(sprite_index as u32),
             texture_atlas: sprite_handles.atlas_handle.clone(),
@@ -46,5 +52,6 @@ pub fn spawn_opening_bundles(
             },
             ..Default::default()
         },
+        player: Player,
     });
 }
