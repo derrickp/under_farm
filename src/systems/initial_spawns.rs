@@ -54,4 +54,6 @@ pub fn spawn_opening_bundles(
         },
         player: Player,
     });
+
+    state.set(AppState::Playing).unwrap(); // For now
 }

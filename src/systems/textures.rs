@@ -21,7 +21,7 @@ pub fn check_textures(
     if let LoadState::Loaded =
         asset_server.get_group_load_state(sprite_handles.handles.iter().map(|handle| handle.id))
     {
-        state.set(AppState::Finished).unwrap();
+        state.set(AppState::TexturesLoaded).unwrap();
     }
 }
 
@@ -49,5 +49,5 @@ pub fn load_sprites(
     let background_handle = asset_server.get_handle("sprites/background.png");
     sprite_handles.background_handle = background_handle;
 
-    state.set(AppState::Playing).unwrap();
+    state.set(AppState::SpritesLoaded).unwrap();
 }

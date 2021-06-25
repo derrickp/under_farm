@@ -21,9 +21,9 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_system_set(SystemSet::on_enter(AppState::Setup).with_system(load_textures.system()))
         .add_system_set(SystemSet::on_update(AppState::Setup).with_system(check_textures.system()))
-        .add_system_set(SystemSet::on_enter(AppState::Finished).with_system(load_sprites.system()))
+        .add_system_set(SystemSet::on_enter(AppState::TexturesLoaded).with_system(load_sprites.system()))
         .add_system_set(
-            SystemSet::on_enter(AppState::Playing).with_system(spawn_opening_bundles.system()),
+            SystemSet::on_enter(AppState::SpritesLoaded).with_system(spawn_opening_bundles.system()),
         )
         .add_system_set(
             SystemSet::on_update(AppState::Playing)
