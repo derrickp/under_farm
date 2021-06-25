@@ -1,21 +1,15 @@
-use bevy::{
-    math::{Vec2, Vec3},
-    prelude::{Assets, Commands, OrthographicCameraBundle, Res, SpriteSheetBundle, Transform},
-    sprite::{TextureAtlas, TextureAtlasSprite},
-};
+use bevy::{math::Vec3, prelude::{Assets, Commands, OrthographicCameraBundle, Res, ResMut, SpriteSheetBundle, State, Transform}, sprite::{TextureAtlas, TextureAtlasSprite}};
 
-use crate::{
-    components::{
+use crate::{app_state::AppState, components::{
         player::{Player, PlayerBundle, PlayerName},
         speed::Speed,
-    },
-    sprite_handles::Sprites,
-};
+    }, sprite_handles::Sprites};
 
 pub fn spawn_opening_bundles(
     mut commands: Commands,
     sprite_handles: Res<Sprites>,
     texture_atlases: Res<Assets<TextureAtlas>>,
+    mut state: ResMut<State<AppState>>,
 ) {
     let texture_atlas = texture_atlases.get(&sprite_handles.atlas_handle).unwrap();
     let background_index = texture_atlas
@@ -40,7 +34,8 @@ pub fn spawn_opening_bundles(
     commands.spawn_bundle(PlayerBundle {
         name: PlayerName("Goblin?".to_string()),
         speed: Speed {
-            current: Vec2::new(0.0, 0.0),
+            x: 0,
+            y: 0,
         },
         sprite: SpriteSheetBundle {
             sprite: TextureAtlasSprite::new(sprite_index as u32),

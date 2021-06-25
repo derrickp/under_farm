@@ -1,5 +1,5 @@
-use bevy::math::Vec2;
-
+#[derive(Default)]
 pub struct Speed {
-    pub current: Vec2,
+    pub x: i32,
+    pub y: i32,
 }
