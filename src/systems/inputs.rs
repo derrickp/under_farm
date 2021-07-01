@@ -3,12 +3,20 @@ use bevy::{
     prelude::{KeyCode, Query, Res},
 };
 
-use crate::components::{player::Player, speed::Speed};
+use crate::{
+    components::{player::Player, speed::Speed},
+    game_state::GameState,
+};
 
 pub fn keyboard_input_system(
     keyboard_input: Res<Input<KeyCode>>,
     mut query: Query<(&Player, &mut Speed)>,
+    game_state: Res<GameState>,
 ) {
+    if !game_state.map_loaded {
+        return;
+    }
+
     let (_, mut speed) = query.single_mut().unwrap();
 
     speed.x = 0;
