@@ -1,13 +1,23 @@
-use bevy::prelude::{Query, Transform};
+use bevy::prelude::{Query, Res, Transform};
 
-use crate::components::{player::Player, speed::Speed};
+use crate::{
+    components::{
+        player::{Player},
+        speed::Speed,
+    },
+    game_state::GameState,
+};
 
-pub fn calculate_movement(mut query: Query<(&Player, &Speed, &mut Transform)>) {
-    let (_, speed, mut transform) = query.single_mut().unwrap();
+pub fn calculate_movement(
+    game_state: Res<GameState>,
+    mut player_query: Query<(&Player, &Speed, &mut Transform)>,
+) {
+    if !game_state.map_loaded {
+        return;
+    }
 
-    let x = speed.x as f32 + transform.translation.x;
-    let y = speed.y as f32 + transform.translation.y;
+    let (_, speed, mut transform) = player_query.single_mut().unwrap();
 
-    transform.translation.x = x;
-    transform.translation.y = y;
+    transform.translation.x = speed.x as f32 + transform.translation.x;
+    transform.translation.y = speed.y as f32 + transform.translation.y;
 }
