@@ -6,13 +6,14 @@ mod systems;
 
 use app_state::AppState;
 use bevy::{input::system::exit_on_esc_system, prelude::*};
-use bevy_tilemap::prelude::TilemapDefaultPlugins;
+use bevy_tiled_prototype::TiledMapPlugin;
+// use bevy_tilemap::prelude::TilemapDefaultPlugins;
 use game_state::GameState;
 use sprite_handles::{LoadedTextures, Sprites};
 use systems::{
     initial_spawns::{build_random_dungeon, spawn_opening_bundles},
     inputs::keyboard_input_system,
-    player_movement::calculate_movement,
+    player_movement::{calculate_movement, camera_movement},
     textures::{check_textures, load_sprites, load_textures},
 };
 
@@ -23,7 +24,8 @@ fn main() {
         .init_resource::<LoadedTextures>()
         .add_state(AppState::Setup)
         .add_plugins(DefaultPlugins)
-        .add_plugins(TilemapDefaultPlugins)
+        // .add_plugins(TilemapDefaultPlugins)
+        .add_plugin(TiledMapPlugin)
         .add_system_set(SystemSet::on_enter(AppState::Setup).with_system(load_textures.system()))
         .add_system_set(SystemSet::on_update(AppState::Setup).with_system(check_textures.system()))
         .add_system_set(
@@ -42,6 +44,12 @@ fn main() {
                         .system()
                         .label("player_movement")
                         .after("input"),
+                )
+                .with_system(
+                    camera_movement
+                        .system()
+                        .label("camera_movement")
+                        .after("player_movement"),
                 ),
         )
         .add_system(exit_on_esc_system.system())

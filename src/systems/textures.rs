@@ -1,12 +1,14 @@
 use bevy::{
     asset::LoadState,
     core::Timer,
+    math::Vec3,
     prelude::{
         AssetServer, Assets, Commands, OrthographicCameraBundle, Res, ResMut, State, Texture,
-        Visible,
+        Transform, Visible,
     },
     sprite::{TextureAtlas, TextureAtlasBuilder},
 };
+use bevy_tiled_prototype::TiledMapCenter;
 use bevy_tilemap::{
     prelude::{LayerKind, TilemapBundle},
     Tilemap, TilemapLayer,
@@ -97,6 +99,12 @@ pub fn load_sprites(
         .spawn()
         .insert_bundle(tilemap_components)
         .insert(Timer::from_seconds(0.075, true));
+    commands.spawn_bundle(bevy_tiled_prototype::TiledMapBundle {
+        map_asset: asset_server.load("maps/cave_1.tmx"),
+        origin: Transform::from_scale(Vec3::new(4.0, 4.0, 1.0)),
+        center: TiledMapCenter(true),
+        ..Default::default()
+    });
 
     state.set(AppState::SpritesLoaded).unwrap();
 }
