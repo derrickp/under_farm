@@ -8,3 +8,4 @@ edition = "2018"
 [dependencies]
 bevy = "0.5.0"
 bevy_tilemap = "0.4"
+bevy_tiled_prototype = { git = "https://github.com/StarArawn/bevy_tiled.git", branch = "main" }
