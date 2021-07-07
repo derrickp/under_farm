@@ -9,7 +9,7 @@ use sprite_handles::{LoadedTextures, Sprites};
 use systems::{
     initial_spawns::spawn_opening_bundles,
     inputs::keyboard_input_system,
-    player_movement::calculate_movement,
+    movement::{camera_movement, check_floor_collision, player_movement},
     textures::{check_textures, load_sprites, load_textures},
 };
 
@@ -29,10 +29,22 @@ fn main() {
             SystemSet::on_update(AppState::Playing)
                 .with_system(keyboard_input_system.system().label("input"))
                 .with_system(
-                    calculate_movement
+                    player_movement
                         .system()
                         .label("player_movement")
                         .after("input"),
+                )
+                .with_system(
+                    camera_movement
+                        .system()
+                        .label("camera_movement")
+                        .after("player_movement"),
+                )
+                .with_system(
+                    check_floor_collision
+                        .system()
+                        .label("floor_collisions")
+                        .after("player_movement"),
                 ),
         )
         .add_system(exit_on_esc_system.system())
