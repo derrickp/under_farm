@@ -8,6 +8,7 @@ pub struct Sprites {
     pub atlas_handle: Handle<TextureAtlas>,
     pub player_sprite_handle: Handle<Texture>,
     pub background_handle: Handle<Texture>,
+    pub outline_handle: Handle<Texture>,
 }
 
 #[derive(Default)]

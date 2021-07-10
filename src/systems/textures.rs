@@ -49,5 +49,8 @@ pub fn load_sprites(
     let background_handle = asset_server.get_handle("sprites/background.png");
     sprite_handles.background_handle = background_handle;
 
+    let outline_handle = asset_server.get_handle("sprites/cell_outline.png");
+    sprite_handles.outline_handle = outline_handle;
+
     state.set(AppState::Playing).unwrap();
 }
