@@ -1,14 +1,14 @@
 use bevy::{
-    prelude::{Handle, HandleUntyped, Texture},
+    prelude::{Handle, HandleUntyped},
     sprite::TextureAtlas,
 };
 
 #[derive(Default)]
 pub struct Sprites {
     pub atlas_handle: Handle<TextureAtlas>,
-    pub player_sprite_handle: Handle<Texture>,
-    pub background_handle: Handle<Texture>,
-    pub outline_handle: Handle<Texture>,
+    pub player_sprite_index: usize,
+    pub background_index: usize,
+    pub outline_index: usize,
 }
 
 #[derive(Default)]

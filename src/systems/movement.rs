@@ -1,8 +1,8 @@
 use bevy::{
     math::Vec3,
-    prelude::{Assets, Commands, Mut, Query, Res, SpriteSheetBundle, Transform},
+    prelude::{Commands, Mut, Query, Res, SpriteSheetBundle, Transform},
     render::camera::Camera,
-    sprite::{TextureAtlas, TextureAtlasSprite},
+    sprite::TextureAtlasSprite,
 };
 
 use crate::{
@@ -11,7 +11,7 @@ use crate::{
         player::Player,
         speed::Speed,
     },
-    sprite_handles::Sprites,
+    sprites::Sprites,
 };
 
 pub fn player_movement(mut query: Query<(&Player, &Speed, &mut Transform)>) {
@@ -38,8 +38,7 @@ pub fn camera_movement(
 
 pub fn check_floor_collision(
     mut commands: Commands,
-    sprite_handles: Res<Sprites>,
-    texture_atlases: Res<Assets<TextureAtlas>>,
+    sprites: Res<Sprites>,
     player_query: Query<(&Player, &Transform)>,
     mut grid_query: Query<&mut Grid>,
 ) {
@@ -56,18 +55,14 @@ pub fn check_floor_collision(
 
     for cell in grid.cells.iter_mut() {
         if cell.intersects_box(&bounding_box) && cell.sprite.is_none() {
-            let texture_atlas = texture_atlases.get(&sprite_handles.atlas_handle).unwrap();
-            let background_index = texture_atlas
-                .get_texture_index(&sprite_handles.background_handle)
-                .unwrap();
             let entity_commands = commands.spawn_bundle(SpriteSheetBundle {
                 transform: Transform {
                     translation: cell.cell_center.clone(),
                     scale: Vec3::splat(1.0),
                     ..Default::default()
                 },
-                sprite: TextureAtlasSprite::new(background_index as u32),
-                texture_atlas: sprite_handles.atlas_handle.clone(),
+                sprite: TextureAtlasSprite::new(sprites.background_index as u32),
+                texture_atlas: sprites.atlas_handle.clone(),
                 ..Default::default()
             });
             cell.sprite = Some(entity_commands.id());

@@ -1,11 +1,11 @@
 mod app_state;
 mod components;
-mod sprite_handles;
+mod sprites;
 mod systems;
 
 use app_state::AppState;
 use bevy::{input::system::exit_on_esc_system, prelude::*};
-use sprite_handles::{LoadedTextures, Sprites};
+use sprites::{LoadedTextures, Sprites};
 use systems::{
     initial_spawns::spawn_opening_bundles,
     inputs::keyboard_input_system,

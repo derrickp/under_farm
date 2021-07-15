@@ -6,7 +6,7 @@ use bevy::{
 
 use crate::{
     app_state::AppState,
-    sprite_handles::{LoadedTextures, Sprites},
+    sprites::{LoadedTextures, Sprites},
 };
 
 pub fn load_textures(mut loaded_textures: ResMut<LoadedTextures>, asset_server: Res<AssetServer>) {
@@ -26,7 +26,7 @@ pub fn check_textures(
 }
 
 pub fn load_sprites(
-    mut sprite_handles: ResMut<Sprites>,
+    mut sprites: ResMut<Sprites>,
     loaded_textures: Res<LoadedTextures>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mut textures: ResMut<Assets<Texture>>,
@@ -40,17 +40,15 @@ pub fn load_sprites(
     }
 
     let texture_atlas = texture_atlas_builder.finish(&mut textures).unwrap();
-    let atlas_handle = texture_atlases.add(texture_atlas);
-    sprite_handles.atlas_handle = atlas_handle;
-
     let texture_handle = asset_server.load("sprites/goblin_big_hat.png");
-    sprite_handles.player_sprite_handle = texture_handle;
-
     let background_handle = asset_server.get_handle("sprites/background.png");
-    sprite_handles.background_handle = background_handle;
-
     let outline_handle = asset_server.get_handle("sprites/cell_outline.png");
-    sprite_handles.outline_handle = outline_handle;
+    sprites.player_sprite_index = texture_atlas.get_texture_index(&texture_handle).unwrap();
+    sprites.background_index = texture_atlas.get_texture_index(&background_handle).unwrap();
+    sprites.outline_index = texture_atlas.get_texture_index(&outline_handle).unwrap();
+
+    let atlas_handle = texture_atlases.add(texture_atlas);
+    sprites.atlas_handle = atlas_handle;
 
     state.set(AppState::Playing).unwrap();
 }
