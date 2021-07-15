@@ -2,9 +2,7 @@ use std::usize;
 
 use bevy::{
     math::{Vec2, Vec3},
-    prelude::{
-        Assets, Commands, OrthographicCameraBundle, Res, SpriteSheetBundle, Transform,
-    },
+    prelude::{Assets, Commands, OrthographicCameraBundle, Res, SpriteSheetBundle, Transform},
     sprite::{TextureAtlas, TextureAtlasSprite},
 };
 
