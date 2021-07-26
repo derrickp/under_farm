@@ -5,7 +5,7 @@ use bevy::{
 };
 
 use crate::{
-    app_state::AppState,
+    states::AppState,
     sprites::{LoadedTextures, Sprites},
 };
 

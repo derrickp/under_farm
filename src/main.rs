@@ -1,29 +1,27 @@
-mod app_state;
+mod states;
 mod components;
 mod sprites;
 mod systems;
 
-use app_state::AppState;
+use states::{AppState, GameState};
 use bevy::{input::system::exit_on_esc_system, prelude::*};
 use sprites::{LoadedTextures, Sprites};
-use systems::{
-    initial_spawns::spawn_opening_bundles,
-    inputs::keyboard_input_system,
-    movement::{camera_movement, check_floor_collision, player_movement},
-    textures::{check_textures, load_sprites, load_textures},
-};
+use systems::{initial_spawns::{set_initial_camera_zoom, spawn_opening_bundles}, inputs::{MovementInputTimer, keyboard_input_system}, movement::{camera_movement, check_floor_collision, player_movement}, textures::{check_textures, load_sprites, load_textures}};
 
 fn main() {
     App::build()
         .init_resource::<Sprites>()
         .init_resource::<LoadedTextures>()
+        .init_resource::<GameState>()
+        .insert_resource(MovementInputTimer(Timer::from_seconds(0.1, true)))
         .add_state(AppState::Setup)
         .add_plugins(DefaultPlugins)
         .add_system_set(SystemSet::on_enter(AppState::Setup).with_system(load_textures.system()))
         .add_system_set(SystemSet::on_update(AppState::Setup).with_system(check_textures.system()))
         .add_system_set(SystemSet::on_enter(AppState::Finished).with_system(load_sprites.system()))
         .add_system_set(
-            SystemSet::on_enter(AppState::Playing).with_system(spawn_opening_bundles.system()),
+            SystemSet::on_enter(AppState::Playing)
+                .with_system(spawn_opening_bundles.system().label("opening_spawn")),
         )
         .add_system_set(
             SystemSet::on_update(AppState::Playing)
@@ -45,6 +43,11 @@ fn main() {
                         .system()
                         .label("floor_collisions")
                         .after("player_movement"),
+                )
+                .with_system(
+                    set_initial_camera_zoom
+                        .system()
+                        .label("set_camera_zoom"),
                 ),
         )
         .add_system(exit_on_esc_system.system())

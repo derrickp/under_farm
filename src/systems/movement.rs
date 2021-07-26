@@ -1,6 +1,6 @@
 use bevy::{
     math::Vec3,
-    prelude::{Commands, Mut, Query, Res, SpriteSheetBundle, Transform},
+    prelude::{Commands, Mut, Query, QuerySet, Res, SpriteSheetBundle, Transform},
     render::camera::Camera,
     sprite::TextureAtlasSprite,
 };
@@ -26,14 +26,26 @@ pub fn player_movement(mut query: Query<(&Player, &Speed, &mut Transform)>) {
 }
 
 pub fn camera_movement(
-    mut speed_query: Query<(&Player, &Speed)>,
-    mut query: Query<(&Camera, &mut Transform)>,
+    mut query_set: QuerySet<(
+        Query<(&Player, &Transform)>,
+        Query<(&Camera, &mut Transform)>,
+    )>,
 ) {
-    let (_, speed): (&Player, &Speed) = speed_query.single_mut().unwrap();
-    let (_, mut camera_transform): (&Camera, Mut<'_, Transform>) = query.single_mut().unwrap();
+    let mut player_x = 0.0;
+    let mut player_y = 0.0;
 
-    camera_transform.translation.x = speed.current.x + camera_transform.translation.x;
-    camera_transform.translation.y = speed.current.y + camera_transform.translation.y;
+    for e in query_set.q0_mut().iter_mut() {
+        let (_, transform): (&Player, &Transform) = e;
+        player_x = transform.translation.x;
+        player_y = transform.translation.y;
+    }
+
+    for camera_data in query_set.q1_mut().iter_mut() {
+        let (_, mut camera_transform): (&Camera, Mut<'_, Transform>) = camera_data;
+
+        camera_transform.translation.x = player_x;
+        camera_transform.translation.y = player_y;
+    }
 }
 
 pub fn check_floor_collision(

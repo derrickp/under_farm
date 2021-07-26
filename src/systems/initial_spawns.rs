@@ -1,19 +1,12 @@
 use std::usize;
 
-use bevy::{
-    math::{Vec2, Vec3},
-    prelude::{Commands, OrthographicCameraBundle, Res, SpriteSheetBundle, Transform},
-    sprite::TextureAtlasSprite,
-};
+use bevy::{math::{Vec2, Vec3}, prelude::{Commands, Mut, OrthographicCameraBundle, Query, Res, ResMut, SpriteSheetBundle, Transform}, render::camera::Camera, sprite::TextureAtlasSprite};
 
-use crate::{
-    components::{
+use crate::{components::{
         grid::{Grid, GridBundle, GridCell, GridName},
         player::{Player, PlayerBundle, PlayerName},
         speed::Speed,
-    },
-    sprites::Sprites,
-};
+    }, sprites::Sprites, states::GameState};
 
 const TILE_SIZE: usize = 32;
 const MAP_WIDTH: i32 = 50;
@@ -76,4 +69,16 @@ pub fn spawn_opening_bundles(mut commands: Commands, sprites: Res<Sprites>) {
         },
         player: Player,
     });
+}
+
+pub fn set_initial_camera_zoom(mut game_state: ResMut<GameState>, mut camera_query: Query<(&Camera, &mut Transform)>) {
+    if game_state.camera_zoom_initialized {
+        return;
+    }
+
+    for camera_data in camera_query.iter_mut() {
+        let (_, mut camera_transform): (&Camera, Mut<'_, Transform>) = camera_data;
+        camera_transform.scale = Vec3::new(0.5, 0.5, 1.0);
+        game_state.camera_zoom_initialized = true;
+    }
 }
