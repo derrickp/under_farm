@@ -41,8 +41,8 @@ pub fn load_sprites(
 
     let texture_atlas = texture_atlas_builder.finish(&mut textures).unwrap();
     let texture_handle = asset_server.load("sprites/goblin_big_hat.png");
-    let background_handle = asset_server.get_handle("sprites/background.png");
-    let outline_handle = asset_server.get_handle("sprites/cell_outline.png");
+    let background_handle = asset_server.get_handle("sprites/second_background.png");
+    let outline_handle = asset_server.get_handle("sprites/cell_outline_32.png");
     sprites.player_sprite_index = texture_atlas.get_texture_index(&texture_handle).unwrap();
     sprites.background_index = texture_atlas.get_texture_index(&background_handle).unwrap();
     sprites.outline_index = texture_atlas.get_texture_index(&outline_handle).unwrap();

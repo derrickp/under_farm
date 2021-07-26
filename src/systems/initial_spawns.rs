@@ -15,9 +15,9 @@ use crate::{
     sprites::Sprites,
 };
 
-const TILE_SIZE: usize = 24;
-const MAP_WIDTH: i32 = 100;
-const MAP_HEIGHT: i32 = 100;
+const TILE_SIZE: usize = 32;
+const MAP_WIDTH: i32 = 50;
+const MAP_HEIGHT: i32 = 50;
 
 pub fn spawn_opening_bundles(mut commands: Commands, sprites: Res<Sprites>) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
