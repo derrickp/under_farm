@@ -5,8 +5,8 @@ use bevy::{
 };
 
 use crate::{
-    states::AppState,
     sprites::{LoadedTextures, Sprites},
+    states::AppState,
 };
 
 pub fn load_textures(mut loaded_textures: ResMut<LoadedTextures>, asset_server: Res<AssetServer>) {
