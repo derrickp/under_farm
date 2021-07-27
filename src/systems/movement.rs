@@ -59,10 +59,10 @@ pub fn check_floor_collision(
     let mut grid: Mut<'_, Grid> = grid_query.single_mut().unwrap();
 
     let bounding_box = BoundingBox {
-        min_x: transform.translation.x.floor(),
-        max_x: transform.translation.x.floor(),
-        min_y: transform.translation.y.floor(),
-        max_y: transform.translation.y.floor(),
+        min_x: transform.translation.x.floor() - 15.0,
+        max_x: transform.translation.x.floor() + 15.0,
+        min_y: transform.translation.y.floor() - 15.0,
+        max_y: transform.translation.y.floor() + 15.0,
     };
 
     for cell in grid.cells.iter_mut() {
