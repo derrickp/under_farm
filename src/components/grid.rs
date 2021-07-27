@@ -44,12 +44,12 @@ impl GridCell {
         return self.bounds().intersects(bounding_box);
     }
 
-    fn bounds(&self) -> BoundingBox {
+    pub fn bounds(&self) -> BoundingBox {
         return BoundingBox {
-            min_x: self.cell_center.x - self.cell_size.x,
-            max_x: self.cell_center.x + self.cell_size.x,
-            min_y: self.cell_center.y - self.cell_size.y,
-            max_y: self.cell_center.y + self.cell_size.y,
+            min_x: self.cell_center.x - (self.cell_size.x / 2.0).floor(),
+            max_x: self.cell_center.x + (self.cell_size.x / 2.0).floor(),
+            min_y: self.cell_center.y - (self.cell_size.y / 2.0).floor(),
+            max_y: self.cell_center.y + (self.cell_size.y / 2.0).floor(),
         };
     }
 }
