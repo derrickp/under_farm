@@ -9,6 +9,7 @@ pub struct Sprites {
     pub player_sprite_index: usize,
     pub background_index: usize,
     pub outline_index: usize,
+    pub mushroom_index: usize,
 }
 
 #[derive(Default)]
