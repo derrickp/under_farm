@@ -1,12 +1,18 @@
-mod states;
 mod components;
 mod sprites;
+mod states;
 mod systems;
 
-use states::{AppState, GameState};
 use bevy::{input::system::exit_on_esc_system, prelude::*};
 use sprites::{LoadedTextures, Sprites};
-use systems::{initial_spawns::{set_initial_camera_zoom, spawn_opening_bundles}, inputs::{MovementInputTimer, keyboard_input_system}, movement::{camera_movement, check_floor_collision, player_movement}, textures::{check_textures, load_sprites, load_textures}};
+use states::{AppState, GameState};
+use systems::{
+    actions::crop_actions,
+    initial_spawns::{set_initial_camera_zoom, spawn_opening_bundles},
+    inputs::{action_input_system, movement_input_system, MovementInputTimer},
+    movement::{camera_movement, check_floor_collision, player_movement},
+    textures::{check_textures, load_sprites, load_textures},
+};
 
 fn main() {
     App::build()
@@ -25,12 +31,13 @@ fn main() {
         )
         .add_system_set(
             SystemSet::on_update(AppState::Playing)
-                .with_system(keyboard_input_system.system().label("input"))
+                .with_system(movement_input_system.system().label("movement_input"))
+                .with_system(action_input_system.system().label("action_input"))
                 .with_system(
                     player_movement
                         .system()
                         .label("player_movement")
-                        .after("input"),
+                        .after("movement_input"),
                 )
                 .with_system(
                     camera_movement
@@ -45,10 +52,12 @@ fn main() {
                         .after("player_movement"),
                 )
                 .with_system(
-                    set_initial_camera_zoom
+                    crop_actions
                         .system()
-                        .label("set_camera_zoom"),
-                ),
+                        .label("crop_actions")
+                        .after("player_movement"),
+                )
+                .with_system(set_initial_camera_zoom.system().label("set_camera_zoom")),
         )
         .add_system(exit_on_esc_system.system())
         .run();

@@ -1,16 +1,21 @@
-use bevy::{core::{Time, Timer}, input::Input, math::Vec2, prelude::{KeyCode, Query, Res, ResMut}};
+use bevy::{
+    core::{Time, Timer},
+    input::Input,
+    math::Vec2,
+    prelude::{KeyCode, Mut, Query, Res, ResMut},
+};
 
-use crate::components::{player::Player, speed::Speed};
+use crate::components::{action::Action, player::Player, speed::Speed};
 
 pub struct MovementInputTimer(pub Timer);
 
-pub fn keyboard_input_system(
+pub fn movement_input_system(
     time: Res<Time>,
     mut timer: ResMut<MovementInputTimer>,
     keyboard_input: Res<Input<KeyCode>>,
     mut query: Query<(&Player, &mut Speed)>,
 ) {
-    let (_, mut speed) = query.single_mut().unwrap();
+    let (_, mut speed): (&Player, Mut<'_, Speed>) = query.single_mut().unwrap();
 
     speed.current = Vec2::ZERO;
 
@@ -51,5 +56,20 @@ pub fn keyboard_input_system(
         if keyboard_input.pressed(KeyCode::Down) {
             speed.current -= Vec2::new(0.0, 32.0);
         }
+    }
+}
+
+pub fn action_input_system(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut query: Query<(&Player, &mut Action)>,
+) {
+    let (_, mut action): (&Player, Mut<'_, Action>) = query.single_mut().unwrap();
+
+    if action.interact_pressed {
+        action.interact_pressed = false;
+    }
+
+    if keyboard_input.just_pressed(KeyCode::E) {
+        action.interact_pressed = true;
     }
 }
