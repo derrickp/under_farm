@@ -11,7 +11,7 @@ pub struct BoundingBox {
 }
 
 impl BoundingBox {
-    fn intersects(&self, bounding_box: &BoundingBox) -> bool {
+    pub fn intersects(&self, bounding_box: &BoundingBox) -> bool {
         return self.min_x < bounding_box.max_x
             && self.max_x > bounding_box.min_x
             && self.max_y > bounding_box.min_y
