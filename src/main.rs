@@ -8,7 +8,7 @@ use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameState};
 use systems::{
     actions::crop_actions,
-    initial_spawns::{set_initial_camera_zoom, spawn_opening_bundles},
+    initial_spawns::spawn_opening_bundles,
     inputs::{action_input_system, movement_input_system, MovementInputTimer},
     movement::{camera_movement, check_floor_collision, player_movement},
     textures::{check_textures, load_sprites, load_textures},
@@ -56,8 +56,7 @@ fn main() {
                         .system()
                         .label("crop_actions")
                         .after("player_movement"),
-                )
-                .with_system(set_initial_camera_zoom.system().label("set_camera_zoom")),
+                ),
         )
         .add_system(exit_on_esc_system.system())
         .run();

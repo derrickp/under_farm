@@ -83,18 +83,3 @@ pub fn spawn_opening_bundles(mut commands: Commands, sprites: Res<Sprites>) {
         action: Action::default(),
     });
 }
-
-pub fn set_initial_camera_zoom(
-    mut game_state: ResMut<GameState>,
-    mut camera_query: Query<(&Camera, &mut Transform)>,
-) {
-    if game_state.camera_zoom_initialized {
-        return;
-    }
-
-    for camera_data in camera_query.iter_mut() {
-        let (_, mut camera_transform): (&Camera, Mut<'_, Transform>) = camera_data;
-        camera_transform.scale = Vec3::new(0.5, 0.5, 1.0);
-        game_state.camera_zoom_initialized = true;
-    }
-}
