@@ -1,5 +1,6 @@
 {
   "editor.detectIndentation": false,
   "editor.tabSize": 4,
-  "rust-analyzer.procMacro.enable": false
+  "rust-analyzer.procMacro.enable": false,
+  "cSpell.words": ["despawn"]
 }
