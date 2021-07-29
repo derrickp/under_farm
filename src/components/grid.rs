@@ -1,5 +1,5 @@
 use bevy::{
-    math::{Vec2, Vec3},
+    math::Vec3,
     prelude::{Bundle, Entity},
 };
 
@@ -42,7 +42,7 @@ pub struct GridBundle {
 }
 
 pub struct GridCell {
-    pub cell_size: Vec2,
+    pub cell_size: f32,
     pub cell_center: Vec3,
     pub contains_tile: bool,
     pub sprite: Option<Entity>,
@@ -56,10 +56,10 @@ impl GridCell {
 
     pub fn bounds(&self) -> BoundingBox {
         return BoundingBox {
-            min_x: self.cell_center.x - (self.cell_size.x / 2.0).floor(),
-            max_x: self.cell_center.x + (self.cell_size.x / 2.0).floor(),
-            min_y: self.cell_center.y - (self.cell_size.y / 2.0).floor(),
-            max_y: self.cell_center.y + (self.cell_size.y / 2.0).floor(),
+            min_x: self.cell_center.x - (self.cell_size / 2.0).floor(),
+            max_x: self.cell_center.x + (self.cell_size / 2.0).floor(),
+            min_y: self.cell_center.y - (self.cell_size / 2.0).floor(),
+            max_y: self.cell_center.y + (self.cell_size / 2.0).floor(),
         };
     }
 }

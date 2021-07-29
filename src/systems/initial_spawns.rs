@@ -48,7 +48,7 @@ pub fn spawn_opening_bundles(mut commands: Commands, sprites: Res<Sprites>) {
             //     ..Default::default()
             // });
             cells.push(GridCell {
-                cell_size: Vec2::new(TILE_SIZE as f32, TILE_SIZE as f32),
+                cell_size: TILE_SIZE as f32,
                 cell_center: Vec3::new(x as f32, y as f32, 0.0),
                 contains_tile: false,
                 sprite: None,
