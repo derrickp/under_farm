@@ -17,6 +17,16 @@ impl BoundingBox {
             && self.max_y > bounding_box.min_y
             && self.min_y < bounding_box.max_y;
     }
+
+    pub fn square(x: f32, y: f32, width: f32) -> BoundingBox {
+        let half_width = (width / 2.0).floor();
+        return BoundingBox {
+            min_x: x - half_width,
+            max_x: x + half_width,
+            min_y: y - half_width,
+            max_y: y + half_width,
+        };
+    }
 }
 
 pub struct GridName(pub String);
