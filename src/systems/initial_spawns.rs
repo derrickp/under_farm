@@ -2,22 +2,19 @@ use std::usize;
 
 use bevy::{
     math::{Vec2, Vec3},
-    prelude::{
-        Commands, Mut, OrthographicCameraBundle, Query, Res, ResMut, SpriteSheetBundle, Transform,
-    },
-    render::camera::Camera,
+    prelude::{Commands, OrthographicCameraBundle, Res, SpriteSheetBundle, Transform},
     sprite::TextureAtlasSprite,
 };
 
 use crate::{
     components::{
         action::Action,
+        camera::GameCamera,
         grid::{Grid, GridBundle, GridCell, GridName},
         player::{Player, PlayerBundle, PlayerName},
         speed::Speed,
     },
     sprites::Sprites,
-    states::GameState,
 };
 
 const TILE_SIZE: usize = 64;
@@ -25,7 +22,9 @@ const MAP_WIDTH: i32 = 50;
 const MAP_HEIGHT: i32 = 50;
 
 pub fn spawn_opening_bundles(mut commands: Commands, sprites: Res<Sprites>) {
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+    commands
+        .spawn_bundle(OrthographicCameraBundle::new_2d())
+        .insert(GameCamera);
 
     let mut cells: Vec<GridCell> = Vec::new();
 

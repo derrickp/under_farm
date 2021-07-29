@@ -7,6 +7,7 @@ use bevy::{
 
 use crate::{
     components::{
+        camera::GameCamera,
         grid::{BoundingBox, Grid},
         player::Player,
         speed::Speed,
@@ -28,7 +29,7 @@ pub fn player_movement(mut query: Query<(&Player, &Speed, &mut Transform)>) {
 pub fn camera_movement(
     mut query_set: QuerySet<(
         Query<(&Player, &Transform)>,
-        Query<(&Camera, &mut Transform)>,
+        Query<(&GameCamera, &Camera, &mut Transform)>,
     )>,
 ) {
     let mut player_x = 0.0;
@@ -41,7 +42,7 @@ pub fn camera_movement(
     }
 
     for camera_data in query_set.q1_mut().iter_mut() {
-        let (_, mut camera_transform): (&Camera, Mut<'_, Transform>) = camera_data;
+        let (_, _, mut camera_transform): (&GameCamera, &Camera, Mut<'_, Transform>) = camera_data;
 
         camera_transform.translation.x = player_x;
         camera_transform.translation.y = player_y;
