@@ -55,11 +55,6 @@ impl GridCell {
     }
 
     pub fn bounds(&self) -> BoundingBox {
-        return BoundingBox {
-            min_x: self.cell_center.x - (self.cell_size / 2.0).floor(),
-            max_x: self.cell_center.x + (self.cell_size / 2.0).floor(),
-            min_y: self.cell_center.y - (self.cell_size / 2.0).floor(),
-            max_y: self.cell_center.y + (self.cell_size / 2.0).floor(),
-        };
+        return BoundingBox::square(self.cell_center.x, self.cell_center.y, self.cell_size);
     }
 }
