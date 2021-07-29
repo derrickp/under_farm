@@ -9,6 +9,16 @@ use crate::components::{action::Action, player::Player, speed::Speed};
 
 pub struct MovementInputTimer(pub Timer);
 
+const SPEED: f32 = 64.0; // 32 px normal size and 2x scale
+
+fn x_axis_speed() -> Vec2 {
+    return Vec2::new(SPEED, 0.0);
+}
+
+fn y_axis_speed() -> Vec2 {
+    return Vec2::new(0.0, SPEED);
+}
+
 pub fn movement_input_system(
     time: Res<Time>,
     mut timer: ResMut<MovementInputTimer>,
@@ -20,19 +30,19 @@ pub fn movement_input_system(
     speed.current = Vec2::ZERO;
 
     if keyboard_input.just_pressed(KeyCode::Left) {
-        speed.current -= Vec2::new(32.0, 0.0);
+        speed.current -= x_axis_speed();
     }
 
     if keyboard_input.just_pressed(KeyCode::Right) {
-        speed.current += Vec2::new(32.0, 0.0);
+        speed.current += x_axis_speed();
     }
 
     if keyboard_input.just_pressed(KeyCode::Up) {
-        speed.current += Vec2::new(0.0, 32.0);
+        speed.current += y_axis_speed();
     }
 
     if keyboard_input.just_pressed(KeyCode::Down) {
-        speed.current -= Vec2::new(0.0, 32.0);
+        speed.current -= y_axis_speed();
     }
 
     if speed.current.x != 0.0 || speed.current.y != 0.0 {
@@ -42,19 +52,19 @@ pub fn movement_input_system(
 
     if timer.0.tick(time.delta()).just_finished() {
         if keyboard_input.pressed(KeyCode::Left) {
-            speed.current -= Vec2::new(32.0, 0.0);
+            speed.current -= x_axis_speed();
         }
 
         if keyboard_input.pressed(KeyCode::Right) {
-            speed.current += Vec2::new(32.0, 0.0);
+            speed.current += x_axis_speed();
         }
 
         if keyboard_input.pressed(KeyCode::Up) {
-            speed.current += Vec2::new(0.0, 32.0);
+            speed.current += y_axis_speed();
         }
 
         if keyboard_input.pressed(KeyCode::Down) {
-            speed.current -= Vec2::new(0.0, 32.0);
+            speed.current -= y_axis_speed();
         }
     }
 }

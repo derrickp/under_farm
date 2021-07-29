@@ -20,7 +20,7 @@ use crate::{
     states::GameState,
 };
 
-const TILE_SIZE: usize = 32;
+const TILE_SIZE: usize = 64;
 const MAP_WIDTH: i32 = 50;
 const MAP_HEIGHT: i32 = 50;
 
@@ -74,7 +74,7 @@ pub fn spawn_opening_bundles(mut commands: Commands, sprites: Res<Sprites>) {
             texture_atlas: sprites.atlas_handle.clone(),
             transform: Transform {
                 translation: Vec3::new(0.0, 0.0, 5.0),
-                scale: Vec3::splat(1.0),
+                scale: Vec3::splat(2.0),
                 ..Default::default()
             },
             ..Default::default()

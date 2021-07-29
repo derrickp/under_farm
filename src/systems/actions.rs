@@ -54,7 +54,7 @@ fn spawn_mushroom(position: Vec2, mut commands: Commands, sprites: Res<Sprites>)
         sprite: SpriteSheetBundle {
             transform: Transform {
                 translation: Vec3::new(position.x, position.y, 2.0),
-                scale: Vec3::splat(1.0),
+                scale: Vec3::splat(2.0),
                 ..Default::default()
             },
             sprite: TextureAtlasSprite::new(sprites.mushroom_index as u32),

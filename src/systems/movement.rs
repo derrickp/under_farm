@@ -58,14 +58,14 @@ pub fn check_floor_collision(
 
     let mut grid: Mut<'_, Grid> = grid_query.single_mut().unwrap();
 
-    let bounding_box = BoundingBox::square(transform.translation.x, transform.translation.y, 30.0);
+    let bounding_box = BoundingBox::square(transform.translation.x, transform.translation.y, 60.0);
 
     for cell in grid.cells.iter_mut() {
         if cell.intersects_box(&bounding_box) && cell.sprite.is_none() {
             let entity_commands = commands.spawn_bundle(SpriteSheetBundle {
                 transform: Transform {
                     translation: cell.cell_center.clone(),
-                    scale: Vec3::splat(1.0),
+                    scale: Vec3::splat(2.0),
                     ..Default::default()
                 },
                 sprite: TextureAtlasSprite::new(sprites.background_index as u32),
