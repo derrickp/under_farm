@@ -21,22 +21,20 @@ pub fn crop_actions(
     crop_query: Query<(&Crop, &Transform)>,
 ) {
     let (_, action, transform): (&Player, &Action, &Transform) = query.single().unwrap();
-    let player_bounds = BoundingBox {
-        min_x: transform.translation.x.floor() - 15.0,
-        max_x: transform.translation.x.floor() + 15.0,
-        min_y: transform.translation.y.floor() - 15.0,
-        max_y: transform.translation.y.floor() + 15.0,
-    };
+    let player_bounds = BoundingBox::square(
+        transform.translation.x.floor(),
+        transform.translation.y.floor(),
+        60.0,
+    );
 
     if action.interact_pressed {
         for crop_data in crop_query.iter() {
             let (_, crop_transform): (&Crop, &Transform) = crop_data;
-            let crop_bounds = BoundingBox {
-                min_x: crop_transform.translation.x.floor() - 15.0,
-                max_x: crop_transform.translation.x.floor() + 15.0,
-                min_y: crop_transform.translation.y.floor() - 15.0,
-                max_y: crop_transform.translation.y.floor() + 15.0,
-            };
+            let crop_bounds = BoundingBox::square(
+                crop_transform.translation.x.floor(),
+                crop_transform.translation.y.floor(),
+                60.0,
+            );
 
             if crop_bounds.intersects(&player_bounds) {
                 return;
