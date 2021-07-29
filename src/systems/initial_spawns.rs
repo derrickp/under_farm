@@ -2,14 +2,19 @@ use std::usize;
 
 use bevy::{
     math::{Vec2, Vec3},
-    prelude::{Commands, OrthographicCameraBundle, Res, SpriteSheetBundle, Transform},
+    prelude::{
+        AssetServer, Color, Commands, HorizontalAlign, OrthographicCameraBundle, Rect,
+        Res, SpriteSheetBundle, TextBundle, Transform, UiCameraBundle,
+    },
     sprite::TextureAtlasSprite,
+    text::{Text, TextAlignment, TextStyle},
+    ui::{AlignSelf, PositionType, Style, Val},
 };
 
 use crate::{
     components::{
         action::Action,
-        camera::GameCamera,
+        camera::{GameCamera, UiCamera},
         grid::{Grid, GridBundle, GridCell, GridName},
         player::{Player, PlayerBundle, PlayerName},
         speed::Speed,
@@ -21,10 +26,46 @@ const TILE_SIZE: usize = 64;
 const MAP_WIDTH: i32 = 50;
 const MAP_HEIGHT: i32 = 50;
 
-pub fn spawn_opening_bundles(mut commands: Commands, sprites: Res<Sprites>) {
+pub fn spawn_opening_bundles(
+    mut commands: Commands,
+    sprites: Res<Sprites>,
+    asset_server: Res<AssetServer>,
+) {
     commands
         .spawn_bundle(OrthographicCameraBundle::new_2d())
         .insert(GameCamera);
+    commands
+        .spawn_bundle(UiCameraBundle::default())
+        .insert(UiCamera);
+
+    commands.spawn_bundle(TextBundle {
+        style: Style {
+            align_self: AlignSelf::FlexEnd,
+            position_type: PositionType::Absolute,
+            position: Rect {
+                bottom: Val::Px(5.0),
+                right: Val::Px(15.0),
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+        // Use the `Text::with_section` constructor
+        text: Text::with_section(
+            // Accepts a `String` or any type that converts into a `String`, such as `&str`
+            "under\nfarm!",
+            TextStyle {
+                font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                font_size: 100.0,
+                color: Color::WHITE,
+            },
+            // Note: You can use `Default::default()` in place of the `TextAlignment`
+            TextAlignment {
+                horizontal: HorizontalAlign::Center,
+                ..Default::default()
+            },
+        ),
+        ..Default::default()
+    });
 
     let mut cells: Vec<GridCell> = Vec::new();
 
