@@ -58,12 +58,7 @@ pub fn check_floor_collision(
 
     let mut grid: Mut<'_, Grid> = grid_query.single_mut().unwrap();
 
-    let bounding_box = BoundingBox {
-        min_x: transform.translation.x.floor() - 15.0,
-        max_x: transform.translation.x.floor() + 15.0,
-        min_y: transform.translation.y.floor() - 15.0,
-        max_y: transform.translation.y.floor() + 15.0,
-    };
+    let bounding_box = BoundingBox::square(transform.translation.x, transform.translation.y, 30.0);
 
     for cell in grid.cells.iter_mut() {
         if cell.intersects_box(&bounding_box) && cell.sprite.is_none() {
