@@ -20,17 +20,17 @@ fn main() {
         .init_resource::<LoadedTextures>()
         .init_resource::<GameState>()
         .insert_resource(MovementInputTimer(Timer::from_seconds(0.1, true)))
-        .add_state(AppState::Setup)
+        .add_state(AppState::Startup)
         .add_plugins(DefaultPlugins)
-        .add_system_set(SystemSet::on_enter(AppState::Setup).with_system(load_textures.system()))
-        .add_system_set(SystemSet::on_update(AppState::Setup).with_system(check_textures.system()))
-        .add_system_set(SystemSet::on_enter(AppState::Finished).with_system(load_sprites.system()))
+        .add_system_set(SystemSet::on_enter(AppState::Startup).with_system(load_textures.system()))
+        .add_system_set(SystemSet::on_update(AppState::Startup).with_system(check_textures.system()))
+        .add_system_set(SystemSet::on_enter(AppState::FinishedLoading).with_system(load_sprites.system()))
         .add_system_set(
-            SystemSet::on_enter(AppState::Playing)
+            SystemSet::on_enter(AppState::InGame)
                 .with_system(spawn_opening_bundles.system().label("opening_spawn")),
         )
         .add_system_set(
-            SystemSet::on_update(AppState::Playing)
+            SystemSet::on_update(AppState::InGame)
                 .with_system(movement_input_system.system().label("movement_input"))
                 .with_system(action_input_system.system().label("action_input"))
                 .with_system(

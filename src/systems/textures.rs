@@ -21,7 +21,7 @@ pub fn check_textures(
     if let LoadState::Loaded =
         asset_server.get_group_load_state(sprite_handles.handles.iter().map(|handle| handle.id))
     {
-        state.set(AppState::Finished).unwrap();
+        state.set(AppState::FinishedLoading).unwrap();
     }
 }
 
@@ -52,5 +52,5 @@ pub fn load_sprites(
     let atlas_handle = texture_atlases.add(texture_atlas);
     sprites.atlas_handle = atlas_handle;
 
-    state.set(AppState::Playing).unwrap();
+    state.set(AppState::InGame).unwrap();
 }
