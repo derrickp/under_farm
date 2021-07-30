@@ -7,5 +7,4 @@ pub enum AppState {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
 pub struct GameState {
-    pub camera_zoom_initialized: bool,
 }
