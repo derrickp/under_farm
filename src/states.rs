@@ -1,3 +1,5 @@
+use bevy::prelude::Entity;
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum AppState {
     Startup,
@@ -6,6 +8,17 @@ pub enum AppState {
     InventoryScreen,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct GameState {
+    pub initial_spawn_complete: bool,
+    pub game_camera: Option<Entity>,
+}
+
+impl Default for GameState {
+    fn default() -> Self {
+        return GameState {
+            initial_spawn_complete: false,
+            game_camera: None,
+        };
+    }
 }
