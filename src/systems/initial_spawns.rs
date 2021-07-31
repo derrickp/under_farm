@@ -1,7 +1,7 @@
 use std::usize;
 
 use bevy::{
-    math::{Vec2, Vec3},
+    math::Vec3,
     prelude::{
         AssetServer, Color, Commands, HorizontalAlign, OrthographicCameraBundle, Rect, Res, ResMut,
         SpriteSheetBundle, TextBundle, Transform, UiCameraBundle,
@@ -13,11 +13,9 @@ use bevy::{
 
 use crate::{
     components::{
-        action::Action,
         camera::{GameCamera, UiCamera},
         grid::{Grid, GridBundle, GridCell, GridName},
-        player::{Player, PlayerBundle, PlayerName},
-        speed::Speed,
+        player::PlayerBundle,
     },
     sprites::Sprites,
     states::GameState,
@@ -114,10 +112,6 @@ pub fn spawn_opening_bundles(
     });
 
     commands.spawn_bundle(PlayerBundle {
-        name: PlayerName("Goblin?".to_string()),
-        speed: Speed {
-            current: Vec2::new(0.0, 0.0),
-        },
         sprite: SpriteSheetBundle {
             sprite: TextureAtlasSprite::new(sprites.player_sprite_index as u32),
             texture_atlas: sprites.atlas_handle.clone(),
@@ -128,8 +122,7 @@ pub fn spawn_opening_bundles(
             },
             ..Default::default()
         },
-        player: Player,
-        action: Action::default(),
+        ..Default::default()
     });
 
     game_state.initial_spawn_complete = true;
