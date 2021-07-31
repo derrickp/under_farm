@@ -5,8 +5,9 @@ mod states;
 mod systems;
 
 use bevy::{input::system::exit_on_esc_system, prelude::*};
+use configuration::crops::CropConfigurations;
 use sprites::{LoadedTextures, Sprites};
-use states::{AppState, GameState};
+use states::{AppState, GameState, InventoryState};
 use systems::{
     actions::crop_actions,
     initial_spawns::spawn_opening_bundles,
@@ -20,6 +21,8 @@ fn main() {
         .init_resource::<Sprites>()
         .init_resource::<LoadedTextures>()
         .init_resource::<GameState>()
+        .init_resource::<InventoryState>()
+        .init_resource::<CropConfigurations>()
         .insert_resource(MovementInputTimer(Timer::from_seconds(0.1, true)))
         .add_state(AppState::Startup)
         .add_plugins(DefaultPlugins)
