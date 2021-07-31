@@ -2,10 +2,13 @@ use bevy::{
     core::{Time, Timer},
     input::Input,
     math::Vec2,
-    prelude::{KeyCode, Mut, Query, Res, ResMut},
+    prelude::{KeyCode, Mut, Query, Res, ResMut, State},
 };
 
-use crate::components::{action::Action, player::Player, speed::Speed};
+use crate::{
+    components::{action::Action, player::Player, speed::Speed},
+    states::AppState,
+};
 
 pub struct MovementInputTimer(pub Timer);
 
@@ -81,5 +84,22 @@ pub fn action_input_system(
 
     if keyboard_input.just_pressed(KeyCode::E) {
         action.interact_pressed = true;
+    }
+}
+
+pub fn open_close_inventory_input_system(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut state: ResMut<State<AppState>>,
+) {
+    if state.current().ne(&AppState::InGame) && state.current().ne(&AppState::InventoryScreen) {
+        return;
+    }
+
+    if keyboard_input.just_pressed(KeyCode::I) {
+        if state.current().eq(&AppState::InGame) {
+            state.set(AppState::InventoryScreen).unwrap();
+        } else {
+            state.set(AppState::InGame).unwrap();
+        }
     }
 }
