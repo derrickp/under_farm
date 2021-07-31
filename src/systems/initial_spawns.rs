@@ -3,8 +3,8 @@ use std::usize;
 use bevy::{
     math::{Vec2, Vec3},
     prelude::{
-        AssetServer, Color, Commands, HorizontalAlign, OrthographicCameraBundle, Rect,
-        Res, SpriteSheetBundle, TextBundle, Transform, UiCameraBundle,
+        AssetServer, Color, Commands, HorizontalAlign, OrthographicCameraBundle, Rect, Res, ResMut,
+        SpriteSheetBundle, TextBundle, Transform, UiCameraBundle,
     },
     sprite::TextureAtlasSprite,
     text::{Text, TextAlignment, TextStyle},
@@ -20,6 +20,7 @@ use crate::{
         speed::Speed,
     },
     sprites::Sprites,
+    states::GameState,
 };
 
 const TILE_SIZE: usize = 64;
@@ -30,10 +31,18 @@ pub fn spawn_opening_bundles(
     mut commands: Commands,
     sprites: Res<Sprites>,
     asset_server: Res<AssetServer>,
+    mut game_state: ResMut<GameState>,
 ) {
-    commands
+    if game_state.initial_spawn_complete {
+        return;
+    }
+
+    let camera = commands
         .spawn_bundle(OrthographicCameraBundle::new_2d())
-        .insert(GameCamera);
+        .insert(GameCamera)
+        .id();
+    game_state.game_camera = Some(camera);
+
     commands
         .spawn_bundle(UiCameraBundle::default())
         .insert(UiCamera);
@@ -122,4 +131,6 @@ pub fn spawn_opening_bundles(
         player: Player,
         action: Action::default(),
     });
+
+    game_state.initial_spawn_complete = true;
 }
