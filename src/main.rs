@@ -1,4 +1,5 @@
 mod components;
+mod configuration;
 mod sprites;
 mod states;
 mod systems;
