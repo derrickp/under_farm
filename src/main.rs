@@ -11,7 +11,13 @@ use states::{AppState, GameState, InventoryState};
 use systems::{
     actions::crop_actions,
     initial_spawns::spawn_opening_bundles,
-    inputs::{action_input_system, movement_input_system, MovementInputTimer},
+    inputs::{
+        action_input_system, movement_input_system, open_close_inventory_input_system,
+        MovementInputTimer,
+    },
+    inventory::{
+        add_gameplay_camera, add_inventory_text, remove_gameplay_camera, remove_inventory_text,
+    },
     movement::{camera_movement, check_floor_collision, player_movement},
     textures::{check_textures, load_sprites, load_textures},
 };
@@ -27,8 +33,12 @@ fn main() {
         .add_state(AppState::Startup)
         .add_plugins(DefaultPlugins)
         .add_system_set(SystemSet::on_enter(AppState::Startup).with_system(load_textures.system()))
-        .add_system_set(SystemSet::on_update(AppState::Startup).with_system(check_textures.system()))
-        .add_system_set(SystemSet::on_enter(AppState::FinishedLoading).with_system(load_sprites.system()))
+        .add_system_set(
+            SystemSet::on_update(AppState::Startup).with_system(check_textures.system()),
+        )
+        .add_system_set(
+            SystemSet::on_enter(AppState::FinishedLoading).with_system(load_sprites.system()),
+        )
         .add_system_set(
             SystemSet::on_enter(AppState::InGame)
                 .with_system(spawn_opening_bundles.system().label("opening_spawn")),
@@ -62,6 +72,17 @@ fn main() {
                         .after("player_movement"),
                 ),
         )
+        .add_system_set(
+            SystemSet::on_enter(AppState::InventoryScreen)
+                .with_system(remove_gameplay_camera.system())
+                .with_system(add_inventory_text.system()),
+        )
+        .add_system_set(
+            SystemSet::on_exit(AppState::InventoryScreen)
+                .with_system(add_gameplay_camera.system())
+                .with_system(remove_inventory_text.system()),
+        )
+        .add_system(open_close_inventory_input_system.system())
         .add_system(exit_on_esc_system.system())
         .run();
 }
