@@ -22,3 +22,15 @@ impl Default for GameState {
         };
     }
 }
+
+pub struct InventoryState {
+    pub inventory_text: Option<Vec<Entity>>,
+}
+
+impl Default for InventoryState {
+    fn default() -> Self {
+        return InventoryState {
+            inventory_text: None,
+        };
+    }
+}
