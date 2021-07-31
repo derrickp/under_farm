@@ -1,34 +1,10 @@
 use bevy::{
-    prelude::{
-        AssetServer, Color, Commands, Entity, OrthographicCameraBundle, Rect, Res, ResMut,
-        TextBundle,
-    },
+    prelude::{AssetServer, Color, Commands, Entity, Rect, Res, ResMut, TextBundle},
     text::{Text, TextStyle},
     ui::{AlignSelf, PositionType, Style, Val},
 };
 
-use crate::{
-    components::camera::GameCamera,
-    configuration::crops::CropConfigurations,
-    states::{GameState, InventoryState},
-};
-
-pub fn remove_gameplay_camera(mut commands: Commands, mut game_state: ResMut<GameState>) {
-    if let Some(camera_entity) = game_state.game_camera {
-        commands.entity(camera_entity).despawn();
-        game_state.game_camera = None;
-    }
-}
-
-pub fn add_gameplay_camera(mut commands: Commands, mut game_state: ResMut<GameState>) {
-    if let None = game_state.game_camera {
-        let camera = commands
-            .spawn_bundle(OrthographicCameraBundle::new_2d())
-            .insert(GameCamera)
-            .id();
-        game_state.game_camera = Some(camera);
-    }
-}
+use crate::{configuration::crops::CropConfigurations, states::InventoryState};
 
 pub fn add_inventory_text(
     mut commands: Commands,

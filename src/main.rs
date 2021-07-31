@@ -10,14 +10,13 @@ use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameState, InventoryState};
 use systems::{
     actions::crop_actions,
+    cameras::{add_gameplay_camera, remove_gameplay_camera},
     initial_spawns::spawn_opening_bundles,
     inputs::{
         action_input_system, movement_input_system, open_close_inventory_input_system,
         MovementInputTimer,
     },
-    inventory::{
-        add_gameplay_camera, add_inventory_text, remove_gameplay_camera, remove_inventory_text,
-    },
+    inventory::{add_inventory_text, remove_inventory_text},
     movement::{camera_movement, check_floor_collision, player_movement},
     textures::{check_textures, load_sprites, load_textures},
 };
