@@ -1,9 +1,11 @@
-use crate::configuration::crops::CropConfiguration;
-
 use super::{action::Action, speed::Speed};
 use bevy::prelude::{Bundle, SpriteSheetBundle};
 
 pub struct PlayerName(pub String);
+
+pub struct PlayerInventory {
+    pub current_crop_selection: Option<usize>,
+}
 
 pub struct Player;
 
@@ -13,7 +15,7 @@ pub struct PlayerBundle {
     pub speed: Speed,
     pub player: Player,
     pub action: Action,
-    pub current_crop: Option<CropConfiguration>,
+    pub inventory: PlayerInventory,
 
     #[bundle]
     pub sprite: SpriteSheetBundle,
@@ -26,7 +28,9 @@ impl Default for PlayerBundle {
             speed: Speed::default(),
             player: Player,
             action: Action::default(),
-            current_crop: None,
+            inventory: PlayerInventory {
+                current_crop_selection: None,
+            },
             sprite: SpriteSheetBundle::default(),
         };
     }
