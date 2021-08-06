@@ -1,10 +1,18 @@
 use bevy::{
-    prelude::{AssetServer, Color, Commands, Entity, Rect, Res, ResMut, TextBundle},
+    input::Input,
+    prelude::{
+        AssetServer, Color, Commands, Entity, KeyCode, Mut, Query, Rect, Res, ResMut, State,
+        TextBundle,
+    },
     text::{Text, TextStyle},
     ui::{AlignSelf, PositionType, Style, Val},
 };
 
-use crate::{configuration::crops::CropConfigurations, states::InventoryState};
+use crate::{
+    components::player::{Player, PlayerInventory},
+    configuration::crops::CropConfigurations,
+    states::{AppState, InventoryState},
+};
 
 pub fn add_inventory_text(
     mut commands: Commands,
@@ -94,4 +102,28 @@ pub fn remove_inventory_text(mut commands: Commands, mut inventory_state: ResMut
     }
 
     inventory_state.inventory_text = None;
+}
+
+pub fn select_crop(
+    keyboard_input: Res<Input<KeyCode>>,
+    state: ResMut<State<AppState>>,
+    crop_configurations: Res<CropConfigurations>,
+    mut query: Query<(&Player, &mut PlayerInventory)>,
+) {
+    if state.current().ne(&AppState::InventoryScreen) {
+        return;
+    }
+
+    let (_, inventory): (&Player, Mut<'_, PlayerInventory>) = query.single_mut().unwrap();
+
+    if keyboard_input.just_pressed(KeyCode::Key1) || keyboard_input.just_pressed(KeyCode::Numpad1) {
+        set_crop_selection(inventory, crop_configurations, 0);
+    }
+}
+
+fn set_crop_selection(mut inventory: Mut<'_, PlayerInventory, >, crop_configurations: Res<'_, CropConfigurations>, index: usize) {
+    let config = crop_configurations.configurations.get(index);
+        if config.is_some() {
+            inventory.current_crop_selection = Some(index);
+        }
 }
