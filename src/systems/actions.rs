@@ -9,18 +9,21 @@ use crate::{
         action::Action,
         crop::{Crop, CropBundle, CropName},
         grid::BoundingBox,
-        player::Player,
+        player::{Player, PlayerInventory},
     },
+    configuration::crops::CropConfigurations,
     sprites::Sprites,
 };
 
 pub fn crop_actions(
     commands: Commands,
+    crop_configurations: Res<CropConfigurations>,
     sprites: Res<Sprites>,
-    query: Query<(&Player, &Action, &Transform)>,
+    query: Query<(&Player, &Action, &Transform, &PlayerInventory)>,
     crop_query: Query<(&Crop, &Transform)>,
 ) {
-    let (_, action, transform): (&Player, &Action, &Transform) = query.single().unwrap();
+    let (_, action, transform, inventory): (&Player, &Action, &Transform, &PlayerInventory) =
+        query.single().unwrap();
     let player_bounds = BoundingBox::square(
         transform.translation.x.floor(),
         transform.translation.y.floor(),
@@ -41,15 +44,25 @@ pub fn crop_actions(
             }
         }
 
-        spawn_mushroom(
-            Vec2::new(transform.translation.x, transform.translation.y),
-            commands,
-            sprites,
-        );
+        if let Some(config_index) = inventory.current_crop_selection {
+            let config_result = crop_configurations
+                .configurations
+                .get(config_index as usize);
+            if let Some(config) = config_result {
+                if let Some(sprite_index) = config.sprite_index {
+                    spawn_crop(
+                        Vec2::new(transform.translation.x, transform.translation.y),
+                        commands,
+                        sprites,
+                        sprite_index as u32,
+                    );
+                }
+            }
+        }
     }
 }
 
-fn spawn_mushroom(position: Vec2, mut commands: Commands, sprites: Res<Sprites>) {
+fn spawn_crop(position: Vec2, mut commands: Commands, sprites: Res<Sprites>, sprite_index: u32) {
     commands.spawn_bundle(CropBundle {
         sprite: SpriteSheetBundle {
             transform: Transform {
@@ -57,7 +70,7 @@ fn spawn_mushroom(position: Vec2, mut commands: Commands, sprites: Res<Sprites>)
                 scale: Vec3::splat(2.0),
                 ..Default::default()
             },
-            sprite: TextureAtlasSprite::new(sprites.mushroom_index as u32),
+            sprite: TextureAtlasSprite::new(sprite_index),
             texture_atlas: sprites.atlas_handle.clone(),
             ..Default::default()
         },
