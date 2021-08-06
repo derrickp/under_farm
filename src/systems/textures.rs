@@ -45,7 +45,9 @@ pub fn load_sprites(
 
     for mut config in crop_configurations.configurations.as_mut_slice() {
         let handle = asset_server.get_handle(config.sprite_location);
-        config.sprite_index = Some(texture_atlas.get_texture_index(&handle).unwrap() as u32);
+        if let Some(index) = texture_atlas.get_texture_index(&handle) {
+            config.sprite_index = Some(index as u32);
+        }
     }
 
     let texture_handle = asset_server.load("sprites/goblin_big_hat.png");
