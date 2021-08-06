@@ -16,7 +16,7 @@ use systems::{
         action_input_system, movement_input_system, open_close_inventory_input_system,
         MovementInputTimer,
     },
-    inventory::{add_inventory_text, remove_inventory_text},
+    inventory::{add_inventory_text, remove_inventory_text, select_crop},
     movement::{camera_movement, check_floor_collision, player_movement},
     textures::{check_textures, load_sprites, load_textures},
 };
@@ -80,6 +80,9 @@ fn main() {
             SystemSet::on_exit(AppState::InventoryScreen)
                 .with_system(add_gameplay_camera.system())
                 .with_system(remove_inventory_text.system()),
+        )
+        .add_system_set(
+            SystemSet::on_update(AppState::InventoryScreen).with_system(select_crop.system()),
         )
         .add_system(open_close_inventory_input_system.system())
         .add_system(exit_on_esc_system.system())
