@@ -5,6 +5,7 @@ use bevy::{
 };
 
 use crate::{
+    configuration::crops::CropConfigurations,
     sprites::{LoadedTextures, Sprites},
     states::AppState,
 };
@@ -27,6 +28,7 @@ pub fn check_textures(
 
 pub fn load_sprites(
     mut sprites: ResMut<Sprites>,
+    mut crop_configurations: ResMut<CropConfigurations>,
     loaded_textures: Res<LoadedTextures>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mut textures: ResMut<Assets<Texture>>,
@@ -40,6 +42,12 @@ pub fn load_sprites(
     }
 
     let texture_atlas = texture_atlas_builder.finish(&mut textures).unwrap();
+
+    for mut config in crop_configurations.configurations.as_mut_slice() {
+        let handle = asset_server.get_handle(config.sprite_location);
+        config.sprite_index = Some(texture_atlas.get_texture_index(&handle).unwrap() as u32);
+    }
+
     let texture_handle = asset_server.load("sprites/goblin_big_hat.png");
     let background_handle = asset_server.get_handle("sprites/second_background.png");
     let outline_handle = asset_server.get_handle("sprites/cell_outline_32.png");
