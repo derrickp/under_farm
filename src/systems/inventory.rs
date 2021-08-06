@@ -68,29 +68,29 @@ pub fn add_inventory_text(
                 inventory_text: InventoryText,
                 status: InventoryTextStatus { index },
                 text: TextBundle {
-                style: Style {
-                    align_self: AlignSelf::FlexEnd,
-                    position_type: PositionType::Absolute,
-                    position: Rect {
-                        top: Val::Px(top),
-                        left: Val::Px(15.0),
+                    style: Style {
+                        align_self: AlignSelf::FlexEnd,
+                        position_type: PositionType::Absolute,
+                        position: Rect {
+                            top: Val::Px(top),
+                            left: Val::Px(15.0),
+                            ..Default::default()
+                        },
                         ..Default::default()
                     },
+                    // Use the `Text::with_section` constructor
+                    text: Text::with_section(
+                        // Accepts a `String` or any type that converts into a `String`, such as `&str`
+                        format!("{} {}", index + 1, crop_config.name),
+                        TextStyle {
+                            font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                            font_size: 20.0,
+                            color: Color::WHITE,
+                        },
+                        // Note: You can use `Default::default()` in place of the `TextAlignment`
+                        Default::default(),
+                    ),
                     ..Default::default()
-                },
-                // Use the `Text::with_section` constructor
-                text: Text::with_section(
-                    // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                    format!("{} {}", index + 1, crop_config.name),
-                    TextStyle {
-                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                        font_size: 20.0,
-                        color: Color::WHITE,
-                    },
-                    // Note: You can use `Default::default()` in place of the `TextAlignment`
-                    Default::default(),
-                ),
-                ..Default::default()
                 },
             })
             .id();
@@ -112,6 +112,26 @@ pub fn remove_inventory_text(mut commands: Commands, mut inventory_state: ResMut
     }
 
     inventory_state.inventory_text = None;
+}
+
+pub fn update_inventory_text_colour(
+    inventory_query: Query<(&Player, &PlayerInventory)>,
+    mut text_query: Query<(&InventoryText, &InventoryTextStatus, &mut Text)>,
+) {
+    let (_, inventory): (&Player, &PlayerInventory) = inventory_query.single().unwrap();
+    for text_data in text_query.iter_mut() {
+        let (_, status, mut text): (&InventoryText, &InventoryTextStatus, Mut<'_, Text>) =
+            text_data;
+        if let Some(selected_index) = inventory.current_crop_selection {
+            if selected_index == status.index {
+                let section = text.sections.get_mut(0).unwrap();
+                section.style.color = Color::YELLOW;
+            } else {
+                let section = text.sections.get_mut(0).unwrap();
+                section.style.color = Color::WHITE;
+            }
+        }
+    }
 }
 
 pub fn select_crop(
