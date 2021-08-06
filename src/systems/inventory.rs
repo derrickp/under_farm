@@ -1,8 +1,8 @@
 use bevy::{
-    input::Input,
+    input::keyboard::KeyboardInput,
     prelude::{
-        AssetServer, Color, Commands, Entity, KeyCode, Mut, Query, Rect, Res, ResMut, State,
-        TextBundle,
+        AssetServer, Color, Commands, Entity, EventReader, KeyCode, Mut, Query, Rect, Res, ResMut,
+        State, TextBundle,
     },
     text::{Text, TextStyle},
     ui::{AlignSelf, PositionType, Style, Val},
@@ -108,7 +108,7 @@ pub fn remove_inventory_text(mut commands: Commands, mut inventory_state: ResMut
 }
 
 pub fn select_crop(
-    keyboard_input: Res<Input<KeyCode>>,
+    event_reader: EventReader<KeyboardInput>,
     state: ResMut<State<AppState>>,
     crop_configurations: Res<CropConfigurations>,
     mut query: Query<(&Player, &mut PlayerInventory)>,
@@ -119,14 +119,40 @@ pub fn select_crop(
 
     let (_, inventory): (&Player, Mut<'_, PlayerInventory>) = query.single_mut().unwrap();
 
-    if keyboard_input.just_pressed(KeyCode::Key1) || keyboard_input.just_pressed(KeyCode::Numpad1) {
-        set_crop_selection(inventory, crop_configurations, 0);
+    let index_result = pressed_key_to_index(event_reader);
+
+    if let Some(index) = index_result {
+        set_crop_selection(inventory, crop_configurations, index);
     }
 }
 
-fn set_crop_selection(mut inventory: Mut<'_, PlayerInventory, >, crop_configurations: Res<'_, CropConfigurations>, index: usize) {
-    let config = crop_configurations.configurations.get(index);
-        if config.is_some() {
-            inventory.current_crop_selection = Some(index);
+fn pressed_key_to_index(mut event_reader: EventReader<KeyboardInput>) -> Option<usize> {
+    for event in event_reader.iter() {
+        match event.key_code {
+            Some(KeyCode::Numpad1) | Some(KeyCode::Key1) => return Some(0),
+            Some(KeyCode::Numpad2) | Some(KeyCode::Key2) => return Some(1),
+            Some(KeyCode::Numpad3) | Some(KeyCode::Key3) => return Some(2),
+            Some(KeyCode::Numpad4) | Some(KeyCode::Key4) => return Some(3),
+            Some(KeyCode::Numpad5) | Some(KeyCode::Key5) => return Some(4),
+            Some(KeyCode::Numpad6) | Some(KeyCode::Key6) => return Some(5),
+            Some(KeyCode::Numpad7) | Some(KeyCode::Key7) => return Some(6),
+            Some(KeyCode::Numpad8) | Some(KeyCode::Key8) => return Some(7),
+            Some(KeyCode::Numpad9) | Some(KeyCode::Key9) => return Some(8),
+            Some(KeyCode::Numpad0) | Some(KeyCode::Key0) => return Some(9),
+            _ => {}
         }
+    }
+
+    return None;
+}
+
+fn set_crop_selection(
+    mut inventory: Mut<'_, PlayerInventory>,
+    crop_configurations: Res<'_, CropConfigurations>,
+    index: usize,
+) {
+    let config = crop_configurations.configurations.get(index);
+    if config.is_some() {
+        inventory.current_crop_selection = Some(index);
+    }
 }
