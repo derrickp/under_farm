@@ -1,6 +1,7 @@
 pub struct CropConfiguration {
-    pub sprite_location: String,
-    pub name: String,
+    pub sprite_location: &'static str,
+    pub name: &'static str,
+    pub sprite_index: Option<u32>,
 }
 
 pub struct CropConfigurations {
@@ -12,8 +13,9 @@ impl Default for CropConfigurations {
         let mut crops: Vec<CropConfiguration> = Vec::new();
 
         crops.push(CropConfiguration {
-            sprite_location: "sprites/giant_mushroom.png".to_string(),
-            name: "Mushroom".to_string(),
+            sprite_location: "sprites/giant_mushroom.png",
+            name: "Mushroom",
+            sprite_index: None,
         });
 
         return CropConfigurations {
