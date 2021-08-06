@@ -18,6 +18,12 @@ impl Default for CropConfigurations {
             sprite_index: None,
         });
 
+        crops.push(CropConfiguration {
+            sprite_location: "sprites/kane_stalks.png",
+            name: "Kane",
+            sprite_index: None,
+        });
+
         return CropConfigurations {
             configurations: crops,
         };
