@@ -24,6 +24,12 @@ impl Default for CropConfigurations {
             sprite_index: None,
         });
 
+        crops.push(CropConfiguration {
+            sprite_location: "sprites/potatoes.png",
+            name: "Potatoes",
+            sprite_index: None,
+        });
+
         return CropConfigurations {
             configurations: crops,
         };
