@@ -30,6 +30,12 @@ impl Default for CropConfigurations {
             sprite_index: None,
         });
 
+        crops.push(CropConfiguration {
+            sprite_location: "sprites/turnip_top.png",
+            name: "Turnips",
+            sprite_index: None,
+        });
+
         return CropConfigurations {
             configurations: crops,
         };
