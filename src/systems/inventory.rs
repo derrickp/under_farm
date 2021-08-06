@@ -9,7 +9,10 @@ use bevy::{
 };
 
 use crate::{
-    components::player::{Player, PlayerInventory},
+    components::{
+        inventory::{InventoryText, InventoryTextBundle, InventoryTextStatus},
+        player::{Player, PlayerInventory},
+    },
     configuration::crops::CropConfigurations,
     states::{AppState, InventoryState},
 };
@@ -61,7 +64,10 @@ pub fn add_inventory_text(
         }
         let top = 15.0 + (50.0 * (index as f32 + 1.0));
         let text_entity = commands
-            .spawn_bundle(TextBundle {
+            .spawn_bundle(InventoryTextBundle {
+                inventory_text: InventoryText,
+                status: InventoryTextStatus { index },
+                text: TextBundle {
                 style: Style {
                     align_self: AlignSelf::FlexEnd,
                     position_type: PositionType::Absolute,
@@ -85,6 +91,7 @@ pub fn add_inventory_text(
                     Default::default(),
                 ),
                 ..Default::default()
+                },
             })
             .id();
         inventory_text.push(text_entity);
