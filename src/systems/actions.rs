@@ -55,6 +55,7 @@ pub fn crop_actions(
                         commands,
                         sprites,
                         sprite_index as u32,
+                        config.name,
                     );
                 }
             }
@@ -62,7 +63,13 @@ pub fn crop_actions(
     }
 }
 
-fn spawn_crop(position: Vec2, mut commands: Commands, sprites: Res<Sprites>, sprite_index: u32) {
+fn spawn_crop(
+    position: Vec2,
+    mut commands: Commands,
+    sprites: Res<Sprites>,
+    sprite_index: u32,
+    crop_name: &str,
+) {
     commands.spawn_bundle(CropBundle {
         sprite: SpriteSheetBundle {
             transform: Transform {
@@ -74,7 +81,7 @@ fn spawn_crop(position: Vec2, mut commands: Commands, sprites: Res<Sprites>, spr
             texture_atlas: sprites.atlas_handle.clone(),
             ..Default::default()
         },
-        name: CropName("mushroom".to_string()),
+        name: CropName(crop_name.to_string()),
         crop: Crop,
     });
 }
