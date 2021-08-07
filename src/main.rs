@@ -30,7 +30,7 @@ fn main() {
         .init_resource::<GameState>()
         .init_resource::<InventoryState>()
         .init_resource::<CropConfigurations>()
-        .insert_resource(MovementInputTimer(Timer::from_seconds(0.1, true)))
+        .insert_resource(MovementInputTimer(Timer::from_seconds(0.2, true)))
         .add_state(AppState::Startup)
         .add_plugins(DefaultPlugins)
         .add_system_set(SystemSet::on_enter(AppState::Startup).with_system(load_textures.system()))
