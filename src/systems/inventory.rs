@@ -59,9 +59,10 @@ pub fn add_inventory_text(
     inventory_text.push(title_entity);
 
     for (index, crop_config) in crop_configurations.configurations.iter().enumerate() {
-        if crop_config.sprite_index.is_none() {
+        if crop_config.stages.is_empty() {
             continue;
         }
+
         let top = 15.0 + (50.0 * (index as f32 + 1.0));
         let text_entity = commands
             .spawn_bundle(InventoryTextBundle {

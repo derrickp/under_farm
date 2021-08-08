@@ -49,14 +49,16 @@ pub fn crop_actions(
                 .configurations
                 .get(config_index as usize);
             if let Some(config) = config_result {
-                if let Some(sprite_index) = config.sprite_index {
-                    spawn_crop(
-                        Vec2::new(transform.translation.x, transform.translation.y),
-                        commands,
-                        sprites,
-                        sprite_index as u32,
-                        config.name,
-                    );
+                if let Some(stage) = config.stages.get(0) {
+                    if let Some(sprite_index) = stage.sprite_index {
+                        spawn_crop(
+                            Vec2::new(transform.translation.x, transform.translation.y),
+                            commands,
+                            sprites,
+                            sprite_index as u32,
+                            config.name,
+                        );
+                    }
                 }
             }
         }

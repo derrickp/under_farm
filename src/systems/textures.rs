@@ -43,10 +43,12 @@ pub fn load_sprites(
 
     let texture_atlas = texture_atlas_builder.finish(&mut textures).unwrap();
 
-    for mut config in crop_configurations.configurations.as_mut_slice() {
-        let handle = asset_server.get_handle(config.sprite_location);
-        if let Some(index) = texture_atlas.get_texture_index(&handle) {
-            config.sprite_index = Some(index as u32);
+    for config in crop_configurations.configurations.as_mut_slice() {
+        for mut stage in config.stages.as_mut_slice() {
+            let handle = asset_server.get_handle(stage.sprite_location);
+            if let Some(index) = texture_atlas.get_texture_index(&handle) {
+                stage.sprite_index = Some(index as u32);
+            }
         }
     }
 
