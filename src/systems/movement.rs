@@ -1,5 +1,4 @@
 use bevy::{
-    math::Vec3,
     prelude::{Commands, Mut, Query, QuerySet, Res, SpriteSheetBundle, Transform},
     render::camera::Camera,
     sprite::TextureAtlasSprite,
@@ -66,7 +65,7 @@ pub fn check_floor_collision(
             let entity_commands = commands.spawn_bundle(SpriteSheetBundle {
                 transform: Transform {
                     translation: cell.cell_center.clone(),
-                    scale: Vec3::splat(2.0),
+                    scale: crate::configuration::sprites::sprite_scale(),
                     ..Default::default()
                 },
                 sprite: TextureAtlasSprite::new(sprites.background_index as u32),

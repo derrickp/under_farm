@@ -17,13 +17,10 @@ use crate::{
         grid::{Grid, GridBundle, GridCell, GridName},
         player::PlayerBundle,
     },
+    configuration::map::{MAP_HEIGHT, MAP_WIDTH, TILE_SIZE},
     sprites::Sprites,
     states::GameState,
 };
-
-const TILE_SIZE: usize = 64;
-const MAP_WIDTH: i32 = 50;
-const MAP_HEIGHT: i32 = 50;
 
 pub fn spawn_opening_bundles(
     mut commands: Commands,
@@ -82,8 +79,8 @@ pub fn spawn_opening_bundles(
     let bottom_y = -1 * TILE_SIZE as i32 * MAP_HEIGHT;
     let top_y = TILE_SIZE as i32 * MAP_HEIGHT;
 
-    for x in (left_x..right_x).step_by(TILE_SIZE) {
-        for y in (bottom_y..top_y).step_by(TILE_SIZE) {
+    for x in (left_x..right_x).step_by(TILE_SIZE as usize) {
+        for y in (bottom_y..top_y).step_by(TILE_SIZE as usize) {
             // commands.spawn_bundle(SpriteSheetBundle {
             //     transform: Transform {
             //         translation: Vec3::new(x as f32, y as f32, 0.0),
@@ -117,7 +114,7 @@ pub fn spawn_opening_bundles(
             texture_atlas: sprites.atlas_handle.clone(),
             transform: Transform {
                 translation: Vec3::new(0.0, 0.0, 5.0),
-                scale: Vec3::splat(2.0),
+                scale: crate::configuration::sprites::sprite_scale(),
                 ..Default::default()
             },
             ..Default::default()

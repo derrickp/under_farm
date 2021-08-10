@@ -76,7 +76,7 @@ fn spawn_crop(
         sprite: SpriteSheetBundle {
             transform: Transform {
                 translation: Vec3::new(position.x, position.y, 2.0),
-                scale: Vec3::splat(2.0),
+                scale: crate::configuration::sprites::sprite_scale(),
                 ..Default::default()
             },
             sprite: TextureAtlasSprite::new(sprite_index),

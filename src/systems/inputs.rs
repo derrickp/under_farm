@@ -7,19 +7,18 @@ use bevy::{
 
 use crate::{
     components::{action::Action, player::Player, speed::Speed},
+    configuration::map::TILE_SIZE,
     states::AppState,
 };
 
 pub struct MovementInputTimer(pub Timer);
 
-const SPEED: f32 = 64.0; // 32 px normal size and 2x scale
-
 fn x_axis_speed() -> Vec2 {
-    return Vec2::new(SPEED, 0.0);
+    return Vec2::new(TILE_SIZE, 0.0);
 }
 
 fn y_axis_speed() -> Vec2 {
-    return Vec2::new(0.0, SPEED);
+    return Vec2::new(0.0, TILE_SIZE);
 }
 
 pub fn movement_input_system(
