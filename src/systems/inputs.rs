@@ -1,12 +1,13 @@
 use bevy::{
     core::{Time, Timer},
     input::Input,
-    math::Vec2,
-    prelude::{KeyCode, Mut, Query, Res, ResMut, State},
+    math::{Vec2, Vec3},
+    prelude::{KeyCode, Mut, Query, Res, ResMut, State, Transform},
+    render::camera::Camera,
 };
 
 use crate::{
-    components::{action::Action, player::Player, speed::Speed},
+    components::{action::Action, camera::GameCamera, player::Player, speed::Speed},
     configuration::map::TILE_SIZE,
     states::AppState,
 };
@@ -101,4 +102,29 @@ pub fn open_close_inventory_input_system(
             state.set(AppState::InGame).unwrap();
         }
     }
+}
+
+pub fn zoom_camera_system(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut query: Query<(&GameCamera, &Camera, &mut Transform)>,
+) {
+    if !keyboard_input.just_pressed(KeyCode::Z) {
+        return;
+    }
+
+    for data in query.iter_mut() {
+        let (_, _, mut transform): (&GameCamera, &Camera, Mut<'_, Transform>) = data;
+        transform.scale = next_camera_scale(transform.scale);
+    }
+}
+
+fn next_camera_scale(scale: Vec3) -> Vec3 {
+    if scale == Vec3::splat(1.0) {
+        return Vec3::new(2.0, 2.0, 1.0);
+    }
+    if scale == Vec3::new(2.0, 2.0, 1.0) {
+        return Vec3::new(4.0, 4.0, 1.0);
+    }
+
+    return Vec3::splat(1.0);
 }
