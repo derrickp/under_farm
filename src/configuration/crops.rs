@@ -24,45 +24,53 @@ pub struct CropConfigurations {
     pub configurations: Vec<CropConfiguration>,
 }
 
+fn kane_configuration() -> CropConfiguration {
+    let stages = vec![CropStage {
+        name: "Kane Stalk",
+        sprite_location: "sprites/kane_stalks.png",
+        sprite_index: None,
+    }];
+
+    return CropConfiguration::build_basic("Kane", stages);
+}
+
+fn mushroom_configuration() -> CropConfiguration {
+    let stages = vec![CropStage {
+        name: "Mushroom Plant",
+        sprite_location: "sprites/giant_mushroom.png",
+        sprite_index: None,
+    }];
+    return CropConfiguration::build_basic("Mushroom", stages);
+}
+
+fn potato_configuration() -> CropConfiguration {
+    let stages = vec![CropStage {
+        name: "Potatoes",
+        sprite_location: "sprites/potatoes.png",
+        sprite_index: None,
+    }];
+
+    return CropConfiguration::build_basic("Potato", stages);
+}
+
+fn turnip_configuration() -> CropConfiguration {
+    let stages = vec![CropStage {
+        name: "Turnip",
+        sprite_location: "sprites/turnip_top.png",
+        sprite_index: None,
+    }];
+
+    return CropConfiguration::build_basic("Turnip", stages);
+}
+
 impl Default for CropConfigurations {
     fn default() -> Self {
-        let mut crops: Vec<CropConfiguration> = Vec::new();
-
-        crops.push(CropConfiguration::build_basic(
-            "Mushroom",
-            vec![CropStage {
-                name: "Mushroom Plant",
-                sprite_location: "sprites/giant_mushroom.png",
-                sprite_index: None,
-            }],
-        ));
-
-        crops.push(CropConfiguration::build_basic(
-            "Kane",
-            vec![CropStage {
-                name: "Kane Stalk",
-                sprite_location: "sprites/kane_stalks.png",
-                sprite_index: None,
-            }],
-        ));
-
-        crops.push(CropConfiguration::build_basic(
-            "Potatoes",
-            vec![CropStage {
-                name: "Potatoes",
-                sprite_location: "sprites/potatoes.png",
-                sprite_index: None,
-            }],
-        ));
-
-        crops.push(CropConfiguration::build_basic(
-            "Turnips",
-            vec![CropStage {
-                name: "Turnip",
-                sprite_location: "sprites/turnip_top.png",
-                sprite_index: None,
-            }],
-        ));
+        let crops: Vec<CropConfiguration> = vec![
+            mushroom_configuration(),
+            kane_configuration(),
+            potato_configuration(),
+            turnip_configuration(),
+        ];
 
         return CropConfigurations {
             configurations: crops,
