@@ -10,12 +10,29 @@ use crate::components::{
     speed::Speed,
 };
 
-pub fn player_movement(mut query: Query<(&Player, &Speed, &mut Transform)>) {
+pub fn player_movement(mut query: Query<(&Player, &Speed, &mut Transform)>, cell_query: Query<&GridCell>) {
     let (_, speed, mut transform): (&Player, &Speed, Mut<'_, Transform>) =
         query.single_mut().unwrap();
 
     let x = speed.current.x + transform.translation.x;
     let y = speed.current.y + transform.translation.y;
+
+    let bounding_box = BoundingBox::square(x, y, 60.0);
+
+    let mut player_in_grid: bool = false;
+
+    for cell_data in cell_query.iter() {
+        let cell: &GridCell = cell_data;
+
+        if cell.intersects_box(&bounding_box) {
+            player_in_grid = true;
+            break;
+        }
+    }
+
+    if !player_in_grid {
+        return;
+    }
 
     transform.translation.x = x;
     transform.translation.y = y;
