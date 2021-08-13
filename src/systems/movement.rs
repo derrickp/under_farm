@@ -1,17 +1,13 @@
 use bevy::{
-    prelude::{Commands, Mut, Query, QuerySet, Res, SpriteSheetBundle, Transform},
+    prelude::{Mut, Query, QuerySet, Transform, Visible},
     render::camera::Camera,
-    sprite::TextureAtlasSprite,
 };
 
-use crate::{
-    components::{
-        camera::GameCamera,
-        grid::{BoundingBox, Grid},
-        player::Player,
-        speed::Speed,
-    },
-    sprites::Sprites,
+use crate::components::{
+    camera::GameCamera,
+    grid::{BoundingBox, GridCell},
+    player::Player,
+    speed::Speed,
 };
 
 pub fn player_movement(mut query: Query<(&Player, &Speed, &mut Transform)>) {
@@ -49,35 +45,18 @@ pub fn camera_movement(
 }
 
 pub fn check_floor_collision(
-    mut commands: Commands,
-    sprites: Res<Sprites>,
     player_query: Query<(&Player, &Transform)>,
-    mut grid_query: Query<&mut Grid>,
+    mut ground_cell_query: Query<(&GridCell, &mut Visible)>,
 ) {
     let (_, transform): (&Player, &Transform) = player_query.single().unwrap();
 
-    let mut grid: Mut<'_, Grid> = grid_query.single_mut().unwrap();
-
     let bounding_box = BoundingBox::square(transform.translation.x, transform.translation.y, 60.0);
 
-    for cell in grid.cells.iter_mut() {
-        if cell.intersects_box(&bounding_box) && cell.sprite.is_none() {
-            let entity_commands = commands.spawn_bundle(SpriteSheetBundle {
-                transform: Transform {
-                    translation: cell.cell_center.clone(),
-                    scale: crate::configuration::sprites::sprite_scale(),
-                    ..Default::default()
-                },
-                sprite: TextureAtlasSprite::new(sprites.background_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                ..Default::default()
-            });
-            cell.sprite = Some(entity_commands.id());
-            // let outline_entity = cell.outline.unwrap();
-            // commands
-            //     .entity(outline_entity)
-            //     .remove_bundle::<SpriteSheetBundle>();
-            // cell.outline = None;
+    for cell_data in ground_cell_query.iter_mut() {
+        let (grid_cell, mut visible): (&GridCell, Mut<'_, Visible>) = cell_data;
+
+        if grid_cell.intersects_box(&bounding_box) && !visible.is_visible {
+            visible.is_visible = true;
         }
     }
 }

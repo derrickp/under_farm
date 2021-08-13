@@ -1,6 +1,6 @@
 use bevy::{
     math::Vec3,
-    prelude::{Bundle, Entity},
+    prelude::{Bundle, Entity, SpriteSheetBundle},
 };
 
 pub struct BoundingBox {
@@ -29,24 +29,23 @@ impl BoundingBox {
     }
 }
 
-pub struct GridName(pub String);
-
-pub struct Grid {
-    pub name: GridName,
-    pub cells: Vec<GridCell>,
-}
-
-#[derive(Bundle)]
-pub struct GridBundle {
-    pub grid: Grid,
-}
-
 pub struct GridCell {
     pub cell_size: f32,
     pub cell_center: Vec3,
     pub contains_tile: bool,
     pub sprite: Option<Entity>,
     pub outline: Option<Entity>,
+}
+
+pub struct GroundCell;
+
+#[derive(Bundle)]
+pub struct GridCellBundle {
+    pub ground_cell: GroundCell,
+    pub cell: GridCell,
+
+    #[bundle]
+    pub sprite: SpriteSheetBundle,
 }
 
 impl GridCell {

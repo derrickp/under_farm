@@ -4,7 +4,7 @@ use bevy::{
     math::Vec3,
     prelude::{
         AssetServer, Color, Commands, HorizontalAlign, OrthographicCameraBundle, Rect, Res, ResMut,
-        SpriteSheetBundle, TextBundle, Transform, UiCameraBundle,
+        SpriteSheetBundle, TextBundle, Transform, UiCameraBundle, Visible,
     },
     sprite::TextureAtlasSprite,
     text::{Text, TextAlignment, TextStyle},
@@ -14,7 +14,7 @@ use bevy::{
 use crate::{
     components::{
         camera::{GameCamera, UiCamera},
-        grid::{Grid, GridBundle, GridCell, GridName},
+        grid::{GridCell, GridCellBundle, GroundCell},
         player::PlayerBundle,
     },
     configuration::map::{MAP_HEIGHT, MAP_WIDTH, TILE_SIZE},
@@ -71,8 +71,6 @@ pub fn spawn_opening_bundles(
         ..Default::default()
     });
 
-    let mut cells: Vec<GridCell> = Vec::new();
-
     let left_x = -1 * TILE_SIZE as i32 * MAP_WIDTH;
     let right_x = TILE_SIZE as i32 * MAP_WIDTH;
 
@@ -81,32 +79,33 @@ pub fn spawn_opening_bundles(
 
     for x in (left_x..right_x).step_by(TILE_SIZE as usize) {
         for y in (bottom_y..top_y).step_by(TILE_SIZE as usize) {
-            // commands.spawn_bundle(SpriteSheetBundle {
-            //     transform: Transform {
-            //         translation: Vec3::new(x as f32, y as f32, 0.0),
-            //         scale: Vec3::splat(1.0),
-            //         ..Default::default()
-            //     },
-            //     sprite: TextureAtlasSprite::new(sprites.outline_index as u32),
-            //     texture_atlas: sprites.atlas_handle.clone(),
-            //     ..Default::default()
-            // });
-            cells.push(GridCell {
-                cell_size: TILE_SIZE as f32,
-                cell_center: Vec3::new(x as f32, y as f32, 0.0),
-                contains_tile: false,
-                sprite: None,
-                outline: None,
+            let cell_center = Vec3::new(x as f32, y as f32, 0.0);
+            commands.spawn_bundle(GridCellBundle {
+                ground_cell: GroundCell,
+                cell: GridCell {
+                    cell_center,
+                    cell_size: TILE_SIZE as f32,
+                    contains_tile: false,
+                    sprite: None,
+                    outline: None,
+                },
+                sprite: SpriteSheetBundle {
+                    transform: Transform {
+                        translation: cell_center,
+                        scale: crate::configuration::sprites::sprite_scale(),
+                        ..Default::default()
+                    },
+                    sprite: TextureAtlasSprite::new(sprites.background_index as u32),
+                    texture_atlas: sprites.atlas_handle.clone(),
+                    visible: Visible {
+                        is_visible: false,
+                        is_transparent: false,
+                    },
+                    ..Default::default()
+                },
             });
         }
     }
-
-    commands.spawn_bundle(GridBundle {
-        grid: Grid {
-            cells,
-            name: GridName("floor".to_string()),
-        },
-    });
 
     commands.spawn_bundle(PlayerBundle {
         sprite: SpriteSheetBundle {
