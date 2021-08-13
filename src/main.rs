@@ -12,6 +12,7 @@ use states::{AppState, GameState, InventoryState};
 use systems::{
     actions::crop_actions,
     cameras::{add_gameplay_camera, remove_gameplay_camera},
+    crops::grow_crops_system,
     initial_spawns::spawn_opening_bundles,
     inputs::{
         action_input_system, movement_input_system, open_close_inventory_input_system,
@@ -22,6 +23,7 @@ use systems::{
     },
     movement::{camera_movement, check_floor_collision, player_movement},
     textures::{check_textures, load_sprites, load_textures},
+    world::tick_game_world,
 };
 use world::WorldTickTimer;
 
@@ -75,7 +77,14 @@ fn main() {
                         .label("crop_actions")
                         .after("player_movement"),
                 )
-                .with_system(zoom_camera_system.system()),
+                .with_system(zoom_camera_system.system())
+                .with_system(tick_game_world.system().label("tick_game_world"))
+                .with_system(
+                    grow_crops_system
+                        .system()
+                        .label("grow_crops_system")
+                        .after("tick_game_world"),
+                ),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::InventoryScreen)
