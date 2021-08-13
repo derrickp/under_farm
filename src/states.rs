@@ -1,4 +1,4 @@
-use bevy::prelude::Entity;
+use bevy::{math::Vec3, prelude::Entity};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum AppState {
@@ -8,10 +8,11 @@ pub enum AppState {
     InventoryScreen,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct GameState {
     pub initial_spawn_complete: bool,
     pub game_camera: Option<Entity>,
+    pub game_camera_scale: Vec3,
 }
 
 impl Default for GameState {
@@ -19,6 +20,7 @@ impl Default for GameState {
         return GameState {
             initial_spawn_complete: false,
             game_camera: None,
+            game_camera_scale: Vec3::splat(1.0),
         };
     }
 }

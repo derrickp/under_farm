@@ -9,7 +9,7 @@ use bevy::{
 use crate::{
     components::{action::Action, camera::GameCamera, player::Player, speed::Speed},
     configuration::map::TILE_SIZE,
-    states::AppState,
+    states::{AppState, GameState},
 };
 
 pub struct MovementInputTimer(pub Timer);
@@ -106,6 +106,7 @@ pub fn open_close_inventory_input_system(
 
 pub fn zoom_camera_system(
     keyboard_input: Res<Input<KeyCode>>,
+    mut game_state: ResMut<GameState>,
     mut query: Query<(&GameCamera, &Camera, &mut Transform)>,
 ) {
     if !keyboard_input.just_pressed(KeyCode::Z) {
@@ -114,7 +115,9 @@ pub fn zoom_camera_system(
 
     for data in query.iter_mut() {
         let (_, _, mut transform): (&GameCamera, &Camera, Mut<'_, Transform>) = data;
-        transform.scale = next_camera_scale(transform.scale);
+        let new_scale = next_camera_scale(transform.scale);
+        game_state.game_camera_scale = new_scale;
+        transform.scale = new_scale;
     }
 }
 
