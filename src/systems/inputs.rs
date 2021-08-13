@@ -6,13 +6,17 @@ use bevy::{
     render::camera::Camera,
 };
 
-use crate::{components::{action::Action, camera::GameCamera, player::Player, speed::Speed}, configuration::{map::TILE_SIZE, timers::movement_timer}, states::{AppState, GameState}};
+use crate::{
+    components::{action::Action, camera::GameCamera, player::Player, speed::Speed},
+    configuration::{map::TILE_SIZE, timers::movement_timer},
+    states::{AppState, GameState},
+};
 
 pub struct MovementInputTimer(pub Timer);
 
 impl Default for MovementInputTimer {
     fn default() -> Self {
-        return Self(movement_timer())
+        return Self(movement_timer());
     }
 }
 

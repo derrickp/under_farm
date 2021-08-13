@@ -7,7 +7,6 @@ pub fn movement_timer() -> Timer {
     return Timer::from_seconds(CONSTANT_MOVE_WAIT_TIME, true);
 }
 
-
 pub fn world_tick_timer() -> Timer {
     return Timer::from_seconds(WORLD_TICK_TIME, true);
 }
