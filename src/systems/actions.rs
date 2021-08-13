@@ -7,7 +7,7 @@ use bevy::{
 use crate::{
     components::{
         action::Action,
-        crop::{Crop, CropBundle, CropName},
+        crop::{Crop, CropBundle, CropName, CropStage, CropStages},
         grid::BoundingBox,
         player::{Player, PlayerInventory},
     },
@@ -49,17 +49,23 @@ pub fn crop_actions(
                 .configurations
                 .get(config_index as usize);
             if let Some(config) = config_result {
-                if let Some(stage) = config.stages.get(0) {
-                    if let Some(sprite_index) = stage.sprite_index {
-                        spawn_crop(
-                            Vec2::new(transform.translation.x, transform.translation.y),
-                            commands,
-                            sprites,
-                            sprite_index as u32,
-                            config.name,
-                        );
-                    }
-                }
+                let stages: Vec<CropStage> = config
+                    .stages
+                    .iter()
+                    .map(|stage| CropStage {
+                        ticks_in_stage: 0,
+                        min_ticks_in_stage: stage.min_ticks_in_stage,
+                        chance_to_advance: stage.chance_to_advance,
+                        sprite_index: stage.sprite_index.unwrap(),
+                    })
+                    .collect();
+                spawn_crop(
+                    Vec2::new(transform.translation.x, transform.translation.y),
+                    commands,
+                    sprites,
+                    config.name,
+                    stages,
+                );
             }
         }
     }
@@ -69,8 +75,8 @@ fn spawn_crop(
     position: Vec2,
     mut commands: Commands,
     sprites: Res<Sprites>,
-    sprite_index: u32,
     crop_name: &str,
+    stages: Vec<CropStage>,
 ) {
     commands.spawn_bundle(CropBundle {
         sprite: SpriteSheetBundle {
@@ -79,11 +85,14 @@ fn spawn_crop(
                 scale: crate::configuration::sprites::sprite_scale(),
                 ..Default::default()
             },
-            sprite: TextureAtlasSprite::new(sprite_index),
+            sprite: TextureAtlasSprite::new(stages.get(0).unwrap().sprite_index),
             texture_atlas: sprites.atlas_handle.clone(),
             ..Default::default()
         },
         name: CropName(crop_name.to_string()),
-        crop: Crop,
+        stages: CropStages { stages },
+        crop: Crop {
+            current_stage_index: 0,
+        },
     });
 }
