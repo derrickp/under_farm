@@ -38,10 +38,20 @@ pub struct GridCell {
 }
 
 pub struct GroundCell;
+pub struct WallCell;
+
+#[derive(Bundle)]
+pub struct WallCellBundle {
+    pub cell_type: WallCell,
+    pub cell: GridCell,
+
+    #[bundle]
+    pub sprite: SpriteSheetBundle,
+}
 
 #[derive(Bundle)]
 pub struct GridCellBundle {
-    pub ground_cell: GroundCell,
+    pub cell_type: GroundCell,
     pub cell: GridCell,
 
     #[bundle]

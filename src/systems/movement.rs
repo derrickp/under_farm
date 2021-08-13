@@ -5,12 +5,15 @@ use bevy::{
 
 use crate::components::{
     camera::GameCamera,
-    grid::{BoundingBox, GridCell},
+    grid::{BoundingBox, GridCell, WallCell},
     player::Player,
     speed::Speed,
 };
 
-pub fn player_movement(mut query: Query<(&Player, &Speed, &mut Transform)>, cell_query: Query<&GridCell>) {
+pub fn player_movement(
+    mut query: Query<(&Player, &Speed, &mut Transform)>,
+    cell_query: Query<(&WallCell, &GridCell)>,
+) {
     let (_, speed, mut transform): (&Player, &Speed, Mut<'_, Transform>) =
         query.single_mut().unwrap();
 
@@ -19,18 +22,18 @@ pub fn player_movement(mut query: Query<(&Player, &Speed, &mut Transform)>, cell
 
     let bounding_box = BoundingBox::square(x, y, 60.0);
 
-    let mut player_in_grid: bool = false;
+    let mut player_would_hit_wall: bool = false;
 
     for cell_data in cell_query.iter() {
-        let cell: &GridCell = cell_data;
+        let (_, cell): (&WallCell, &GridCell) = cell_data;
 
         if cell.intersects_box(&bounding_box) {
-            player_in_grid = true;
+            player_would_hit_wall = true;
             break;
         }
     }
 
-    if !player_in_grid {
+    if player_would_hit_wall {
         return;
     }
 
