@@ -1,7 +1,4 @@
-use bevy::{
-    prelude::{Mut, Query, Res},
-    sprite::TextureAtlasSprite,
-};
+use bevy::{prelude::{Commands, Entity, Mut, Query, Res}, sprite::TextureAtlasSprite};
 use rand::Rng;
 
 use crate::{
@@ -10,8 +7,9 @@ use crate::{
 };
 
 pub fn grow_crops_system(
+    mut commands: Commands,
     timer: Res<WorldTickTimer>,
-    mut query: Query<(&mut Crop, &mut CropStages, &mut TextureAtlasSprite)>,
+    mut query: Query<(Entity, &mut Crop, &mut CropStages, &mut TextureAtlasSprite)>,
 ) {
     if !timer.0.just_finished() {
         return;
@@ -20,7 +18,8 @@ pub fn grow_crops_system(
     let mut rng = rand::thread_rng();
     let chance_to_grow: u32 = rng.gen_range(1..100);
     for crop_data in query.iter_mut() {
-        let (mut crop, mut stages, mut sprite): (
+        let (entity, mut crop, mut stages, mut sprite): (
+            Entity,
             Mut<'_, Crop>,
             Mut<'_, CropStages>,
             Mut<'_, TextureAtlasSprite>,
@@ -38,8 +37,7 @@ pub fn grow_crops_system(
                         crop.current_stage_index = crop.current_stage_index + 1;
                     }
                     _ => {
-                        // TODO Despawn later
-                        println!("Would despawn crop {}", chance_to_grow);
+                        commands.entity(entity).despawn();
                     }
                 }
             }
