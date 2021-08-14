@@ -1,3 +1,5 @@
+use super::timers::WORLD_TICK_TIME;
+
 pub struct CropConfiguration {
     pub name: &'static str,
     pub sprite_index: Option<u32>,
@@ -26,7 +28,7 @@ pub struct CropConfigurations {
     pub configurations: Vec<CropConfiguration>,
 }
 
-const TICKS_PER_SECOND: u32 = 5;
+const TICKS_PER_SECOND: u32 = (1.0 / WORLD_TICK_TIME) as u32;
 
 fn kane_configuration() -> CropConfiguration {
     let stages = vec![
@@ -41,8 +43,8 @@ fn kane_configuration() -> CropConfiguration {
             name: "Kane Stalk",
             sprite_location: "sprites/kane_stalks.png",
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 15,
-            chance_to_advance: 10,
+            min_ticks_in_stage: TICKS_PER_SECOND * 30,
+            chance_to_advance: 25,
         },
     ];
 
@@ -62,8 +64,8 @@ fn mushroom_configuration() -> CropConfiguration {
             name: "Mushroom Plant",
             sprite_location: "sprites/giant_mushroom.png",
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 10,
-            chance_to_advance: 5,
+            min_ticks_in_stage: TICKS_PER_SECOND * 30,
+            chance_to_advance: 1,
         },
     ];
     return CropConfiguration::build_basic("Mushroom", stages);
@@ -82,8 +84,8 @@ fn potato_configuration() -> CropConfiguration {
             name: "Potatoes",
             sprite_location: "sprites/potatoes.png",
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 5,
-            chance_to_advance: 5,
+            min_ticks_in_stage: TICKS_PER_SECOND * 60,
+            chance_to_advance: 1,
         },
     ];
 
@@ -103,8 +105,8 @@ fn turnip_configuration() -> CropConfiguration {
             name: "Turnip",
             sprite_location: "sprites/turnip_top.png",
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 25,
-            chance_to_advance: 25,
+            min_ticks_in_stage: TICKS_PER_SECOND * 45,
+            chance_to_advance: 5,
         },
     ];
 
