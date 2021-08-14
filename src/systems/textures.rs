@@ -5,7 +5,7 @@ use bevy::{
 };
 
 use crate::{
-    configuration::crops::CropConfigurations,
+    configuration::{crops::CropConfigurations, sprites::dirt_floor_sprite_names},
     sprites::{LoadedTextures, Sprites},
     states::AppState,
 };
@@ -52,11 +52,17 @@ pub fn load_sprites(
         }
     }
 
+    sprites.dirt_floor_indexes = Vec::new();
+    for name in dirt_floor_sprite_names() {
+        let handle = asset_server.get_handle(name);
+        if let Some(index) = texture_atlas.get_texture_index(&handle) {
+            sprites.dirt_floor_indexes.push(index);
+        }
+    }
+
     let texture_handle = asset_server.load("sprites/goblin_big_hat.png");
-    let background_handle = asset_server.get_handle("sprites/second_background.png");
     let outline_handle = asset_server.get_handle("sprites/cell_outline_32.png");
     sprites.player_sprite_index = texture_atlas.get_texture_index(&texture_handle).unwrap();
-    sprites.background_index = texture_atlas.get_texture_index(&background_handle).unwrap();
     sprites.outline_index = texture_atlas.get_texture_index(&outline_handle).unwrap();
 
     let atlas_handle = texture_atlases.add(texture_atlas);

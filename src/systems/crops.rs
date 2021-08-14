@@ -1,4 +1,7 @@
-use bevy::{prelude::{Commands, Entity, Mut, Query, Res}, sprite::TextureAtlasSprite};
+use bevy::{
+    prelude::{Commands, Entity, Mut, Query, Res},
+    sprite::TextureAtlasSprite,
+};
 use rand::Rng;
 
 use crate::{

@@ -10,6 +10,7 @@ use bevy::{
     text::{Text, TextAlignment, TextStyle},
     ui::{AlignSelf, PositionType, Style, Val},
 };
+use rand::Rng;
 
 use crate::{
     components::{
@@ -77,8 +78,21 @@ pub fn spawn_opening_bundles(
     let bottom_y = -1 * TILE_SIZE as i32 * MAP_HEIGHT;
     let top_y = TILE_SIZE as i32 * MAP_HEIGHT;
 
+    let mut rng = rand::thread_rng();
+
     for x in (left_x..=right_x).step_by(TILE_SIZE as usize) {
         for y in (bottom_y..=top_y).step_by(TILE_SIZE as usize) {
+            let random_index: usize = rng.gen_range(0..sprites.dirt_floor_indexes.len());
+            let dirt_floor_index = sprites
+                .dirt_floor_indexes
+                .get(random_index)
+                .unwrap_or(
+                    sprites
+                        .dirt_floor_indexes
+                        .first()
+                        .expect("Need at least 1 floor sprite"),
+                )
+                .clone();
             let cell_center = Vec3::new(x as f32, y as f32, 0.0);
             commands.spawn_bundle(GridCellBundle {
                 cell_type: GroundCell,
@@ -95,7 +109,7 @@ pub fn spawn_opening_bundles(
                         scale: crate::configuration::sprites::sprite_scale(),
                         ..Default::default()
                     },
-                    sprite: TextureAtlasSprite::new(sprites.background_index as u32),
+                    sprite: TextureAtlasSprite::new(dirt_floor_index as u32),
                     texture_atlas: sprites.atlas_handle.clone(),
                     visible: Visible {
                         is_visible: false,
