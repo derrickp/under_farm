@@ -21,7 +21,6 @@ pub struct PlayerMovement {
 pub struct PlayerBundle {
     pub name: PlayerName,
     pub player_movement: PlayerMovement,
-    pub speed: Speed,
     pub player: Player,
     pub action: Action,
     pub inventory: PlayerInventory,
@@ -38,7 +37,6 @@ impl Default for PlayerBundle {
                 direction: Direction::None,
                 speed: Speed::default(),
             },
-            speed: Speed::default(),
             player: Player,
             action: Action::default(),
             inventory: PlayerInventory {

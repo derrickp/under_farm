@@ -10,7 +10,7 @@ use crate::{
     components::{
         action::Action,
         camera::GameCamera,
-        movement::{Direction, Speed},
+        movement::Direction,
         player::{Player, PlayerMovement},
     },
     configuration::{map::TILE_SIZE, timers::movement_timer},
@@ -37,65 +37,56 @@ pub fn movement_input_system(
     time: Res<Time>,
     mut timer: ResMut<MovementInputTimer>,
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&Player, &mut Speed, &mut PlayerMovement)>,
+    mut query: Query<(&Player, &mut PlayerMovement)>,
 ) {
-    let (_, mut speed, mut movement): (&Player, Mut<'_, Speed>, Mut<'_, PlayerMovement>) =
+    let (_, mut movement): (&Player, Mut<'_, PlayerMovement>) =
         query.single_mut().unwrap();
 
-    speed.current = Vec2::ZERO;
     movement.speed.current = Vec2::ZERO;
     movement.direction = Direction::None;
 
     if keyboard_input.just_pressed(KeyCode::Left) {
-        speed.current -= x_axis_speed();
         movement.speed.current -= x_axis_speed();
         movement.direction = movement.direction + Direction::West;
     }
 
     if keyboard_input.just_pressed(KeyCode::Right) {
-        speed.current += x_axis_speed();
         movement.speed.current += x_axis_speed();
         movement.direction = movement.direction + Direction::East;
     }
 
     if keyboard_input.just_pressed(KeyCode::Up) {
-        speed.current += y_axis_speed();
         movement.speed.current += y_axis_speed();
         movement.direction = movement.direction + Direction::North;
     }
 
     if keyboard_input.just_pressed(KeyCode::Down) {
-        speed.current -= y_axis_speed();
         movement.speed.current -= y_axis_speed();
         movement.direction = movement.direction + Direction::South;
     }
 
-    if speed.current.x != 0.0 || speed.current.y != 0.0 {
+    if movement.speed.current.x != 0.0 || movement.speed.current.y != 0.0 {
         timer.0.reset();
         return;
     }
 
     if timer.0.tick(time.delta()).just_finished() {
         if keyboard_input.pressed(KeyCode::Left) {
-            speed.current -= x_axis_speed();
             movement.speed.current -= x_axis_speed();
             movement.direction = movement.direction + Direction::West;
         }
 
         if keyboard_input.pressed(KeyCode::Right) {
-            speed.current += x_axis_speed();
             movement.speed.current += x_axis_speed();
             movement.direction = movement.direction + Direction::East;
         }
 
         if keyboard_input.pressed(KeyCode::Up) {
-            speed.current += y_axis_speed();
             movement.speed.current += y_axis_speed();
             movement.direction = movement.direction + Direction::North;
         }
 
         if keyboard_input.pressed(KeyCode::Down) {
-            speed.current -= y_axis_speed();
             movement.speed.current -= y_axis_speed();
             movement.direction = movement.direction + Direction::South;
         }

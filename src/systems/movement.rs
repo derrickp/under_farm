@@ -7,21 +7,21 @@ use crate::{
     components::{
         camera::GameCamera,
         map::{BoundingBox, MapTile, WallTile},
-        movement::{Direction, Speed},
+        movement::Direction,
         player::{Player, PlayerMovement},
     },
     configuration::map::TILE_SIZE,
 };
 
 pub fn player_movement(
-    mut query: Query<(&Player, &Speed, &mut Transform)>,
+    mut query: Query<(&Player, &PlayerMovement, &mut Transform)>,
     cell_query: Query<(&WallTile, &MapTile)>,
 ) {
-    let (_, speed, mut transform): (&Player, &Speed, Mut<'_, Transform>) =
+    let (_, movement, mut transform): (&Player, &PlayerMovement, Mut<'_, Transform>) =
         query.single_mut().unwrap();
 
-    let x = speed.current.x + transform.translation.x;
-    let y = speed.current.y + transform.translation.y;
+    let x = movement.speed.current.x + transform.translation.x;
+    let y = movement.speed.current.y + transform.translation.y;
 
     let bounding_box = BoundingBox::square(x, y, 60.0);
 
