@@ -15,7 +15,7 @@ use rand::Rng;
 use crate::{
     components::{
         camera::{GameCamera, UiCamera},
-        grid::{MapTile, GroundTileBundle, GroundTile, WallTile, WallTileBundle},
+        map::{GroundTile, GroundTileBundle, MapTile, WallTile, WallTileBundle},
         player::PlayerBundle,
     },
     configuration::map::{MAP_HEIGHT, MAP_WIDTH, TILE_SIZE},

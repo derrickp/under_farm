@@ -5,7 +5,7 @@ use bevy::{
 
 use crate::components::{
     camera::GameCamera,
-    grid::{BoundingBox, MapTile, WallTile},
+    map::{BoundingBox, MapTile, WallTile},
     player::Player,
     speed::Speed,
 };

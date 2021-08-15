@@ -8,7 +8,7 @@ use crate::{
     components::{
         action::Action,
         crop::{Crop, CropBundle, CropName, CropStage, CropStages},
-        grid::BoundingBox,
+        map::BoundingBox,
         player::{Player, PlayerInventory},
     },
     configuration::crops::CropConfigurations,
