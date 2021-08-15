@@ -6,8 +6,8 @@ use bevy::{
 use crate::components::{
     camera::GameCamera,
     map::{BoundingBox, MapTile, WallTile},
+    movement::Speed,
     player::Player,
-    speed::Speed,
 };
 
 pub fn player_movement(

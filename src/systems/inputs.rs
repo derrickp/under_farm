@@ -7,7 +7,7 @@ use bevy::{
 };
 
 use crate::{
-    components::{action::Action, camera::GameCamera, player::Player, speed::Speed},
+    components::{action::Action, camera::GameCamera, movement::Speed, player::Player},
     configuration::{map::TILE_SIZE, timers::movement_timer},
     states::{AppState, GameState},
 };

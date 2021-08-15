@@ -1,4 +1,4 @@
-use super::{action::Action, speed::Speed};
+use super::{action::Action, movement::Speed};
 use bevy::prelude::{Bundle, SpriteSheetBundle};
 
 pub struct PlayerName(pub String);
