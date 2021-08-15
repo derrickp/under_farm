@@ -144,7 +144,7 @@ pub fn spawn_opening_bundles(
                     scale: crate::configuration::sprites::sprite_scale(),
                     ..Default::default()
                 },
-                sprite: TextureAtlasSprite::new(sprites.outline_index as u32),
+                sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
                 texture_atlas: sprites.atlas_handle.clone(),
                 visible: Visible {
                     is_visible: true,
@@ -170,7 +170,7 @@ pub fn spawn_opening_bundles(
                     scale: crate::configuration::sprites::sprite_scale(),
                     ..Default::default()
                 },
-                sprite: TextureAtlasSprite::new(sprites.outline_index as u32),
+                sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
                 texture_atlas: sprites.atlas_handle.clone(),
                 visible: Visible {
                     is_visible: true,
@@ -198,7 +198,7 @@ pub fn spawn_opening_bundles(
                     scale: crate::configuration::sprites::sprite_scale(),
                     ..Default::default()
                 },
-                sprite: TextureAtlasSprite::new(sprites.outline_index as u32),
+                sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
                 texture_atlas: sprites.atlas_handle.clone(),
                 visible: Visible {
                     is_visible: true,
@@ -224,7 +224,7 @@ pub fn spawn_opening_bundles(
                     scale: crate::configuration::sprites::sprite_scale(),
                     ..Default::default()
                 },
-                sprite: TextureAtlasSprite::new(sprites.outline_index as u32),
+                sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
                 texture_atlas: sprites.atlas_handle.clone(),
                 visible: Visible {
                     is_visible: true,
