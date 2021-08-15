@@ -5,14 +5,14 @@ use bevy::{
 
 use crate::components::{
     camera::GameCamera,
-    grid::{BoundingBox, GridCell, WallCell},
+    grid::{BoundingBox, MapTile, WallTile},
     player::Player,
     speed::Speed,
 };
 
 pub fn player_movement(
     mut query: Query<(&Player, &Speed, &mut Transform)>,
-    cell_query: Query<(&WallCell, &GridCell)>,
+    cell_query: Query<(&WallTile, &MapTile)>,
 ) {
     let (_, speed, mut transform): (&Player, &Speed, Mut<'_, Transform>) =
         query.single_mut().unwrap();
@@ -25,7 +25,7 @@ pub fn player_movement(
     let mut player_would_hit_wall: bool = false;
 
     for cell_data in cell_query.iter() {
-        let (_, cell): (&WallCell, &GridCell) = cell_data;
+        let (_, cell): (&WallTile, &MapTile) = cell_data;
 
         if cell.intersects_box(&bounding_box) {
             player_would_hit_wall = true;
@@ -66,14 +66,14 @@ pub fn camera_movement(
 
 pub fn check_floor_collision(
     player_query: Query<(&Player, &Transform)>,
-    mut ground_cell_query: Query<(&GridCell, &mut Visible)>,
+    mut ground_cell_query: Query<(&MapTile, &mut Visible)>,
 ) {
     let (_, transform): (&Player, &Transform) = player_query.single().unwrap();
 
     let bounding_box = BoundingBox::square(transform.translation.x, transform.translation.y, 60.0);
 
     for cell_data in ground_cell_query.iter_mut() {
-        let (grid_cell, mut visible): (&GridCell, Mut<'_, Visible>) = cell_data;
+        let (grid_cell, mut visible): (&MapTile, Mut<'_, Visible>) = cell_data;
 
         if grid_cell.intersects_box(&bounding_box) && !visible.is_visible {
             visible.is_visible = true;

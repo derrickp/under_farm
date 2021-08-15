@@ -15,7 +15,7 @@ use rand::Rng;
 use crate::{
     components::{
         camera::{GameCamera, UiCamera},
-        grid::{GridCell, GridCellBundle, GroundCell, WallCell, WallCellBundle},
+        grid::{MapTile, GroundTileBundle, GroundTile, WallTile, WallTileBundle},
         player::PlayerBundle,
     },
     configuration::map::{MAP_HEIGHT, MAP_WIDTH, TILE_SIZE},
@@ -94,11 +94,11 @@ pub fn spawn_opening_bundles(
                 )
                 .clone();
             let cell_center = Vec3::new(x as f32, y as f32, 0.0);
-            commands.spawn_bundle(GridCellBundle {
-                cell_type: GroundCell,
-                cell: GridCell {
+            commands.spawn_bundle(GroundTileBundle {
+                cell_type: GroundTile,
+                cell: MapTile {
                     cell_center,
-                    cell_size: TILE_SIZE as f32,
+                    tile_size: TILE_SIZE as f32,
                     contains_tile: false,
                     sprite: None,
                     outline: None,
@@ -129,11 +129,11 @@ pub fn spawn_opening_bundles(
 
     for x in (wall_left_x..=wall_right_x).step_by(TILE_SIZE as usize) {
         let cell_center_top = Vec3::new(x as f32, wall_top_y as f32, 0.0);
-        commands.spawn_bundle(WallCellBundle {
-            cell_type: WallCell,
-            cell: GridCell {
+        commands.spawn_bundle(WallTileBundle {
+            cell_type: WallTile,
+            cell: MapTile {
                 cell_center: cell_center_top,
-                cell_size: TILE_SIZE as f32,
+                tile_size: TILE_SIZE as f32,
                 contains_tile: false,
                 sprite: None,
                 outline: None,
@@ -155,11 +155,11 @@ pub fn spawn_opening_bundles(
         });
 
         let cell_center_bottom = Vec3::new(x as f32, wall_bottom_y as f32, 0.0);
-        commands.spawn_bundle(WallCellBundle {
-            cell_type: WallCell,
-            cell: GridCell {
+        commands.spawn_bundle(WallTileBundle {
+            cell_type: WallTile,
+            cell: MapTile {
                 cell_center: cell_center_bottom,
-                cell_size: TILE_SIZE as f32,
+                tile_size: TILE_SIZE as f32,
                 contains_tile: false,
                 sprite: None,
                 outline: None,
@@ -183,11 +183,11 @@ pub fn spawn_opening_bundles(
 
     for y in (wall_bottom_y..=wall_top_y).step_by(TILE_SIZE as usize) {
         let cell_center_top = Vec3::new(wall_left_x as f32, y as f32, 0.0);
-        commands.spawn_bundle(WallCellBundle {
-            cell_type: WallCell,
-            cell: GridCell {
+        commands.spawn_bundle(WallTileBundle {
+            cell_type: WallTile,
+            cell: MapTile {
                 cell_center: cell_center_top,
-                cell_size: TILE_SIZE as f32,
+                tile_size: TILE_SIZE as f32,
                 contains_tile: false,
                 sprite: None,
                 outline: None,
@@ -209,11 +209,11 @@ pub fn spawn_opening_bundles(
         });
 
         let cell_center_bottom = Vec3::new(wall_right_x as f32, y as f32, 0.0);
-        commands.spawn_bundle(WallCellBundle {
-            cell_type: WallCell,
-            cell: GridCell {
+        commands.spawn_bundle(WallTileBundle {
+            cell_type: WallTile,
+            cell: MapTile {
                 cell_center: cell_center_bottom,
-                cell_size: TILE_SIZE as f32,
+                tile_size: TILE_SIZE as f32,
                 contains_tile: false,
                 sprite: None,
                 outline: None,

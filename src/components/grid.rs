@@ -29,41 +29,41 @@ impl BoundingBox {
     }
 }
 
-pub struct GridCell {
-    pub cell_size: f32,
+pub struct MapTile {
+    pub tile_size: f32,
     pub cell_center: Vec3,
     pub contains_tile: bool,
     pub sprite: Option<Entity>,
     pub outline: Option<Entity>,
 }
 
-pub struct GroundCell;
-pub struct WallCell;
+pub struct GroundTile;
+pub struct WallTile;
 
 #[derive(Bundle)]
-pub struct WallCellBundle {
-    pub cell_type: WallCell,
-    pub cell: GridCell,
+pub struct WallTileBundle {
+    pub cell_type: WallTile,
+    pub cell: MapTile,
 
     #[bundle]
     pub sprite: SpriteSheetBundle,
 }
 
 #[derive(Bundle)]
-pub struct GridCellBundle {
-    pub cell_type: GroundCell,
-    pub cell: GridCell,
+pub struct GroundTileBundle {
+    pub cell_type: GroundTile,
+    pub cell: MapTile,
 
     #[bundle]
     pub sprite: SpriteSheetBundle,
 }
 
-impl GridCell {
+impl MapTile {
     pub fn intersects_box(&self, bounding_box: &BoundingBox) -> bool {
         return self.bounds().intersects(bounding_box);
     }
 
     pub fn bounds(&self) -> BoundingBox {
-        return BoundingBox::square(self.cell_center.x, self.cell_center.y, self.cell_size);
+        return BoundingBox::square(self.cell_center.x, self.cell_center.y, self.tile_size);
     }
 }
