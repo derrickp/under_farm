@@ -3,11 +3,14 @@ use bevy::{
     render::camera::Camera,
 };
 
-use crate::components::{
-    camera::GameCamera,
-    map::{BoundingBox, MapTile, WallTile},
-    movement::Speed,
-    player::Player,
+use crate::{
+    components::{
+        camera::GameCamera,
+        map::{BoundingBox, MapTile, WallTile},
+        movement::{Direction, Speed},
+        player::{Player, PlayerMovement},
+    },
+    configuration::map::TILE_SIZE,
 };
 
 pub fn player_movement(
@@ -65,18 +68,65 @@ pub fn camera_movement(
 }
 
 pub fn check_floor_collision(
-    player_query: Query<(&Player, &Transform)>,
+    player_query: Query<(&Player, &Transform, &PlayerMovement)>,
     mut ground_cell_query: Query<(&MapTile, &mut Visible)>,
 ) {
-    let (_, transform): (&Player, &Transform) = player_query.single().unwrap();
+    let (_, transform, movement): (&Player, &Transform, &PlayerMovement) =
+        player_query.single().unwrap();
 
-    let bounding_box = BoundingBox::square(transform.translation.x, transform.translation.y, 60.0);
+    let bounding_boxes = build_visibility_box(
+        transform.translation.x,
+        transform.translation.y,
+        &movement.direction,
+    );
 
     for cell_data in ground_cell_query.iter_mut() {
         let (grid_cell, mut visible): (&MapTile, Mut<'_, Visible>) = cell_data;
 
-        if grid_cell.intersects_box(&bounding_box) && !visible.is_visible {
+        if bounding_boxes
+            .iter()
+            .any(|bounds| grid_cell.intersects_box(bounds))
+            && !visible.is_visible
+        {
             visible.is_visible = true;
         }
     }
+}
+
+fn build_visibility_box(x: f32, y: f32, direction: &Direction) -> Vec<BoundingBox> {
+    let width = TILE_SIZE - 2.0;
+
+    let player_box = BoundingBox::square(x, y, width);
+
+    let mut visibility_boxes: Vec<BoundingBox> = match direction {
+        Direction::North => vec![BoundingBox::square(x, y + TILE_SIZE, width)],
+        Direction::South => vec![BoundingBox::square(x, y - TILE_SIZE, width)],
+        Direction::East => vec![BoundingBox::square(x + TILE_SIZE, y, width)],
+        Direction::West => vec![BoundingBox::square(x - TILE_SIZE, y, width)],
+        Direction::NorthEast => vec![
+            BoundingBox::square(x, y + TILE_SIZE, width),
+            BoundingBox::square(x + TILE_SIZE, y, width),
+            BoundingBox::square(x + TILE_SIZE, y + TILE_SIZE, width),
+        ],
+        Direction::NorthWest => vec![
+            BoundingBox::square(x, y + TILE_SIZE, width),
+            BoundingBox::square(x - TILE_SIZE, y, width),
+            BoundingBox::square(x - TILE_SIZE, y + TILE_SIZE, width),
+        ],
+        Direction::SouthEast => vec![
+            BoundingBox::square(x, y - TILE_SIZE, width),
+            BoundingBox::square(x + TILE_SIZE, y, width),
+            BoundingBox::square(x + TILE_SIZE, y - TILE_SIZE, width),
+        ],
+        Direction::SouthWest => vec![
+            BoundingBox::square(x, y - TILE_SIZE, width),
+            BoundingBox::square(x - TILE_SIZE, y, width),
+            BoundingBox::square(x - TILE_SIZE, y - TILE_SIZE, width),
+        ],
+        _ => Vec::new(),
+    };
+
+    visibility_boxes.push(player_box);
+
+    return visibility_boxes;
 }

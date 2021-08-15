@@ -1,4 +1,7 @@
-use super::{action::Action, movement::Speed};
+use super::{
+    action::Action,
+    movement::{Direction, Speed},
+};
 use bevy::prelude::{Bundle, SpriteSheetBundle};
 
 pub struct PlayerName(pub String);
@@ -9,9 +12,15 @@ pub struct PlayerInventory {
 
 pub struct Player;
 
+pub struct PlayerMovement {
+    pub speed: Speed,
+    pub direction: Direction,
+}
+
 #[derive(Bundle)]
 pub struct PlayerBundle {
     pub name: PlayerName,
+    pub player_movement: PlayerMovement,
     pub speed: Speed,
     pub player: Player,
     pub action: Action,
@@ -25,6 +34,10 @@ impl Default for PlayerBundle {
     fn default() -> Self {
         return PlayerBundle {
             name: PlayerName("Goblin?!".to_string()),
+            player_movement: PlayerMovement {
+                direction: Direction::None,
+                speed: Speed::default(),
+            },
             speed: Speed::default(),
             player: Player,
             action: Action::default(),
