@@ -72,11 +72,11 @@ pub fn spawn_opening_bundles(
         ..Default::default()
     });
 
-    let left_x = -1 * TILE_SIZE as i32 * MAP_WIDTH;
-    let right_x = TILE_SIZE as i32 * MAP_WIDTH;
+    let left_x = -1 * TILE_SIZE as i32 * (MAP_WIDTH / 2);
+    let right_x = TILE_SIZE as i32 * (MAP_WIDTH / 2);
 
-    let bottom_y = -1 * TILE_SIZE as i32 * MAP_HEIGHT;
-    let top_y = TILE_SIZE as i32 * MAP_HEIGHT;
+    let bottom_y = -1 * TILE_SIZE as i32 * (MAP_HEIGHT / 2);
+    let top_y = TILE_SIZE as i32 * (MAP_HEIGHT / 2);
 
     let mut rng = rand::thread_rng();
 
