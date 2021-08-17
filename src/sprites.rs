@@ -10,6 +10,8 @@ pub struct Sprites {
     pub outline_index: usize,
     pub dirt_floor_indexes: Vec<usize>,
     pub outer_wall_index: usize,
+    pub room_wall_index: usize,
+    pub room_floor_index: usize,
 }
 
 #[derive(Default)]

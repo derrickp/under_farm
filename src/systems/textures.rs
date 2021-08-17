@@ -63,9 +63,13 @@ pub fn load_sprites(
     let texture_handle = asset_server.load("sprites/goblin_big_hat.png");
     let outline_handle = asset_server.get_handle("sprites/cell_outline_32.png");
     let outer_wall_handle = asset_server.get_handle("sprites/wall.png");
+    let room_wall_handle = asset_server.get_handle("sprites/wood_wall.png");
+    let room_floor_handle = asset_server.get_handle("sprites/sand_1.png");
     sprites.player_sprite_index = texture_atlas.get_texture_index(&texture_handle).unwrap();
     sprites.outline_index = texture_atlas.get_texture_index(&outline_handle).unwrap();
     sprites.outer_wall_index = texture_atlas.get_texture_index(&outer_wall_handle).unwrap();
+    sprites.room_wall_index = texture_atlas.get_texture_index(&room_wall_handle).unwrap();
+    sprites.room_floor_index = texture_atlas.get_texture_index(&room_floor_handle).unwrap();
 
     let atlas_handle = texture_atlases.add(texture_atlas);
     sprites.atlas_handle = atlas_handle;

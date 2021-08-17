@@ -135,7 +135,63 @@ pub fn spawn_opening_bundles(
                             scale: crate::configuration::sprites::sprite_scale(),
                             ..Default::default()
                         },
-                        sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
+                        sprite: TextureAtlasSprite::new(sprites.room_wall_index as u32),
+                        texture_atlas: sprites.atlas_handle.clone(),
+                        visible: Visible {
+                            is_visible: true,
+                            is_transparent: false,
+                        },
+                        ..Default::default()
+                    },
+                });
+            }
+            crate::world_generation::grid::CellType::RoomFloor => {
+                let coordinate = world_coordinate_from_grid((cell.x, cell.y));
+                let cell_center = Vec3::new(coordinate.0, coordinate.1, 0.0);
+                commands.spawn_bundle(GroundTileBundle {
+                    cell_type: GroundTile,
+                    cell: MapTile {
+                        cell_center,
+                        tile_size: TILE_SIZE as f32,
+                        contains_tile: false,
+                        sprite: None,
+                        outline: None,
+                    },
+                    sprite: SpriteSheetBundle {
+                        transform: Transform {
+                            translation: cell_center,
+                            scale: crate::configuration::sprites::sprite_scale(),
+                            ..Default::default()
+                        },
+                        sprite: TextureAtlasSprite::new(sprites.room_floor_index as u32),
+                        texture_atlas: sprites.atlas_handle.clone(),
+                        visible: Visible {
+                            is_visible: false,
+                            is_transparent: false,
+                        },
+                        ..Default::default()
+                    },
+                });
+            }
+            crate::world_generation::grid::CellType::Door => {
+                let coordinate = world_coordinate_from_grid((cell.x, cell.y));
+                let cell_center = Vec3::new(coordinate.0, coordinate.1, 0.0);
+                commands.spawn_bundle(GroundTileBundle {
+                    cell_type: GroundTile,
+                    cell: MapTile {
+                        cell_center,
+                        tile_size: TILE_SIZE as f32,
+                        contains_tile: false,
+                        sprite: None,
+                        outline: None,
+                    },
+                    sprite: SpriteSheetBundle {
+                        transform: Transform {
+                            translation: cell_center,
+                            scale: crate::configuration::sprites::sprite_scale(),
+                            ..Default::default()
+                        },
+                        sprite: TextureAtlasSprite::new(sprites.room_floor_index as u32),
                         texture_atlas: sprites.atlas_handle.clone(),
                         visible: Visible {
                             is_visible: false,
