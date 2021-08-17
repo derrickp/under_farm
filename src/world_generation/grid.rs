@@ -45,7 +45,11 @@ impl Grid {
             self.set_cell_type(floor_coordinate.0, floor_coordinate.1, CellType::RoomFloor);
         }
 
-        self.set_cell_type(room.door_coordinate.0, room.door_coordinate.1, CellType::Door);
+        self.set_cell_type(
+            room.door_coordinate.0,
+            room.door_coordinate.1,
+            CellType::Door,
+        );
     }
 
     pub fn fill_empty_cells(&mut self) {
