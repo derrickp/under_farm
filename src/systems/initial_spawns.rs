@@ -18,9 +18,10 @@ use crate::{
         map::{GroundTile, GroundTileBundle, MapTile, WallTile, WallTileBundle},
         player::PlayerBundle,
     },
-    configuration::map::{MAP_HEIGHT, MAP_WIDTH, TILE_SIZE},
+    configuration::map::{world_coordinate_from_grid, TILE_SIZE},
     sprites::Sprites,
     states::GameState,
+    world_generation::generation::generate_world_grid,
 };
 
 pub fn spawn_opening_bundles(
@@ -72,167 +73,109 @@ pub fn spawn_opening_bundles(
         ..Default::default()
     });
 
-    let left_x = -1 * TILE_SIZE as i32 * (MAP_WIDTH / 2);
-    let right_x = TILE_SIZE as i32 * (MAP_WIDTH / 2);
-
-    let bottom_y = -1 * TILE_SIZE as i32 * (MAP_HEIGHT / 2);
-    let top_y = TILE_SIZE as i32 * (MAP_HEIGHT / 2);
-
+    let grid = generate_world_grid();
     let mut rng = rand::thread_rng();
 
-    for x in (left_x..=right_x).step_by(TILE_SIZE as usize) {
-        for y in (bottom_y..=top_y).step_by(TILE_SIZE as usize) {
-            let random_index: usize = rng.gen_range(0..sprites.dirt_floor_indexes.len());
-            let dirt_floor_index = sprites
-                .dirt_floor_indexes
-                .get(random_index)
-                .unwrap_or(
-                    sprites
-                        .dirt_floor_indexes
-                        .first()
-                        .expect("Need at least 1 floor sprite"),
-                )
-                .clone();
-            let cell_center = Vec3::new(x as f32, y as f32, 0.0);
-            commands.spawn_bundle(GroundTileBundle {
-                cell_type: GroundTile,
-                cell: MapTile {
-                    cell_center,
-                    tile_size: TILE_SIZE as f32,
-                    contains_tile: false,
-                    sprite: None,
-                    outline: None,
-                },
-                sprite: SpriteSheetBundle {
-                    transform: Transform {
-                        translation: cell_center,
-                        scale: crate::configuration::sprites::sprite_scale(),
+    for cell in grid.cells.values() {
+        match cell.cell_type {
+            crate::world_generation::grid::CellType::Floor => {
+                let random_index: usize = rng.gen_range(0..sprites.dirt_floor_indexes.len());
+                let dirt_floor_index = sprites
+                    .dirt_floor_indexes
+                    .get(random_index)
+                    .unwrap_or(
+                        sprites
+                            .dirt_floor_indexes
+                            .first()
+                            .expect("Need at least 1 floor sprite"),
+                    )
+                    .clone();
+                let coordinate = world_coordinate_from_grid((cell.x, cell.y));
+                let cell_center = Vec3::new(coordinate.0, coordinate.1, 0.0);
+                commands.spawn_bundle(GroundTileBundle {
+                    cell_type: GroundTile,
+                    cell: MapTile {
+                        cell_center,
+                        tile_size: TILE_SIZE as f32,
+                        contains_tile: false,
+                        sprite: None,
+                        outline: None,
+                    },
+                    sprite: SpriteSheetBundle {
+                        transform: Transform {
+                            translation: cell_center,
+                            scale: crate::configuration::sprites::sprite_scale(),
+                            ..Default::default()
+                        },
+                        sprite: TextureAtlasSprite::new(dirt_floor_index as u32),
+                        texture_atlas: sprites.atlas_handle.clone(),
+                        visible: Visible {
+                            is_visible: false,
+                            is_transparent: false,
+                        },
                         ..Default::default()
                     },
-                    sprite: TextureAtlasSprite::new(dirt_floor_index as u32),
-                    texture_atlas: sprites.atlas_handle.clone(),
-                    visible: Visible {
-                        is_visible: false,
-                        is_transparent: false,
+                });
+            }
+            crate::world_generation::grid::CellType::RoomWall => {
+                let coordinate = world_coordinate_from_grid((cell.x, cell.y));
+                let cell_center = Vec3::new(coordinate.0, coordinate.1, 0.0);
+                commands.spawn_bundle(WallTileBundle {
+                    cell_type: WallTile,
+                    cell: MapTile {
+                        cell_center,
+                        tile_size: TILE_SIZE as f32,
+                        contains_tile: false,
+                        sprite: None,
+                        outline: None,
                     },
-                    ..Default::default()
-                },
-            });
+                    sprite: SpriteSheetBundle {
+                        transform: Transform {
+                            translation: cell_center,
+                            scale: crate::configuration::sprites::sprite_scale(),
+                            ..Default::default()
+                        },
+                        sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
+                        texture_atlas: sprites.atlas_handle.clone(),
+                        visible: Visible {
+                            is_visible: false,
+                            is_transparent: false,
+                        },
+                        ..Default::default()
+                    },
+                });
+            }
+            crate::world_generation::grid::CellType::OuterWall => {
+                let coordinate = world_coordinate_from_grid((cell.x, cell.y));
+                let cell_center = Vec3::new(coordinate.0, coordinate.1, 0.0);
+
+                commands.spawn_bundle(WallTileBundle {
+                    cell_type: WallTile,
+                    cell: MapTile {
+                        cell_center: cell_center,
+                        tile_size: TILE_SIZE as f32,
+                        contains_tile: false,
+                        sprite: None,
+                        outline: None,
+                    },
+                    sprite: SpriteSheetBundle {
+                        transform: Transform {
+                            translation: cell_center,
+                            scale: crate::configuration::sprites::sprite_scale(),
+                            ..Default::default()
+                        },
+                        sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
+                        texture_atlas: sprites.atlas_handle.clone(),
+                        visible: Visible {
+                            is_visible: true,
+                            is_transparent: false,
+                        },
+                        ..Default::default()
+                    },
+                });
+            }
+            _ => {}
         }
-    }
-
-    // Walk around our world and spawn our walls
-    let wall_left_x = left_x - TILE_SIZE as i32;
-    let wall_right_x = right_x + TILE_SIZE as i32;
-    let wall_bottom_y = bottom_y - TILE_SIZE as i32;
-    let wall_top_y = top_y + TILE_SIZE as i32;
-
-    for x in (wall_left_x..=wall_right_x).step_by(TILE_SIZE as usize) {
-        let cell_center_top = Vec3::new(x as f32, wall_top_y as f32, 0.0);
-        commands.spawn_bundle(WallTileBundle {
-            cell_type: WallTile,
-            cell: MapTile {
-                cell_center: cell_center_top,
-                tile_size: TILE_SIZE as f32,
-                contains_tile: false,
-                sprite: None,
-                outline: None,
-            },
-            sprite: SpriteSheetBundle {
-                transform: Transform {
-                    translation: cell_center_top,
-                    scale: crate::configuration::sprites::sprite_scale(),
-                    ..Default::default()
-                },
-                sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                visible: Visible {
-                    is_visible: true,
-                    is_transparent: false,
-                },
-                ..Default::default()
-            },
-        });
-
-        let cell_center_bottom = Vec3::new(x as f32, wall_bottom_y as f32, 0.0);
-        commands.spawn_bundle(WallTileBundle {
-            cell_type: WallTile,
-            cell: MapTile {
-                cell_center: cell_center_bottom,
-                tile_size: TILE_SIZE as f32,
-                contains_tile: false,
-                sprite: None,
-                outline: None,
-            },
-            sprite: SpriteSheetBundle {
-                transform: Transform {
-                    translation: cell_center_bottom,
-                    scale: crate::configuration::sprites::sprite_scale(),
-                    ..Default::default()
-                },
-                sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                visible: Visible {
-                    is_visible: true,
-                    is_transparent: false,
-                },
-                ..Default::default()
-            },
-        });
-    }
-
-    for y in (wall_bottom_y..=wall_top_y).step_by(TILE_SIZE as usize) {
-        let cell_center_top = Vec3::new(wall_left_x as f32, y as f32, 0.0);
-        commands.spawn_bundle(WallTileBundle {
-            cell_type: WallTile,
-            cell: MapTile {
-                cell_center: cell_center_top,
-                tile_size: TILE_SIZE as f32,
-                contains_tile: false,
-                sprite: None,
-                outline: None,
-            },
-            sprite: SpriteSheetBundle {
-                transform: Transform {
-                    translation: cell_center_top,
-                    scale: crate::configuration::sprites::sprite_scale(),
-                    ..Default::default()
-                },
-                sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                visible: Visible {
-                    is_visible: true,
-                    is_transparent: false,
-                },
-                ..Default::default()
-            },
-        });
-
-        let cell_center_bottom = Vec3::new(wall_right_x as f32, y as f32, 0.0);
-        commands.spawn_bundle(WallTileBundle {
-            cell_type: WallTile,
-            cell: MapTile {
-                cell_center: cell_center_bottom,
-                tile_size: TILE_SIZE as f32,
-                contains_tile: false,
-                sprite: None,
-                outline: None,
-            },
-            sprite: SpriteSheetBundle {
-                transform: Transform {
-                    translation: cell_center_bottom,
-                    scale: crate::configuration::sprites::sprite_scale(),
-                    ..Default::default()
-                },
-                sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                visible: Visible {
-                    is_visible: true,
-                    is_transparent: false,
-                },
-                ..Default::default()
-            },
-        });
     }
 
     commands.spawn_bundle(PlayerBundle {
