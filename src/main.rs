@@ -4,6 +4,7 @@ mod sprites;
 mod states;
 mod systems;
 mod world;
+mod world_generation;
 
 use bevy::{input::system::exit_on_esc_system, prelude::*};
 use configuration::crops::CropConfigurations;
@@ -29,6 +30,7 @@ use world::WorldTickTimer;
 
 fn main() {
     App::build()
+        .insert_resource(ClearColor(Color::rgb(0.05, 0.05, 0.05)))
         .init_resource::<Sprites>()
         .init_resource::<LoadedTextures>()
         .init_resource::<GameState>()
