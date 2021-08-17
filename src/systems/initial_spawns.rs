@@ -76,6 +76,8 @@ pub fn spawn_opening_bundles(
     let grid = generate_world_grid();
     let mut rng = rand::thread_rng();
 
+    let mut player_coordinate: Option<(f32, f32)> = None;
+
     for cell in grid.cells.values() {
         match cell.cell_type {
             crate::world_generation::grid::CellType::Floor => {
@@ -92,6 +94,9 @@ pub fn spawn_opening_bundles(
                     .clone();
                 let coordinate = world_coordinate_from_grid((cell.x, cell.y));
                 let cell_center = Vec3::new(coordinate.0, coordinate.1, 0.0);
+                if player_coordinate.is_none() {
+                    player_coordinate = Some(coordinate);
+                }
                 commands.spawn_bundle(GroundTileBundle {
                     cell_type: GroundTile,
                     cell: MapTile {
@@ -234,12 +239,13 @@ pub fn spawn_opening_bundles(
         }
     }
 
+    let player_spawn = player_coordinate.unwrap();
     commands.spawn_bundle(PlayerBundle {
         sprite: SpriteSheetBundle {
             sprite: TextureAtlasSprite::new(sprites.player_sprite_index as u32),
             texture_atlas: sprites.atlas_handle.clone(),
             transform: Transform {
-                translation: Vec3::new(0.0, 0.0, 5.0),
+                translation: Vec3::new(player_spawn.0, player_spawn.1, 5.0),
                 scale: crate::configuration::sprites::sprite_scale(),
                 ..Default::default()
             },
