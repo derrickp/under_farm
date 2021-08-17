@@ -39,8 +39,7 @@ pub fn movement_input_system(
     keyboard_input: Res<Input<KeyCode>>,
     mut query: Query<(&Player, &mut PlayerMovement)>,
 ) {
-    let (_, mut movement): (&Player, Mut<'_, PlayerMovement>) =
-        query.single_mut().unwrap();
+    let (_, mut movement): (&Player, Mut<'_, PlayerMovement>) = query.single_mut().unwrap();
 
     movement.speed.current = Vec2::ZERO;
     movement.direction = Direction::None;
