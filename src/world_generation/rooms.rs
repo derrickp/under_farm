@@ -1,60 +1,259 @@
 use rand::Rng;
 
+use super::cell::Cell;
+
 pub enum RoomSize {
     TwoByTwo,
 }
 
 pub struct Room {
-    pub wall_coordinates: Vec<(i32, i32)>,
-    pub floor_coordinates: Vec<(i32, i32)>,
-    pub door_coordinate: (i32, i32),
+    pub cells: Vec<Cell>,
 }
 
 impl Room {
     // 2x2 floor, so 4x4 with walls
     pub fn two_by_two_square(bottom_left_x: i32, bottom_left_y: i32) -> Self {
-        let right_x = bottom_left_x + 3;
-        let top_y = bottom_left_y + 3;
-
-        let mut corner_wall_coordinates: Vec<(i32, i32)> = Vec::new();
-        let mut outside_wall_coordinates: Vec<(i32, i32)> = Vec::new();
-        let mut floor_coordinates: Vec<(i32, i32)> = Vec::new();
-
-        // Split our walls that can be doors from the ones that cannot
-        // If we were to put a "door" on a corner, you'd be moving into the
-        // room at an angle, and I don't want that.
-        for x in (bottom_left_x + 1)..right_x {
-            outside_wall_coordinates.push((x, bottom_left_y));
-            outside_wall_coordinates.push((x, top_y));
-        }
-
-        for y in (bottom_left_y + 1)..top_y {
-            outside_wall_coordinates.push((bottom_left_x, y));
-            outside_wall_coordinates.push((right_x, y));
-        }
-
-        corner_wall_coordinates.push((bottom_left_x, bottom_left_y));
-        corner_wall_coordinates.push((right_x, bottom_left_y));
-        corner_wall_coordinates.push((bottom_left_x, top_y));
-        corner_wall_coordinates.push((right_x, top_y));
-
-        // Then we fill in the rest of the square with our floor
-        for x in (bottom_left_x + 1)..(right_x) {
-            for y in (bottom_left_y + 1)..(top_y) {
-                floor_coordinates.push((x, y));
-            }
-        }
+        let templates = Self::two_by_two_templates();
 
         let mut rng = rand::thread_rng();
-        let index: usize = rng.gen_range(0..outside_wall_coordinates.len());
-        let door_coordinate = outside_wall_coordinates.remove(index); // Remove our door
-        outside_wall_coordinates.append(&mut corner_wall_coordinates);
+        let index: usize = rng.gen_range(0..templates.len());
 
-        return Self {
-            door_coordinate,
-            floor_coordinates,
-            wall_coordinates: outside_wall_coordinates,
-        };
+        let template = templates.get(index).unwrap();
+        let cells = template
+            .cells
+            .iter()
+            .map(|cell| {
+                Cell::new(
+                    cell.coordinate.x + bottom_left_x,
+                    cell.coordinate.y + bottom_left_y,
+                    cell.cell_type,
+                )
+            })
+            .collect();
+
+        return Self { cells };
+    }
+
+    fn two_by_two_templates() -> Vec<Self> {
+        let mut templates: Vec<Self> = Vec::new();
+
+        templates.push(Self {
+            cells: vec![
+                // Walls
+                Cell::splatted_room_wall(0),
+                Cell::room_wall(0, 1),
+                Cell::room_wall(0, 2),
+                Cell::room_wall(0, 3),
+                Cell::room_wall(1, 3),
+                Cell::room_wall(2, 3),
+                Cell::splatted_room_wall(3),
+                Cell::room_wall(3, 2),
+                Cell::room_wall(3, 0),
+                Cell::room_wall(2, 0),
+                Cell::room_wall(1, 0),
+                // Floor
+                Cell::splatted_room_floor(1),
+                Cell::room_floor(1, 2),
+                Cell::splatted_room_floor(2),
+                Cell::room_floor(2, 1),
+                // Door
+                Cell::room_door(3, 1),
+            ],
+        });
+
+        templates.push(Self {
+            cells: vec![
+                // Walls
+                Cell::splatted_room_wall(0),
+                Cell::room_wall(0, 1),
+                Cell::room_wall(0, 2),
+                Cell::room_wall(0, 3),
+                Cell::room_wall(1, 3),
+                Cell::room_wall(2, 3),
+                Cell::splatted_room_wall(3),
+                Cell::room_wall(3, 1),
+                Cell::room_wall(3, 0),
+                Cell::room_wall(2, 0),
+                Cell::room_wall(1, 0),
+                // Floor
+                Cell::splatted_room_floor(1),
+                Cell::room_floor(1, 2),
+                Cell::splatted_room_floor(2),
+                Cell::room_floor(2, 1),
+                // Door
+                Cell::room_door(3, 2),
+            ],
+        });
+
+        templates.push(Self {
+            cells: vec![
+                // Walls
+                Cell::splatted_room_wall(0),
+                Cell::room_wall(0, 1),
+                Cell::room_wall(0, 2),
+                Cell::room_wall(0, 3),
+                Cell::room_wall(1, 3),
+                Cell::room_wall(2, 3),
+                Cell::splatted_room_wall(3),
+                Cell::room_wall(3, 2),
+                Cell::room_wall(3, 1),
+                Cell::room_wall(3, 0),
+                Cell::room_wall(2, 0),
+                // Floor
+                Cell::splatted_room_floor(1),
+                Cell::room_floor(1, 2),
+                Cell::splatted_room_floor(2),
+                Cell::room_floor(2, 1),
+                // Door
+                Cell::room_door(1, 0),
+            ],
+        });
+
+        templates.push(Self {
+            cells: vec![
+                // Walls
+                Cell::splatted_room_wall(0),
+                Cell::room_wall(0, 1),
+                Cell::room_wall(0, 2),
+                Cell::room_wall(0, 3),
+                Cell::room_wall(1, 3),
+                Cell::room_wall(2, 3),
+                Cell::splatted_room_wall(3),
+                Cell::room_wall(3, 2),
+                Cell::room_wall(3, 1),
+                Cell::room_wall(3, 0),
+                Cell::room_wall(1, 0),
+                // Floor
+                Cell::splatted_room_floor(1),
+                Cell::room_floor(1, 2),
+                Cell::splatted_room_floor(2),
+                Cell::room_floor(2, 1),
+                // Door
+                Cell::room_door(2, 0),
+            ],
+        });
+
+        templates.push(Self {
+            cells: vec![
+                // Walls
+                Cell::splatted_room_wall(0),
+                Cell::room_wall(0, 1),
+                Cell::room_wall(0, 2),
+                Cell::room_wall(0, 3),
+                Cell::room_wall(1, 3),
+                Cell::room_wall(2, 3),
+                Cell::splatted_room_wall(3),
+                Cell::room_wall(3, 2),
+                Cell::room_wall(3, 1),
+                Cell::room_wall(3, 0),
+                Cell::room_wall(2, 0),
+                // Floor
+                Cell::splatted_room_floor(1),
+                Cell::room_floor(1, 2),
+                Cell::splatted_room_floor(2),
+                Cell::room_floor(2, 1),
+                // Door
+                Cell::room_door(1, 0),
+            ],
+        });
+
+        templates.push(Self {
+            cells: vec![
+                // Walls
+                Cell::splatted_room_wall(0),
+                Cell::room_wall(0, 2),
+                Cell::room_wall(0, 3),
+                Cell::room_wall(1, 3),
+                Cell::room_wall(2, 3),
+                Cell::splatted_room_wall(3),
+                Cell::room_wall(3, 2),
+                Cell::room_wall(3, 1),
+                Cell::room_wall(3, 0),
+                Cell::room_wall(2, 0),
+                Cell::room_wall(1, 0),
+                // Floor
+                Cell::splatted_room_floor(1),
+                Cell::room_floor(1, 2),
+                Cell::splatted_room_floor(2),
+                Cell::room_floor(2, 1),
+                // Door
+                Cell::room_door(0, 1),
+            ],
+        });
+
+        templates.push(Self {
+            cells: vec![
+                // Walls
+                Cell::splatted_room_wall(0),
+                Cell::room_wall(0, 1),
+                Cell::room_wall(0, 3),
+                Cell::room_wall(1, 3),
+                Cell::room_wall(2, 3),
+                Cell::splatted_room_wall(3),
+                Cell::room_wall(3, 2),
+                Cell::room_wall(3, 1),
+                Cell::room_wall(3, 0),
+                Cell::room_wall(2, 0),
+                Cell::room_wall(1, 0),
+                // Floor
+                Cell::splatted_room_floor(1),
+                Cell::room_floor(1, 2),
+                Cell::splatted_room_floor(2),
+                Cell::room_floor(2, 1),
+                // Door
+                Cell::room_door(0, 2),
+            ],
+        });
+
+        templates.push(Self {
+            cells: vec![
+                // Walls
+                Cell::splatted_room_wall(0),
+                Cell::room_wall(0, 1),
+                Cell::room_wall(0, 2),
+                Cell::room_wall(0, 3),
+                Cell::room_wall(1, 3),
+                Cell::room_wall(2, 3),
+                Cell::splatted_room_wall(3),
+                Cell::room_wall(3, 2),
+                Cell::room_wall(3, 0),
+                Cell::room_wall(2, 0),
+                Cell::room_wall(1, 0),
+                // Floor
+                Cell::splatted_room_floor(1),
+                Cell::room_floor(1, 2),
+                Cell::splatted_room_floor(2),
+                Cell::room_floor(2, 1),
+                // Door
+                Cell::room_door(3, 1),
+            ],
+        });
+
+        templates.push(Self {
+            cells: vec![
+                // Walls
+                Cell::splatted_room_wall(0),
+                Cell::room_wall(0, 1),
+                Cell::room_wall(0, 2),
+                Cell::room_wall(0, 3),
+                Cell::room_wall(1, 3),
+                Cell::room_wall(2, 3),
+                Cell::splatted_room_wall(3),
+                Cell::room_wall(3, 1),
+                Cell::room_wall(3, 0),
+                Cell::room_wall(2, 0),
+                Cell::room_wall(1, 0),
+                // Floor
+                Cell::splatted_room_floor(1),
+                Cell::room_floor(1, 2),
+                Cell::splatted_room_floor(2),
+                Cell::room_floor(2, 1),
+                // Door
+                Cell::room_door(3, 2),
+            ],
+        });
+
+        return templates;
     }
 }
 
