@@ -1,10 +1,10 @@
 #[derive(Copy, Clone, Eq, Hash, PartialEq)]
-pub struct Coordinate {
-    pub x: i32,
-    pub y: i32,
+pub struct Coordinate<T> {
+    pub x: T,
+    pub y: T,
 }
 
-impl Coordinate {
+impl Coordinate<i32> {
     pub fn new(x: i32, y: i32) -> Self {
         return Coordinate { x, y };
     }

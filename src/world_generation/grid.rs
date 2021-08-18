@@ -9,7 +9,7 @@ use super::{
 const DEFAULT_GRID_SIZE: usize = 100;
 
 pub struct Grid {
-    pub cells: HashMap<Coordinate, Cell>,
+    pub cells: HashMap<Coordinate<i32>, Cell>,
     size: usize,
 }
 
@@ -53,7 +53,7 @@ impl Grid {
         }
     }
 
-    pub fn is_cell_empty(&self, coordinate: &Coordinate) -> bool {
+    pub fn is_cell_empty(&self, coordinate: &Coordinate<i32>) -> bool {
         let cell = self.cells.get(coordinate);
         match cell {
             Some(c) => c.cell_type == CellType::None,

@@ -13,7 +13,7 @@ pub enum CellType {
 #[derive(PartialEq, Eq)]
 pub struct Cell {
     pub cell_type: CellType,
-    pub coordinate: Coordinate,
+    pub coordinate: Coordinate<i32>,
 }
 
 impl Cell {
