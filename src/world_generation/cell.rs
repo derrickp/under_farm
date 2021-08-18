@@ -10,7 +10,7 @@ pub enum CellType {
     None,
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub struct Cell {
     pub cell_type: CellType,
     pub coordinate: Coordinate<i32>,

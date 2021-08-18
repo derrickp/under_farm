@@ -1,24 +1,18 @@
-use super::{
-    grid::Grid,
-    rooms::{room_sizes, Room, RoomSize},
-};
+use super::{grid::Grid, rooms::Room};
 use rand::Rng;
 
 pub fn generate_world_grid() -> Grid {
     let mut grid = Grid::default();
 
-    // We would randomly pick a room here
-    // But instead for now we're just using the 2x2
-
-    let room_sizes = room_sizes(RoomSize::TwoByTwo);
     let mut rng = rand::thread_rng();
-
     let mut room_count = 0;
 
     for _ in 0..20 {
-        let x: i32 = rng.gen_range(1..=(100 - room_sizes.0));
-        let y: i32 = rng.gen_range(1..=(100 - room_sizes.1 - 1));
-        let room = Room::two_by_two_square(x, y);
+        let template = Room::random_template();
+        let max_side_length = (&template).max_side_length;
+        let x: i32 = rng.gen_range(1..=(100 - max_side_length as i32));
+        let y: i32 = rng.gen_range(1..=(100 - max_side_length as i32 - 1));
+        let room = Room::two_by_two_square(x, y, template);
 
         if room
             .cells
