@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use super::{cell::Cell, templates::two_by_two_templates};
+use super::{cell::Cell, templates::all_templates};
 
 #[derive(Clone)]
 pub struct Room {
@@ -10,7 +10,7 @@ pub struct Room {
 
 impl Room {
     pub fn random_template() -> Self {
-        let templates = two_by_two_templates();
+        let templates = all_templates();
 
         let mut rng = rand::thread_rng();
         let index: usize = rng.gen_range(0..templates.len());
@@ -19,7 +19,7 @@ impl Room {
     }
 
     // 2x2 floor, so 4x4 with walls
-    pub fn two_by_two_square(bottom_left_x: i32, bottom_left_y: i32, template: Room) -> Self {
+    pub fn move_room_coordinates(bottom_left_x: i32, bottom_left_y: i32, template: Room) -> Self {
         let cells = template
             .cells
             .iter()
