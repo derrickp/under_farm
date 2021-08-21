@@ -8,6 +8,11 @@ pub enum AppState {
     InventoryScreen,
 }
 
+#[derive(Debug, Clone, PartialEq, Default)]
+pub struct GameLoadState {
+    pub texture_load_complete: bool,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct GameState {
     pub initial_spawn_complete: bool,

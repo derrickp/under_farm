@@ -9,7 +9,7 @@ mod world_generation;
 use bevy::{input::system::exit_on_esc_system, prelude::*};
 use configuration::crops::CropConfigurations;
 use sprites::{LoadedTextures, Sprites};
-use states::{AppState, GameState, InventoryState};
+use states::{AppState, GameLoadState, GameState, InventoryState};
 use systems::{
     actions::crop_actions,
     cameras::{add_gameplay_camera, remove_gameplay_camera},
@@ -22,6 +22,7 @@ use systems::{
     inventory::{
         add_inventory_text, remove_inventory_text, select_crop, update_inventory_text_colour,
     },
+    loading::check_load_state,
     movement::{camera_movement, check_floor_collision, player_movement},
     textures::{check_textures, load_sprites, load_textures},
     world::tick_game_world,
@@ -33,16 +34,19 @@ fn main() {
         .insert_resource(ClearColor(Color::rgb(0.05, 0.05, 0.05)))
         .init_resource::<Sprites>()
         .init_resource::<LoadedTextures>()
+        .init_resource::<GameLoadState>()
         .init_resource::<GameState>()
         .init_resource::<InventoryState>()
         .init_resource::<CropConfigurations>()
-        .insert_resource(MovementInputTimer::default())
-        .insert_resource(WorldTickTimer::default())
+        .init_resource::<MovementInputTimer>()
+        .init_resource::<WorldTickTimer>()
         .add_state(AppState::Startup)
         .add_plugins(DefaultPlugins)
         .add_system_set(SystemSet::on_enter(AppState::Startup).with_system(load_textures.system()))
         .add_system_set(
-            SystemSet::on_update(AppState::Startup).with_system(check_textures.system()),
+            SystemSet::on_update(AppState::Startup)
+                .with_system(check_textures.system().label("check_textures"))
+                .with_system(check_load_state.system().after("check_textures")),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::FinishedLoading).with_system(load_sprites.system()),

@@ -7,7 +7,7 @@ use bevy::{
 use crate::{
     configuration::{crops::CropConfigurations, sprites::dirt_floor_sprite_names},
     sprites::{LoadedTextures, Sprites},
-    states::AppState,
+    states::{AppState, GameLoadState},
 };
 
 pub fn load_textures(mut loaded_textures: ResMut<LoadedTextures>, asset_server: Res<AssetServer>) {
@@ -15,14 +15,14 @@ pub fn load_textures(mut loaded_textures: ResMut<LoadedTextures>, asset_server: 
 }
 
 pub fn check_textures(
-    mut state: ResMut<State<AppState>>,
+    mut load_state: ResMut<GameLoadState>,
     sprite_handles: Res<LoadedTextures>,
     asset_server: Res<AssetServer>,
 ) {
     if let LoadState::Loaded =
         asset_server.get_group_load_state(sprite_handles.handles.iter().map(|handle| handle.id))
     {
-        state.set(AppState::FinishedLoading).unwrap();
+        load_state.texture_load_complete = true;
     }
 }
 
