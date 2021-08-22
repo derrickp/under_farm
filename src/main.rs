@@ -22,7 +22,7 @@ use systems::{
     inventory::{
         add_inventory_text, remove_inventory_text, select_crop, update_inventory_text_colour,
     },
-    loading::check_load_state,
+    loading::{check_load_state, start_game},
     movement::{camera_movement, check_floor_collision, player_movement},
     textures::{check_textures, load_sprites, load_textures},
     world::tick_game_world,
@@ -50,6 +50,9 @@ fn main() {
         )
         .add_system_set(
             SystemSet::on_enter(AppState::FinishedLoading).with_system(load_sprites.system()),
+        )
+        .add_system_set(
+            SystemSet::on_update(AppState::FinishedLoading).with_system(start_game.system()),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::InGame)

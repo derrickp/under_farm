@@ -1,13 +1,13 @@
 use bevy::{
     asset::LoadState,
-    prelude::{AssetServer, Assets, Res, ResMut, State, Texture},
+    prelude::{AssetServer, Assets, Res, ResMut, Texture},
     sprite::{TextureAtlas, TextureAtlasBuilder},
 };
 
 use crate::{
     configuration::{crops::CropConfigurations, sprites::dirt_floor_sprite_names},
     sprites::{LoadedTextures, Sprites},
-    states::{AppState, GameLoadState},
+    states::GameLoadState,
 };
 
 pub fn load_textures(mut loaded_textures: ResMut<LoadedTextures>, asset_server: Res<AssetServer>) {
@@ -32,7 +32,7 @@ pub fn load_sprites(
     loaded_textures: Res<LoadedTextures>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mut textures: ResMut<Assets<Texture>>,
-    mut state: ResMut<State<AppState>>,
+    mut load_state: ResMut<GameLoadState>,
     asset_server: Res<AssetServer>,
 ) {
     let mut texture_atlas_builder = TextureAtlasBuilder::default();
@@ -74,5 +74,5 @@ pub fn load_sprites(
     let atlas_handle = texture_atlases.add(texture_atlas);
     sprites.atlas_handle = atlas_handle;
 
-    state.set(AppState::InGame).unwrap();
+    load_state.textures_set = true;
 }

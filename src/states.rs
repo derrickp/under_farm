@@ -11,6 +11,7 @@ pub enum AppState {
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct GameLoadState {
     pub texture_load_complete: bool,
+    pub textures_set: bool,
 }
 
 #[derive(Debug, Clone, PartialEq)]
