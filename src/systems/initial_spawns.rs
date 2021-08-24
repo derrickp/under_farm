@@ -2,13 +2,8 @@ use std::usize;
 
 use bevy::{
     math::Vec3,
-    prelude::{
-        AssetServer, Color, Commands, HorizontalAlign, Rect, Res, ResMut, SpriteSheetBundle,
-        TextBundle, Transform, Visible,
-    },
+    prelude::{Commands, Res, ResMut, SpriteSheetBundle, Transform, Visible},
     sprite::TextureAtlasSprite,
-    text::{Text, TextAlignment, TextStyle},
-    ui::{AlignSelf, PositionType, Style, Val},
 };
 use rand::Rng;
 
@@ -26,41 +21,11 @@ use crate::{
 pub fn spawn_opening_bundles(
     mut commands: Commands,
     sprites: Res<Sprites>,
-    asset_server: Res<AssetServer>,
     mut game_state: ResMut<GameState>,
 ) {
     if game_state.initial_spawn_complete {
         return;
     }
-
-    commands.spawn_bundle(TextBundle {
-        style: Style {
-            align_self: AlignSelf::FlexEnd,
-            position_type: PositionType::Absolute,
-            position: Rect {
-                bottom: Val::Px(5.0),
-                right: Val::Px(15.0),
-                ..Default::default()
-            },
-            ..Default::default()
-        },
-        // Use the `Text::with_section` constructor
-        text: Text::with_section(
-            // Accepts a `String` or any type that converts into a `String`, such as `&str`
-            "under\nfarm!",
-            TextStyle {
-                font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                font_size: 50.0,
-                color: Color::WHITE,
-            },
-            // Note: You can use `Default::default()` in place of the `TextAlignment`
-            TextAlignment {
-                horizontal: HorizontalAlign::Center,
-                ..Default::default()
-            },
-        ),
-        ..Default::default()
-    });
 
     let grid = generate_world_grid();
     let mut rng = rand::thread_rng();
