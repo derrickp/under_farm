@@ -3,8 +3,8 @@ use std::usize;
 use bevy::{
     math::Vec3,
     prelude::{
-        AssetServer, Color, Commands, HorizontalAlign, OrthographicCameraBundle, Rect, Res, ResMut,
-        SpriteSheetBundle, TextBundle, Transform, UiCameraBundle, Visible,
+        AssetServer, Color, Commands, HorizontalAlign, Rect, Res, ResMut, SpriteSheetBundle,
+        TextBundle, Transform, Visible,
     },
     sprite::TextureAtlasSprite,
     text::{Text, TextAlignment, TextStyle},
@@ -14,7 +14,6 @@ use rand::Rng;
 
 use crate::{
     components::{
-        camera::{GameCamera, UiCamera},
         map::{GroundTile, GroundTileBundle, MapTile, WallTile, WallTileBundle},
         player::PlayerBundle,
     },
@@ -33,16 +32,6 @@ pub fn spawn_opening_bundles(
     if game_state.initial_spawn_complete {
         return;
     }
-
-    let camera = commands
-        .spawn_bundle(OrthographicCameraBundle::new_2d())
-        .insert(GameCamera)
-        .id();
-    game_state.game_camera = Some(camera);
-
-    commands
-        .spawn_bundle(UiCameraBundle::default())
-        .insert(UiCamera);
 
     commands.spawn_bundle(TextBundle {
         style: Style {

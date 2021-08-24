@@ -1,6 +1,9 @@
-use bevy::prelude::{Commands, OrthographicCameraBundle, ResMut};
+use bevy::prelude::{Commands, OrthographicCameraBundle, ResMut, UiCameraBundle};
 
-use crate::{components::camera::GameCamera, states::GameState};
+use crate::{
+    components::camera::{GameCamera, UiCamera},
+    states::GameState,
+};
 
 pub fn remove_gameplay_camera(mut commands: Commands, mut game_state: ResMut<GameState>) {
     if let Some(camera_entity) = game_state.game_camera {
@@ -15,5 +18,15 @@ pub fn add_gameplay_camera(mut commands: Commands, mut game_state: ResMut<GameSt
         ortho_camera.transform.scale = game_state.game_camera_scale;
         let camera = commands.spawn_bundle(ortho_camera).insert(GameCamera).id();
         game_state.game_camera = Some(camera);
+    }
+}
+
+pub fn add_ui_camera(mut commands: Commands, mut game_state: ResMut<GameState>) {
+    if let None = game_state.ui_camera {
+        let camera = commands
+            .spawn_bundle(UiCameraBundle::default())
+            .insert(UiCamera)
+            .id();
+        game_state.ui_camera = Some(camera);
     }
 }

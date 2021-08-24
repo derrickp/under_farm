@@ -18,6 +18,7 @@ pub struct GameLoadState {
 pub struct GameState {
     pub initial_spawn_complete: bool,
     pub game_camera: Option<Entity>,
+    pub ui_camera: Option<Entity>,
     pub game_camera_scale: Vec3,
 }
 
@@ -27,6 +28,7 @@ impl Default for GameState {
             initial_spawn_complete: false,
             game_camera: None,
             game_camera_scale: Vec3::splat(1.0),
+            ui_camera: None,
         };
     }
 }

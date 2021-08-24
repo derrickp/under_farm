@@ -12,7 +12,7 @@ use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState, GameState, InventoryState};
 use systems::{
     actions::crop_actions,
-    cameras::{add_gameplay_camera, remove_gameplay_camera},
+    cameras::{add_gameplay_camera, add_ui_camera, remove_gameplay_camera},
     crops::grow_crops_system,
     initial_spawns::spawn_opening_bundles,
     inputs::{
@@ -56,7 +56,9 @@ fn main() {
         )
         .add_system_set(
             SystemSet::on_enter(AppState::InGame)
-                .with_system(spawn_opening_bundles.system().label("opening_spawn")),
+                .with_system(spawn_opening_bundles.system().label("opening_spawn"))
+                .with_system(add_gameplay_camera.system())
+                .with_system(add_ui_camera.system()),
         )
         .add_system_set(
             SystemSet::on_update(AppState::InGame)
@@ -102,7 +104,6 @@ fn main() {
         )
         .add_system_set(
             SystemSet::on_exit(AppState::InventoryScreen)
-                .with_system(add_gameplay_camera.system())
                 .with_system(remove_inventory_text.system()),
         )
         .add_system_set(
