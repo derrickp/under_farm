@@ -15,19 +15,19 @@ use crate::{
     configuration::map::{world_coordinate_from_grid, TILE_SIZE},
     sprites::Sprites,
     states::GameState,
-    world_generation::{cell::CellType, generation::generate_world_grid},
+    world_generation::{cell::CellType, grid::Grid},
 };
 
 pub fn spawn_opening_bundles(
     mut commands: Commands,
     sprites: Res<Sprites>,
     mut game_state: ResMut<GameState>,
+    grid: Res<Grid>,
 ) {
     if game_state.initial_spawn_complete {
         return;
     }
 
-    let grid = generate_world_grid();
     let mut rng = rand::thread_rng();
 
     let mut player_coordinate: Option<(f32, f32)> = None;
@@ -167,7 +167,7 @@ pub fn spawn_opening_bundles(
                 commands.spawn_bundle(WallTileBundle {
                     cell_type: WallTile,
                     cell: MapTile {
-                        cell_center: cell_center,
+                        cell_center,
                         tile_size: TILE_SIZE as f32,
                         contains_tile: false,
                         sprite: None,

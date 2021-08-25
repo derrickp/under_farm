@@ -12,6 +12,7 @@ pub enum AppState {
 pub struct GameLoadState {
     pub texture_load_complete: bool,
     pub textures_set: bool,
+    pub game_world_generated: bool,
 }
 
 #[derive(Debug, Clone, PartialEq)]

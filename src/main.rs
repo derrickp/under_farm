@@ -25,7 +25,7 @@ use systems::{
     loading::{check_load_state, start_game},
     movement::{camera_movement, check_floor_collision, player_movement},
     textures::{check_textures, load_sprites, load_textures},
-    world::tick_game_world,
+    world::{generate_world_grid, tick_game_world},
 };
 use world::WorldTickTimer;
 
@@ -49,7 +49,9 @@ fn main() {
                 .with_system(check_load_state.system().after("check_textures")),
         )
         .add_system_set(
-            SystemSet::on_enter(AppState::FinishedLoading).with_system(load_sprites.system()),
+            SystemSet::on_enter(AppState::FinishedLoading)
+                .with_system(load_sprites.system())
+                .with_system(generate_world_grid.system()),
         )
         .add_system_set(
             SystemSet::on_update(AppState::FinishedLoading).with_system(start_game.system()),
