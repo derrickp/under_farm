@@ -2,15 +2,15 @@
   "editor.detectIndentation": false,
   "editor.tabSize": 4,
   "rust-analyzer.procMacro.enable": false,
-  "cSpell.words": ["Numpad", "despawn"],
+  "cSpell.words": ["Numpad", "despawn", "spawnable"],
   "files.exclude": {
-      "**/.git": true,
-      "**/.svn": true,
-      "**/.hg": true,
-      "**/CVS": true,
-      "**/.DS_Store": true,
-      "target": true,
-      "build": true,
-      "*.zip": true
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "target": true,
+    "build": true,
+    "*.zip": true
   }
 }
