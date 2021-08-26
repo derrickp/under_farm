@@ -30,8 +30,6 @@ pub fn spawn_opening_bundles(
 
     let mut rng = rand::thread_rng();
 
-    let mut player_coordinate: Option<(f32, f32)> = None;
-
     for cell in grid.cells.values() {
         match cell.cell_type {
             CellType::Floor => {
@@ -47,10 +45,7 @@ pub fn spawn_opening_bundles(
                     )
                     .clone();
                 let coordinate = world_coordinate_from_grid(&cell.coordinate);
-                let cell_center = Vec3::new(coordinate.0, coordinate.1, 0.0);
-                if player_coordinate.is_none() {
-                    player_coordinate = Some(coordinate);
-                }
+                let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
                 commands.spawn_bundle(GroundTileBundle {
                     cell_type: GroundTile,
                     cell: MapTile {
@@ -78,7 +73,7 @@ pub fn spawn_opening_bundles(
             }
             CellType::RoomWall => {
                 let coordinate = world_coordinate_from_grid(&cell.coordinate);
-                let cell_center = Vec3::new(coordinate.0, coordinate.1, 0.0);
+                let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
                 commands.spawn_bundle(WallTileBundle {
                     cell_type: WallTile,
                     cell: MapTile {
@@ -106,7 +101,7 @@ pub fn spawn_opening_bundles(
             }
             CellType::RoomFloor => {
                 let coordinate = world_coordinate_from_grid(&cell.coordinate);
-                let cell_center = Vec3::new(coordinate.0, coordinate.1, 0.0);
+                let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
                 commands.spawn_bundle(GroundTileBundle {
                     cell_type: GroundTile,
                     cell: MapTile {
@@ -134,7 +129,7 @@ pub fn spawn_opening_bundles(
             }
             CellType::Door => {
                 let coordinate = world_coordinate_from_grid(&cell.coordinate);
-                let cell_center = Vec3::new(coordinate.0, coordinate.1, 0.0);
+                let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
                 commands.spawn_bundle(GroundTileBundle {
                     cell_type: GroundTile,
                     cell: MapTile {
@@ -162,7 +157,7 @@ pub fn spawn_opening_bundles(
             }
             CellType::OuterWall => {
                 let coordinate = world_coordinate_from_grid(&cell.coordinate);
-                let cell_center = Vec3::new(coordinate.0, coordinate.1, 0.0);
+                let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
 
                 commands.spawn_bundle(WallTileBundle {
                     cell_type: WallTile,
@@ -193,13 +188,14 @@ pub fn spawn_opening_bundles(
         }
     }
 
-    let player_spawn = player_coordinate.unwrap();
+    let player_spawn = grid.random_spawnable_coordinate().unwrap();
+    let coordinate = world_coordinate_from_grid(&player_spawn);
     commands.spawn_bundle(PlayerBundle {
         sprite: SpriteSheetBundle {
             sprite: TextureAtlasSprite::new(sprites.player_sprite_index as u32),
             texture_atlas: sprites.atlas_handle.clone(),
             transform: Transform {
-                translation: Vec3::new(player_spawn.0, player_spawn.1, 5.0),
+                translation: Vec3::new(coordinate.x, coordinate.y, 5.0),
                 scale: crate::configuration::sprites::sprite_scale(),
                 ..Default::default()
             },

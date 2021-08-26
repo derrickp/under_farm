@@ -1,3 +1,4 @@
+use rand::Rng;
 use std::collections::HashMap;
 
 use super::{
@@ -20,8 +21,8 @@ impl Grid {
 
     fn set_cell_type(&mut self, x: i32, y: i32, cell_type: CellType) {
         let coordinate = Coordinate { x, y };
-        if let Some(mut cell) = self.cells.get_mut(&coordinate) {
-            cell.cell_type = cell_type;
+        if let Some(cell) = self.cells.get_mut(&coordinate) {
+            cell.set_cell_type(cell_type);
         };
     }
 
@@ -32,9 +33,9 @@ impl Grid {
     }
 
     pub fn fill_empty_cells(&mut self) {
-        for mut cell in self.cells.values_mut() {
+        for cell in self.cells.values_mut() {
             if cell.cell_type == CellType::None {
-                cell.cell_type = CellType::Floor;
+                cell.set_cell_type(CellType::Floor);
             }
         }
     }
@@ -58,6 +59,27 @@ impl Grid {
         match cell {
             Some(c) => c.cell_type == CellType::None,
             None => false,
+        }
+    }
+
+    pub fn random_spawnable_coordinate(&self) -> Option<Coordinate<i32>> {
+        let mut rng = rand::thread_rng();
+        let spawnable_cells: Vec<Coordinate<i32>> = self
+            .cells
+            .iter()
+            .filter_map(|(coordinate, cell)| {
+                if cell.spawnable {
+                    Some(coordinate.clone())
+                } else {
+                    None
+                }
+            })
+            .collect();
+        let index: usize = rng.gen_range(0..spawnable_cells.len());
+        if let Some(coordinate) = spawnable_cells.get(index) {
+            return Some(coordinate.clone());
+        } else {
+            return None;
         }
     }
 }

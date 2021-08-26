@@ -24,10 +24,9 @@ impl Room {
             .cells
             .iter()
             .map(|cell| {
-                Cell::new(
+                cell.translate(
                     cell.coordinate.x + bottom_left_x,
                     cell.coordinate.y + bottom_left_y,
-                    cell.cell_type,
                 )
             })
             .collect();
