@@ -1,7 +1,8 @@
-use super::cell::Cell;
-use super::rooms::Room;
+use rand::Rng;
+use tdlg::cell::Cell;
+use tdlg::room::Room;
 
-pub fn two_by_two_templates() -> Vec<Room> {
+pub fn two_by_two_templates() -> Vec<Room<i32>> {
     let max_side_length: usize = 4;
     return vec![
         Room {
@@ -223,7 +224,7 @@ pub fn two_by_two_templates() -> Vec<Room> {
     ];
 }
 
-pub fn three_by_three_templates() -> Vec<Room> {
+pub fn three_by_three_templates() -> Vec<Room<i32>> {
     let max_side_length: usize = 5;
 
     return vec![
@@ -626,7 +627,7 @@ pub fn three_by_three_templates() -> Vec<Room> {
     ];
 }
 
-pub fn four_by_four_templates() -> Vec<Room> {
+pub fn four_by_four_templates() -> Vec<Room<i32>> {
     let max_side_length: usize = 6;
 
     return vec![
@@ -1337,12 +1338,21 @@ pub fn four_by_four_templates() -> Vec<Room> {
     ];
 }
 
-pub fn all_templates() -> Vec<Room> {
-    let mut templates: Vec<Room> = Vec::new();
+pub fn all_templates() -> Vec<Room<i32>> {
+    let mut templates: Vec<Room<i32>> = Vec::new();
 
     templates.append(&mut two_by_two_templates());
     templates.append(&mut three_by_three_templates());
     templates.append(&mut four_by_four_templates());
 
     return templates;
+}
+
+pub fn random_template() -> Room<i32> {
+    let templates = all_templates();
+
+    let mut rng = rand::thread_rng();
+    let index: usize = rng.gen_range(0..templates.len());
+
+    return templates.get(index).unwrap().clone();
 }

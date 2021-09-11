@@ -6,6 +6,7 @@ use bevy::{
     sprite::TextureAtlasSprite,
 };
 use rand::Rng;
+use tdlg::cell::CellType;
 
 use crate::{
     components::{
@@ -15,7 +16,7 @@ use crate::{
     configuration::map::{world_coordinate_from_grid, TILE_SIZE},
     sprites::Sprites,
     states::GameState,
-    world_generation::{cell::CellType, grid::Grid},
+    world_generation::grid::Grid,
 };
 
 pub fn spawn_opening_bundles(

@@ -1,21 +1,18 @@
 use rand::Rng;
+use tdlg::cell::{Cell, CellType};
+use tdlg::coordinate::Coordinate;
+use tdlg::room::Room;
 use std::collections::HashMap;
-
-use super::{
-    cell::{Cell, CellType},
-    coordinate::Coordinate,
-    rooms::Room,
-};
 
 const DEFAULT_GRID_SIZE: usize = 100;
 
 pub struct Grid {
-    pub cells: HashMap<Coordinate<i32>, Cell>,
+    pub cells: HashMap<Coordinate<i32>, Cell<i32>>,
     size: usize,
 }
 
 impl Grid {
-    fn add_cell(&mut self, cell: Cell) {
+    fn add_cell(&mut self, cell: Cell<i32>) {
         self.cells.insert(cell.coordinate, cell);
     }
 
@@ -26,7 +23,7 @@ impl Grid {
         };
     }
 
-    pub fn add_room(&mut self, room: Room) {
+    pub fn add_room(&mut self, room: Room<i32>) {
         for cell in room.cells.iter() {
             self.set_cell_type(cell.coordinate.x, cell.coordinate.y, cell.cell_type);
         }
@@ -34,7 +31,7 @@ impl Grid {
 
     pub fn fill_empty_cells(&mut self) {
         for cell in self.cells.values_mut() {
-            if cell.cell_type == CellType::None {
+            if cell.cell_type == CellType::Empty {
                 cell.set_cell_type(CellType::Floor);
             }
         }
@@ -57,7 +54,7 @@ impl Grid {
     pub fn is_cell_empty(&self, coordinate: &Coordinate<i32>) -> bool {
         let cell = self.cells.get(coordinate);
         match cell {
-            Some(c) => c.cell_type == CellType::None,
+            Some(c) => c.cell_type == CellType::Empty,
             None => false,
         }
     }

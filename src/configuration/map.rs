@@ -1,4 +1,4 @@
-use crate::world_generation::coordinate::Coordinate;
+use tdlg::coordinate::Coordinate;
 
 use super::sprites::{SPRITE_SCALE, SPRITE_SIZE};
 
