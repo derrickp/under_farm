@@ -2995,6 +2995,11 @@ dependencies = [
 ]
 
 [[package]]
+name = "tdlg"
+version = "0.1.0"
+source = "git+https://github.com/derrickp/tdlg#f4b96471d1810377be4489887975a1e8337a2aab"
+
+[[package]]
 name = "thiserror"
 version = "1.0.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3136,6 +3141,7 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "rand",
+ "tdlg",
 ]
 
 [[package]]
