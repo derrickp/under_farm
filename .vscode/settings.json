@@ -2,7 +2,7 @@
   "editor.detectIndentation": false,
   "editor.tabSize": 4,
   "rust-analyzer.procMacro.enable": false,
-  "cSpell.words": ["Numpad", "despawn", "spawnable"],
+  "cSpell.words": ["despawn", "Numpad", "spawnable", "tdlg"],
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
@@ -12,5 +12,8 @@
     "target": true,
     "build": true,
     "*.zip": true
+  },
+  "[plaintext]": {
+    "editor.quickSuggestions": false
   }
 }
