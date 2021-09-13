@@ -1,39 +1,9 @@
-use std::fs;
-use walkdir::WalkDir;
+use bevy::prelude::{Res, ResMut, State};
 
-use bevy::prelude::{Commands, Res, ResMut, State};
-
-use crate::{
-    states::{AppState, GameLoadState},
-    world_generation::templates::RoomTemplates,
-};
-
-pub fn load_templates(mut commands: Commands, mut load_state: ResMut<GameLoadState>) {
-    if load_state.room_templates_loaded {
-        return;
-    }
-
-    let mut templates: Vec<String> = Vec::new();
-    for dir_entry in WalkDir::new("assets/room_templates") {
-        if let Ok(entry) = dir_entry {
-            if let Ok(content) = fs::read_to_string(entry.path()) {
-                templates.push(content);
-            }
-        }
-    }
-
-    println!("{}", templates.clone().len());
-
-    let room_templates = RoomTemplates {
-        all_templates: templates,
-    };
-
-    commands.insert_resource(room_templates);
-    load_state.room_templates_loaded = true;
-}
+use crate::states::{AppState, GameLoadState};
 
 pub fn check_load_state(mut state: ResMut<State<AppState>>, load_state: Res<GameLoadState>) {
-    if load_state.texture_load_complete && load_state.room_templates_loaded {
+    if load_state.texture_load_complete {
         state.set(AppState::FinishedLoading).unwrap();
     }
 }

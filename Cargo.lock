@@ -2997,9 +2997,10 @@ dependencies = [
 [[package]]
 name = "tdlg"
 version = "0.1.0"
-source = "git+https://github.com/derrickp/tdlg#21b30ec0c09c2a41dc752943a5c9590a5de63b8c"
+source = "git+https://github.com/derrickp/tdlg#34441ae79b70e06bb81876df4bdc5821d086f2b6"
 dependencies = [
  "rand",
+ "walkdir",
 ]
 
 [[package]]

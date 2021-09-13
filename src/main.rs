@@ -4,7 +4,6 @@ mod sprites;
 mod states;
 mod systems;
 mod world;
-mod world_generation;
 
 use bevy::{input::system::exit_on_esc_system, prelude::*};
 use configuration::crops::CropConfigurations;
@@ -22,7 +21,7 @@ use systems::{
     inventory::{
         add_inventory_text, remove_inventory_text, select_crop, update_inventory_text_colour,
     },
-    loading::{check_load_state, load_templates, start_game},
+    loading::{check_load_state, start_game},
     movement::{camera_movement, check_floor_collision, player_movement},
     textures::{check_textures, load_sprites, load_textures},
     world::{generate_world_grid, tick_game_world},
@@ -46,7 +45,6 @@ fn main() {
         .add_system_set(
             SystemSet::on_update(AppState::Startup)
                 .with_system(check_textures.system().label("check_textures"))
-                .with_system(load_templates.system())
                 .with_system(check_load_state.system().after("check_textures")),
         )
         .add_system_set(
