@@ -6,7 +6,7 @@ use bevy::{
     sprite::TextureAtlasSprite,
 };
 use rand::Rng;
-use tdlg::cell::CellType;
+use tdlg::{cell::CellType, grid::Grid};
 
 use crate::{
     components::{
@@ -16,14 +16,13 @@ use crate::{
     configuration::map::{world_coordinate_from_grid, TILE_SIZE},
     sprites::Sprites,
     states::GameState,
-    world_generation::grid::Grid,
 };
 
 pub fn spawn_opening_bundles(
     mut commands: Commands,
     sprites: Res<Sprites>,
     mut game_state: ResMut<GameState>,
-    grid: Res<Grid>,
+    grid: Res<Grid<i32>>,
 ) {
     if game_state.initial_spawn_complete {
         return;
