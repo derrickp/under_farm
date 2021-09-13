@@ -2997,7 +2997,10 @@ dependencies = [
 [[package]]
 name = "tdlg"
 version = "0.1.0"
-source = "git+https://github.com/derrickp/tdlg#f4b96471d1810377be4489887975a1e8337a2aab"
+source = "git+https://github.com/derrickp/tdlg#21b30ec0c09c2a41dc752943a5c9590a5de63b8c"
+dependencies = [
+ "rand",
+]
 
 [[package]]
 name = "thiserror"
@@ -3142,6 +3145,7 @@ dependencies = [
  "bevy",
  "rand",
  "tdlg",
+ "walkdir",
 ]
 
 [[package]]
