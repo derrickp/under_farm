@@ -13,7 +13,7 @@ use crate::{
         inventory::{InventoryText, InventoryTextBundle, InventoryTextStatus},
         player::{Player, PlayerInventory},
     },
-    configuration::crops::CropConfigurations,
+    configuration::{crops::CropConfigurations, tools::ToolConfigurations},
     states::{AppState, InventoryState},
 };
 
@@ -22,6 +22,7 @@ pub fn add_inventory_text(
     mut inventory_state: ResMut<InventoryState>,
     asset_server: Res<AssetServer>,
     crop_configurations: Res<CropConfigurations>,
+    tool_configurations: Res<ToolConfigurations>,
 ) {
     if inventory_state.inventory_text.is_some() {
         return;
@@ -98,6 +99,47 @@ pub fn add_inventory_text(
         inventory_text.push(text_entity);
     }
 
+    let count_crop_configs = crop_configurations.configurations.len();
+
+    for (index, tool_config) in tool_configurations.configurations.iter().enumerate() {
+        let text_entry_index = index + count_crop_configs;
+        let top = 15.0 + (50.0 * (text_entry_index as f32 + 1.0));
+        let text_entity = commands
+            .spawn_bundle(InventoryTextBundle {
+                inventory_text: InventoryText,
+                status: InventoryTextStatus {
+                    index: text_entry_index,
+                },
+                text: TextBundle {
+                    style: Style {
+                        align_self: AlignSelf::FlexEnd,
+                        position_type: PositionType::Absolute,
+                        position: Rect {
+                            top: Val::Px(top),
+                            left: Val::Px(15.0),
+                            ..Default::default()
+                        },
+                        ..Default::default()
+                    },
+                    // Use the `Text::with_section` constructor
+                    text: Text::with_section(
+                        // Accepts a `String` or any type that converts into a `String`, such as `&str`
+                        format!("{} {}", text_entry_index + 1, tool_config.name),
+                        TextStyle {
+                            font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                            font_size: 20.0,
+                            color: Color::WHITE,
+                        },
+                        // Note: You can use `Default::default()` in place of the `TextAlignment`
+                        Default::default(),
+                    ),
+                    ..Default::default()
+                },
+            })
+            .id();
+        inventory_text.push(text_entity);
+    }
+
     inventory_state.inventory_text = Some(inventory_text);
 }
 
@@ -123,7 +165,17 @@ pub fn update_inventory_text_colour(
     for text_data in text_query.iter_mut() {
         let (_, status, mut text): (&InventoryText, &InventoryTextStatus, Mut<'_, Text>) =
             text_data;
-        if let Some(selected_index) = inventory.current_crop_selection {
+        if inventory.current_tool.is_some() {
+            if let Some(selected_tool_index) = inventory.current_tool_selection {
+                if selected_tool_index == status.index {
+                    let section = text.sections.get_mut(0).unwrap();
+                    section.style.color = Color::YELLOW;
+                } else {
+                    let section = text.sections.get_mut(0).unwrap();
+                    section.style.color = Color::WHITE;
+                }
+            }
+        } else if let Some(selected_index) = inventory.current_crop_selection {
             if selected_index == status.index {
                 let section = text.sections.get_mut(0).unwrap();
                 section.style.color = Color::YELLOW;
@@ -139,6 +191,7 @@ pub fn select_crop(
     event_reader: EventReader<KeyboardInput>,
     state: ResMut<State<AppState>>,
     crop_configurations: Res<CropConfigurations>,
+    tool_configurations: Res<ToolConfigurations>,
     mut query: Query<(&Player, &mut PlayerInventory)>,
 ) {
     if state.current().ne(&AppState::InventoryScreen) {
@@ -150,7 +203,7 @@ pub fn select_crop(
     let index_result = pressed_key_to_index(event_reader);
 
     if let Some(index) = index_result {
-        set_crop_selection(inventory, crop_configurations, index);
+        set_item_selection(inventory, crop_configurations, tool_configurations, index);
     }
 }
 
@@ -174,13 +227,26 @@ fn pressed_key_to_index(mut event_reader: EventReader<KeyboardInput>) -> Option<
     return None;
 }
 
-fn set_crop_selection(
+fn set_item_selection(
     mut inventory: Mut<'_, PlayerInventory>,
     crop_configurations: Res<'_, CropConfigurations>,
+    tool_configurations: Res<'_, ToolConfigurations>,
     index: usize,
 ) {
-    let config = crop_configurations.configurations.get(index);
-    if config.is_some() {
-        inventory.current_crop_selection = Some(index);
+    if index >= crop_configurations.configurations.len() {
+        let tool_index = index - crop_configurations.configurations.len();
+        if let Some(tool_config) = tool_configurations.configurations.get(tool_index) {
+            inventory.current_tool = Some(tool_config.to_tool());
+            inventory.current_tool_selection = Some(index);
+            inventory.current_crop_selection = None;
+        }
+    } else {
+        println!("choosing crop");
+        let config = crop_configurations.configurations.get(index);
+        if config.is_some() {
+            inventory.current_tool = None;
+            inventory.current_crop_selection = None;
+            inventory.current_crop_selection = Some(index);
+        }
     }
 }
