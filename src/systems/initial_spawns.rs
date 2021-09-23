@@ -73,11 +73,22 @@ pub fn spawn_opening_bundles(
             }
             CellType::RoomWall => {
                 let coordinate = world_coordinate_from_grid(&cell.coordinate);
-                let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
-                commands.spawn_bundle(WallTileBundle {
-                    cell_type: WallTile,
+                let floor_cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
+                let random_index: usize = rng.gen_range(0..sprites.dirt_floor_indexes.len());
+                let dirt_floor_index = sprites
+                    .dirt_floor_indexes
+                    .get(random_index)
+                    .unwrap_or(
+                        sprites
+                            .dirt_floor_indexes
+                            .first()
+                            .expect("Need at least 1 floor sprite"),
+                    )
+                    .clone();
+                commands.spawn_bundle(GroundTileBundle {
+                    cell_type: GroundTile,
                     cell: MapTile {
-                        cell_center,
+                        cell_center: floor_cell_center,
                         tile_size: TILE_SIZE as f32,
                         contains_tile: false,
                         sprite: None,
@@ -85,7 +96,34 @@ pub fn spawn_opening_bundles(
                     },
                     sprite: SpriteSheetBundle {
                         transform: Transform {
-                            translation: cell_center,
+                            translation: floor_cell_center,
+                            scale: crate::configuration::sprites::sprite_scale(),
+                            ..Default::default()
+                        },
+                        sprite: TextureAtlasSprite::new(dirt_floor_index as u32),
+                        texture_atlas: sprites.atlas_handle.clone(),
+                        visible: Visible {
+                            is_visible: false,
+                            is_transparent: false,
+                        },
+                        ..Default::default()
+                    },
+                });
+                let wall_cell_center = Vec3::new(coordinate.x, coordinate.y, 1.0);
+                commands.spawn_bundle(WallTileBundle {
+                    cell_type: WallTile {
+                        can_be_broken: true,
+                    },
+                    cell: MapTile {
+                        cell_center: wall_cell_center,
+                        tile_size: TILE_SIZE as f32,
+                        contains_tile: false,
+                        sprite: None,
+                        outline: None,
+                    },
+                    sprite: SpriteSheetBundle {
+                        transform: Transform {
+                            translation: wall_cell_center,
                             scale: crate::configuration::sprites::sprite_scale(),
                             ..Default::default()
                         },
@@ -160,7 +198,7 @@ pub fn spawn_opening_bundles(
                 let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
 
                 commands.spawn_bundle(WallTileBundle {
-                    cell_type: WallTile,
+                    cell_type: WallTile::default(),
                     cell: MapTile {
                         cell_center,
                         tile_size: TILE_SIZE as f32,

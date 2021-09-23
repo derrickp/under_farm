@@ -38,7 +38,11 @@ pub struct MapTile {
 }
 
 pub struct GroundTile;
-pub struct WallTile;
+
+#[derive(Default)]
+pub struct WallTile {
+    pub can_be_broken: bool,
+}
 
 #[derive(Bundle)]
 pub struct WallTileBundle {
