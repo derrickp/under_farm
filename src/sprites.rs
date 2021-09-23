@@ -12,6 +12,7 @@ pub struct Sprites {
     pub outer_wall_index: usize,
     pub room_wall_index: usize,
     pub room_floor_index: usize,
+    pub broken_wall_index: usize,
 }
 
 #[derive(Default)]
