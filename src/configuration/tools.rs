@@ -7,30 +7,30 @@ pub struct ToolConfiguration {
 
 impl ToolConfiguration {
     fn build(name: &'static str, tool_type: ToolType) -> Self {
-        return Self { name, tool_type };
+        Self { name, tool_type }
     }
 
     fn pick_axe(name: &'static str) -> Self {
-        return Self::build(name, ToolType::PickAxe);
+        Self::build(name, ToolType::PickAxe)
     }
 
     fn shovel(name: &'static str) -> Self {
-        return Self::build(name, ToolType::Shovel);
+        Self::build(name, ToolType::Shovel)
     }
 
     fn hammer(name: &'static str) -> Self {
-        return Self::build(name, ToolType::Hammer);
+        Self::build(name, ToolType::Hammer)
     }
 
     fn hoe(name: &'static str) -> Self {
-        return Self::build(name, ToolType::Hoe);
+        Self::build(name, ToolType::Hoe)
     }
 
     pub fn to_tool(&self) -> Tool {
-        return Tool {
+        Tool {
             name: ToolName(self.name.to_string()),
             tool_type: self.tool_type,
-        };
+        }
     }
 }
 

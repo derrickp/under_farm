@@ -4,9 +4,9 @@ pub const CONSTANT_MOVE_WAIT_TIME: f32 = 0.2;
 pub const WORLD_TICK_TIME: f32 = 0.2;
 
 pub fn movement_timer() -> Timer {
-    return Timer::from_seconds(CONSTANT_MOVE_WAIT_TIME, true);
+    Timer::from_seconds(CONSTANT_MOVE_WAIT_TIME, true)
 }
 
 pub fn world_tick_timer() -> Timer {
-    return Timer::from_seconds(WORLD_TICK_TIME, true);
+    Timer::from_seconds(WORLD_TICK_TIME, true)
 }

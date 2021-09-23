@@ -8,11 +8,11 @@ pub struct CropConfiguration {
 
 impl CropConfiguration {
     pub fn build_basic(name: &'static str, stages: Vec<CropStage>) -> Self {
-        return CropConfiguration {
+        CropConfiguration {
             name,
             stages,
             sprite_index: None,
-        };
+        }
     }
 }
 
@@ -48,7 +48,7 @@ fn kane_configuration() -> CropConfiguration {
         },
     ];
 
-    return CropConfiguration::build_basic("Kane", stages);
+    CropConfiguration::build_basic("Kane", stages)
 }
 
 fn mushroom_configuration() -> CropConfiguration {
@@ -68,7 +68,7 @@ fn mushroom_configuration() -> CropConfiguration {
             chance_to_advance: 1,
         },
     ];
-    return CropConfiguration::build_basic("Mushroom", stages);
+    CropConfiguration::build_basic("Mushroom", stages)
 }
 
 fn potato_configuration() -> CropConfiguration {
@@ -89,7 +89,7 @@ fn potato_configuration() -> CropConfiguration {
         },
     ];
 
-    return CropConfiguration::build_basic("Potato", stages);
+    CropConfiguration::build_basic("Potato", stages)
 }
 
 fn turnip_configuration() -> CropConfiguration {
@@ -110,7 +110,7 @@ fn turnip_configuration() -> CropConfiguration {
         },
     ];
 
-    return CropConfiguration::build_basic("Turnip", stages);
+    CropConfiguration::build_basic("Turnip", stages)
 }
 
 impl Default for CropConfigurations {
@@ -122,8 +122,8 @@ impl Default for CropConfigurations {
             turnip_configuration(),
         ];
 
-        return CropConfigurations {
+        CropConfigurations {
             configurations: crops,
-        };
+        }
     }
 }

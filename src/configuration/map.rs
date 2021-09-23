@@ -12,5 +12,5 @@ pub fn world_coordinate_from_grid(grid_coordinate: &Coordinate<i32>) -> Vec2 {
     let x = TILE_SIZE * grid_coordinate.x as f32 - (TILE_SIZE * (MAP_WIDTH / 2) as f32);
     let y = TILE_SIZE * grid_coordinate.y as f32 - (TILE_SIZE * (MAP_HEIGHT / 2) as f32);
 
-    return Vec2::new(x, y);
+    Vec2::new(x, y)
 }

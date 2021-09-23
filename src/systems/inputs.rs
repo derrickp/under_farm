@@ -21,16 +21,16 @@ pub struct MovementInputTimer(pub Timer);
 
 impl Default for MovementInputTimer {
     fn default() -> Self {
-        return Self(movement_timer());
+        Self(movement_timer())
     }
 }
 
 fn x_axis_speed() -> Vec2 {
-    return Vec2::new(TILE_SIZE, 0.0);
+    Vec2::new(TILE_SIZE, 0.0)
 }
 
 fn y_axis_speed() -> Vec2 {
-    return Vec2::new(0.0, TILE_SIZE);
+    Vec2::new(0.0, TILE_SIZE)
 }
 
 pub fn movement_input_system(
@@ -149,5 +149,5 @@ fn next_camera_scale(scale: Vec3) -> Vec3 {
         return Vec3::new(4.0, 4.0, 1.0);
     }
 
-    return Vec3::splat(1.0);
+    Vec3::splat(1.0)
 }

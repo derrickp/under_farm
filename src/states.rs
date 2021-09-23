@@ -25,23 +25,16 @@ pub struct GameState {
 
 impl Default for GameState {
     fn default() -> Self {
-        return GameState {
+        GameState {
             initial_spawn_complete: false,
             game_camera: None,
             game_camera_scale: Vec3::splat(1.0),
             ui_camera: None,
-        };
+        }
     }
 }
 
+#[derive(Default)]
 pub struct InventoryState {
     pub inventory_text: Option<Vec<Entity>>,
-}
-
-impl Default for InventoryState {
-    fn default() -> Self {
-        return InventoryState {
-            inventory_text: None,
-        };
-    }
 }

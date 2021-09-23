@@ -6,6 +6,6 @@ pub struct WorldTickTimer(pub Timer);
 
 impl Default for WorldTickTimer {
     fn default() -> Self {
-        return Self(world_tick_timer());
+        Self(world_tick_timer())
     }
 }

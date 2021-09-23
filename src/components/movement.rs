@@ -31,7 +31,7 @@ impl Add for Direction {
             return self;
         }
 
-        return match (self, rhs) {
+        match (self, rhs) {
             (Direction::North, Direction::East) => Direction::NorthEast,
             (Direction::East, Direction::North) => Direction::NorthEast,
             (Direction::North, Direction::West) => Direction::NorthWest,
@@ -49,14 +49,14 @@ impl Add for Direction {
             (Direction::SouthWest, Direction::West) => Direction::SouthWest,
             (Direction::SouthEast, Direction::East) => Direction::SouthEast,
             _ => Direction::None,
-        };
+        }
     }
 }
 
 impl Default for Speed {
     fn default() -> Self {
-        return Speed {
+        Speed {
             current: Vec2::new(0.0, 0.0),
-        };
+        }
     }
 }

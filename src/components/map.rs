@@ -12,20 +12,20 @@ pub struct BoundingBox {
 
 impl BoundingBox {
     pub fn intersects(&self, bounding_box: &BoundingBox) -> bool {
-        return self.min_x < bounding_box.max_x
+        self.min_x < bounding_box.max_x
             && self.max_x > bounding_box.min_x
             && self.max_y > bounding_box.min_y
-            && self.min_y < bounding_box.max_y;
+            && self.min_y < bounding_box.max_y
     }
 
     pub fn square(x: f32, y: f32, width: f32) -> Self {
         let half_width = (width / 2.0).floor();
-        return Self {
+        Self {
             min_x: x - half_width,
             max_x: x + half_width,
             min_y: y - half_width,
             max_y: y + half_width,
-        };
+        }
     }
 }
 
@@ -64,10 +64,10 @@ pub struct GroundTileBundle {
 
 impl MapTile {
     pub fn intersects_box(&self, bounding_box: &BoundingBox) -> bool {
-        return self.bounds().intersects(bounding_box);
+        self.bounds().intersects(bounding_box)
     }
 
     pub fn bounds(&self) -> BoundingBox {
-        return BoundingBox::square(self.cell_center.x, self.cell_center.y, self.tile_size);
+        BoundingBox::square(self.cell_center.x, self.cell_center.y, self.tile_size)
     }
 }

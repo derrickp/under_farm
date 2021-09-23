@@ -4,7 +4,7 @@ pub const SPRITE_SCALE: f32 = 4.0;
 pub const SPRITE_SIZE: f32 = 32.0;
 
 pub fn sprite_scale() -> Vec3 {
-    return Vec3::splat(SPRITE_SCALE);
+    Vec3::splat(SPRITE_SCALE)
 }
 
 pub fn dirt_floor_sprite_names() -> Vec<&'static str> {

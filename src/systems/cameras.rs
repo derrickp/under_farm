@@ -13,7 +13,7 @@ pub fn remove_gameplay_camera(mut commands: Commands, mut game_state: ResMut<Gam
 }
 
 pub fn add_gameplay_camera(mut commands: Commands, mut game_state: ResMut<GameState>) {
-    if let None = game_state.game_camera {
+    if game_state.game_camera.is_none() {
         let mut ortho_camera = OrthographicCameraBundle::new_2d();
         ortho_camera.transform.scale = game_state.game_camera_scale;
         let camera = commands.spawn_bundle(ortho_camera).insert(GameCamera).id();
@@ -22,7 +22,7 @@ pub fn add_gameplay_camera(mut commands: Commands, mut game_state: ResMut<GameSt
 }
 
 pub fn add_ui_camera(mut commands: Commands, mut game_state: ResMut<GameState>) {
-    if let None = game_state.ui_camera {
+    if game_state.ui_camera.is_none() {
         let camera = commands
             .spawn_bundle(UiCameraBundle::default())
             .insert(UiCamera)

@@ -30,20 +30,19 @@ pub fn spawn_opening_bundles(
 
     let mut rng = rand::thread_rng();
 
+    let default_dirt_floor_index = *sprites
+        .dirt_floor_indexes
+        .first()
+        .expect("Need at least 1 floor sprite");
+
     for cell in grid.cells.values() {
         match cell.cell_type {
             CellType::Floor => {
                 let random_index: usize = rng.gen_range(0..sprites.dirt_floor_indexes.len());
-                let dirt_floor_index = sprites
+                let dirt_floor_index = *sprites
                     .dirt_floor_indexes
                     .get(random_index)
-                    .unwrap_or(
-                        sprites
-                            .dirt_floor_indexes
-                            .first()
-                            .expect("Need at least 1 floor sprite"),
-                    )
-                    .clone();
+                    .unwrap_or(&default_dirt_floor_index);
                 let coordinate = world_coordinate_from_grid(&cell.coordinate);
                 let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
                 commands.spawn_bundle(GroundTileBundle {
@@ -75,16 +74,10 @@ pub fn spawn_opening_bundles(
                 let coordinate = world_coordinate_from_grid(&cell.coordinate);
                 let floor_cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
                 let random_index: usize = rng.gen_range(0..sprites.dirt_floor_indexes.len());
-                let dirt_floor_index = sprites
+                let dirt_floor_index = *sprites
                     .dirt_floor_indexes
                     .get(random_index)
-                    .unwrap_or(
-                        sprites
-                            .dirt_floor_indexes
-                            .first()
-                            .expect("Need at least 1 floor sprite"),
-                    )
-                    .clone();
+                    .unwrap_or(&default_dirt_floor_index);
                 commands.spawn_bundle(GroundTileBundle {
                     cell_type: GroundTile,
                     cell: MapTile {

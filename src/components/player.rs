@@ -34,7 +34,7 @@ pub struct PlayerBundle {
 
 impl Default for PlayerBundle {
     fn default() -> Self {
-        return PlayerBundle {
+        PlayerBundle {
             name: PlayerName("Goblin?!".to_string()),
             player_movement: PlayerMovement {
                 direction: Direction::None,
@@ -48,6 +48,6 @@ impl Default for PlayerBundle {
                 current_tool_selection: None,
             },
             sprite: SpriteSheetBundle::default(),
-        };
+        }
     }
 }

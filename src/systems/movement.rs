@@ -79,11 +79,11 @@ pub fn player_movement(
     transform.translation.y = y;
 }
 
+type PlayerTransform = (&'static Player, &'static Transform);
+type GameCameraTransform = (&'static GameCamera, &'static Camera, &'static mut Transform);
+
 pub fn camera_movement(
-    mut query_set: QuerySet<(
-        Query<(&Player, &Transform)>,
-        Query<(&GameCamera, &Camera, &mut Transform)>,
-    )>,
+    mut query_set: QuerySet<(Query<PlayerTransform>, Query<GameCameraTransform>)>,
 ) {
     let mut player_x = 0.0;
     let mut player_y = 0.0;
@@ -163,5 +163,5 @@ fn build_visibility_box(x: f32, y: f32, direction: &Direction) -> Vec<BoundingBo
 
     visibility_boxes.push(player_box);
 
-    return visibility_boxes;
+    visibility_boxes
 }

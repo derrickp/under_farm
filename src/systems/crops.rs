@@ -37,7 +37,7 @@ pub fn grow_crops_system(
                 match next_stage_result {
                     Some(next_stage) => {
                         sprite.index = next_stage.sprite_index;
-                        crop.current_stage_index = crop.current_stage_index + 1;
+                        crop.current_stage_index += 1;
                     }
                     _ => {
                         commands.entity(entity).despawn();

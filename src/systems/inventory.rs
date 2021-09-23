@@ -224,7 +224,7 @@ fn pressed_key_to_index(mut event_reader: EventReader<KeyboardInput>) -> Option<
         }
     }
 
-    return None;
+    None
 }
 
 fn set_item_selection(
