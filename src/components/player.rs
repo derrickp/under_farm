@@ -1,6 +1,7 @@
 use super::{
     action::Action,
     movement::{Direction, Speed},
+    tool::Tool,
 };
 use bevy::prelude::{Bundle, SpriteSheetBundle};
 
@@ -8,6 +9,8 @@ pub struct PlayerName(pub String);
 
 pub struct PlayerInventory {
     pub current_crop_selection: Option<usize>,
+    pub current_tool: Option<Tool>,
+    pub current_tool_selection: Option<usize>,
 }
 
 pub struct Player;
@@ -41,6 +44,8 @@ impl Default for PlayerBundle {
             action: Action::default(),
             inventory: PlayerInventory {
                 current_crop_selection: None,
+                current_tool: None,
+                current_tool_selection: None,
             },
             sprite: SpriteSheetBundle::default(),
         };
