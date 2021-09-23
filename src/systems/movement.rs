@@ -1,6 +1,8 @@
 use bevy::{
-    prelude::{Mut, Query, QuerySet, Transform, Visible},
+    math::Vec3,
+    prelude::{Commands, Entity, Mut, Query, QuerySet, Res, SpriteSheetBundle, Transform, Visible},
     render::camera::Camera,
+    sprite::TextureAtlasSprite,
 };
 
 use crate::{
@@ -8,17 +10,25 @@ use crate::{
         camera::GameCamera,
         map::{BoundingBox, MapTile, WallTile},
         movement::Direction,
-        player::{Player, PlayerMovement},
+        player::{Player, PlayerInventory, PlayerMovement},
+        tool::ToolType,
     },
     configuration::map::TILE_SIZE,
+    sprites::Sprites,
 };
 
 pub fn player_movement(
-    mut query: Query<(&Player, &PlayerMovement, &mut Transform)>,
-    cell_query: Query<(&WallTile, &MapTile)>,
+    mut commands: Commands,
+    sprites: Res<Sprites>,
+    mut query: Query<(&Player, &PlayerMovement, &PlayerInventory, &mut Transform)>,
+    cell_query: Query<(&WallTile, &MapTile, Entity)>,
 ) {
-    let (_, movement, mut transform): (&Player, &PlayerMovement, Mut<'_, Transform>) =
-        query.single_mut().unwrap();
+    let (_, movement, inventory, mut transform): (
+        &Player,
+        &PlayerMovement,
+        &PlayerInventory,
+        Mut<'_, Transform>,
+    ) = query.single_mut().unwrap();
 
     let x = movement.speed.current.x + transform.translation.x;
     let y = movement.speed.current.y + transform.translation.y;
@@ -28,11 +38,36 @@ pub fn player_movement(
     let mut player_would_hit_wall: bool = false;
 
     for cell_data in cell_query.iter() {
-        let (_, cell): (&WallTile, &MapTile) = cell_data;
+        let (wall, cell, entity): (&WallTile, &MapTile, Entity) = cell_data;
 
         if cell.intersects_box(&bounding_box) {
-            player_would_hit_wall = true;
-            break;
+            if !wall.can_be_broken {
+                player_would_hit_wall = true;
+                break;
+            }
+
+            if inventory.current_tool.is_none() {
+                player_would_hit_wall = true;
+                break;
+            }
+
+            let tool = inventory.current_tool.clone().unwrap();
+            if tool.tool_type != ToolType::PickAxe {
+                player_would_hit_wall = true;
+                break;
+            }
+
+            commands.entity(entity).despawn();
+            commands.spawn_bundle(SpriteSheetBundle {
+                sprite: TextureAtlasSprite::new(sprites.broken_wall_index as u32),
+                texture_atlas: sprites.atlas_handle.clone(),
+                transform: Transform {
+                    translation: Vec3::new(x, y, 1.0),
+                    scale: crate::configuration::sprites::sprite_scale(),
+                    ..Default::default()
+                },
+                ..Default::default()
+            });
         }
     }
 
