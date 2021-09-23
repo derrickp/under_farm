@@ -6,7 +6,7 @@ mod systems;
 mod world;
 
 use bevy::{input::system::exit_on_esc_system, prelude::*};
-use configuration::crops::CropConfigurations;
+use configuration::{crops::CropConfigurations, tools::ToolConfigurations};
 use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState, GameState, InventoryState};
 use systems::{
@@ -37,6 +37,7 @@ fn main() {
         .init_resource::<GameState>()
         .init_resource::<InventoryState>()
         .init_resource::<CropConfigurations>()
+        .init_resource::<ToolConfigurations>()
         .init_resource::<MovementInputTimer>()
         .init_resource::<WorldTickTimer>()
         .add_state(AppState::Startup)
