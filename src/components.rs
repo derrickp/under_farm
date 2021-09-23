@@ -5,3 +5,4 @@ pub mod inventory;
 pub mod map;
 pub mod movement;
 pub mod player;
+pub mod tool;
