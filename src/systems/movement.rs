@@ -57,6 +57,7 @@ pub fn player_movement(
                 break;
             }
 
+            player_would_hit_wall = true;
             commands.entity(entity).despawn();
             commands.spawn_bundle(SpriteSheetBundle {
                 sprite: TextureAtlasSprite::new(sprites.broken_wall_index as u32),
