@@ -6,14 +6,20 @@ use bevy::{
     sprite::TextureAtlasSprite,
 };
 use rand::Rng;
-use tdlg::{cell::{Cell, CellLayerType}, grid::Grid};
+use tdlg::{
+    cell::{Cell, CellLayerType},
+    grid::Grid,
+};
 
 use crate::{
     components::{
         map::{GroundTile, GroundTileBundle, MapTile, WallTile, WallTileBundle},
         player::PlayerBundle,
     },
-    configuration::map::{world_coordinate_from_grid, TILE_SIZE},
+    configuration::{
+        map::{world_coordinate_from_grid, TILE_SIZE},
+        sprites::player_sprite_scale,
+    },
     sprites::Sprites,
     states::GameState,
 };
@@ -39,7 +45,8 @@ pub fn spawn_opening_bundles(
         for layer in cell.layers.iter() {
             match layer.clone() {
                 CellLayerType::Floor => {
-                    let floor_bundle = get_floor_component(&sprites, default_dirt_floor_index, &cell);
+                    let floor_bundle =
+                        get_floor_component(&sprites, default_dirt_floor_index, &cell);
                     commands.spawn_bundle(floor_bundle);
                 }
                 CellLayerType::RoomWall => {
@@ -228,7 +235,7 @@ pub fn spawn_opening_bundles(
             texture_atlas: sprites.atlas_handle.clone(),
             transform: Transform {
                 translation: Vec3::new(coordinate.x, coordinate.y, 5.0),
-                scale: crate::configuration::sprites::sprite_scale(),
+                scale: player_sprite_scale(),
                 ..Default::default()
             },
             ..Default::default()
@@ -239,7 +246,11 @@ pub fn spawn_opening_bundles(
     game_state.initial_spawn_complete = true;
 }
 
-fn get_floor_component(sprites: &Sprites, default_dirt_floor_index: usize, cell: &Cell<i32>) -> GroundTileBundle {
+fn get_floor_component(
+    sprites: &Sprites,
+    default_dirt_floor_index: usize,
+    cell: &Cell<i32>,
+) -> GroundTileBundle {
     let mut rng = rand::thread_rng();
     let random_index: usize = rng.gen_range(0..sprites.dirt_floor_indexes.len());
     let dirt_floor_index = *sprites
