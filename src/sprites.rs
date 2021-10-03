@@ -13,6 +13,7 @@ pub struct Sprites {
     pub room_wall_index: usize,
     pub room_floor_index: usize,
     pub broken_wall_index: usize,
+    pub table_index: usize,
 }
 
 #[derive(Default)]

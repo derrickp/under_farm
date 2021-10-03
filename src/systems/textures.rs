@@ -66,6 +66,7 @@ pub fn load_sprites(
     let room_wall_handle = asset_server.get_handle("sprites/brick_wall.png");
     let room_floor_handle = asset_server.get_handle("sprites/sand_1.png");
     let broken_wall_handle = asset_server.get_handle("sprites/broken_wall.png");
+    let table_handle = asset_server.get_handle("sprites/table.png");
     sprites.player_sprite_index = texture_atlas.get_texture_index(&texture_handle).unwrap();
     sprites.outline_index = texture_atlas.get_texture_index(&outline_handle).unwrap();
     sprites.outer_wall_index = texture_atlas.get_texture_index(&outer_wall_handle).unwrap();
@@ -74,6 +75,7 @@ pub fn load_sprites(
     sprites.broken_wall_index = texture_atlas
         .get_texture_index(&broken_wall_handle)
         .unwrap();
+    sprites.table_index = texture_atlas.get_texture_index(&table_handle).unwrap();
 
     let atlas_handle = texture_atlases.add(texture_atlas);
     sprites.atlas_handle = atlas_handle;
