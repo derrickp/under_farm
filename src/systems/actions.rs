@@ -7,8 +7,8 @@ use bevy::{
 use crate::{
     components::{
         action::Action,
+        bounding_box::BoundingBox,
         crop::{Crop, CropBundle, CropName, CropStage, CropStages},
-        map::BoundingBox,
         player::{Player, PlayerInventory},
     },
     configuration::crops::CropConfigurations,
