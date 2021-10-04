@@ -13,9 +13,9 @@ use tdlg::{
 
 use crate::{
     components::{
+        body::Body,
         ground::{GroundTile, GroundTileBundle},
         player::PlayerBundle,
-        body::Body,
         structure::{Structure, StructureBundle},
     },
     configuration::{
@@ -84,16 +84,29 @@ pub fn spawn_opening_bundles(
                 }
                 CellLayerType::Table => {
                     let coordinate = world_coordinate_from_grid(&cell.coordinate);
-                    let cell_center = Vec3::new(coordinate.x, coordinate.y, 2.0);
-                    commands.spawn_bundle(SpriteSheetBundle {
-                        sprite: TextureAtlasSprite::new(sprites.table_index as u32),
-                        texture_atlas: sprites.atlas_handle.clone(),
-                        transform: Transform {
-                            translation: cell_center,
-                            scale: crate::configuration::sprites::sprite_scale(),
+                    let cell_center = Vec3::new(coordinate.x, coordinate.y, 4.0);
+                    commands.spawn_bundle(StructureBundle {
+                        tile_type: Structure::default(),
+                        collide: Body {
+                            cell_center: cell_center,
+                            tile_size: TILE_SIZE as f32,
+                            sprite: None,
+                            outline: None,
+                        },
+                        sprite: SpriteSheetBundle {
+                            sprite: TextureAtlasSprite::new(sprites.table_index as u32),
+                            texture_atlas: sprites.atlas_handle.clone(),
+                            visible: Visible {
+                                is_visible: false,
+                                is_transparent: true,
+                            },
+                            transform: Transform {
+                                translation: cell_center,
+                                scale: crate::configuration::sprites::sprite_scale(),
+                                ..Default::default()
+                            },
                             ..Default::default()
                         },
-                        ..Default::default()
                     });
                 }
                 _ => {}
@@ -146,7 +159,7 @@ fn get_outer_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBun
             texture_atlas: sprites.atlas_handle.clone(),
             visible: Visible {
                 is_visible: true,
-                is_transparent: false,
+                is_transparent: true,
             },
             ..Default::default()
         },
@@ -176,7 +189,7 @@ fn get_room_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBund
             texture_atlas: sprites.atlas_handle.clone(),
             visible: Visible {
                 is_visible: true,
-                is_transparent: false,
+                is_transparent: true,
             },
             ..Default::default()
         },
