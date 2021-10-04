@@ -6,6 +6,6 @@ pub mod ground;
 pub mod inventory;
 pub mod movement;
 pub mod player;
-pub mod structure;
+pub mod body;
 pub mod tool;
 pub mod wall;

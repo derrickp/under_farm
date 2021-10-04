@@ -1,6 +1,6 @@
 use bevy::prelude::{Bundle, SpriteSheetBundle};
 
-use super::structure::Structure;
+use super::body::Body;
 
 #[derive(Default)]
 pub struct WallTile {
@@ -10,7 +10,7 @@ pub struct WallTile {
 #[derive(Bundle)]
 pub struct WallTileBundle {
     pub cell_type: WallTile,
-    pub collide: Structure,
+    pub collide: Body,
 
     #[bundle]
     pub sprite: SpriteSheetBundle,

@@ -15,7 +15,7 @@ use crate::{
     components::{
         ground::{GroundTile, GroundTileBundle},
         player::PlayerBundle,
-        structure::Structure,
+        body::Body,
         wall::{WallTile, WallTileBundle},
     },
     configuration::{
@@ -130,7 +130,7 @@ fn get_outer_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> WallTileBund
     let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
     WallTileBundle {
         cell_type: WallTile::default(),
-        collide: Structure {
+        collide: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,
             contains_tile: false,
@@ -161,7 +161,7 @@ fn get_room_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> WallTileBundl
         cell_type: WallTile {
             can_be_broken: true,
         },
-        collide: Structure {
+        collide: Body {
             cell_center: wall_cell_center,
             tile_size: TILE_SIZE as f32,
             contains_tile: false,
@@ -190,7 +190,7 @@ fn get_room_floor_component(sprites: &Sprites, cell: &Cell<i32>) -> GroundTileBu
     let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
     GroundTileBundle {
         cell_type: GroundTile,
-        collide: Structure {
+        collide: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,
             contains_tile: false,
@@ -229,7 +229,7 @@ fn get_floor_component(
     let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
     GroundTileBundle {
         cell_type: GroundTile,
-        collide: Structure {
+        collide: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,
             contains_tile: false,

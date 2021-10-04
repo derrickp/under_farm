@@ -11,7 +11,7 @@ use crate::{
         camera::GameCamera,
         movement::Direction,
         player::{Player, PlayerInventory, PlayerMovement},
-        structure::Structure,
+        body::Body,
         tool::ToolType,
         wall::WallTile,
     },
@@ -23,7 +23,7 @@ pub fn player_movement(
     mut commands: Commands,
     sprites: Res<Sprites>,
     mut query: Query<(&Player, &PlayerMovement, &PlayerInventory, &mut Transform)>,
-    cell_query: Query<(&WallTile, &Structure, Entity)>,
+    cell_query: Query<(&WallTile, &Body, Entity)>,
 ) {
     let (_, movement, inventory, mut transform): (
         &Player,
@@ -40,7 +40,7 @@ pub fn player_movement(
     let mut player_would_hit_wall: bool = false;
 
     for cell_data in cell_query.iter() {
-        let (wall, collide, entity): (&WallTile, &Structure, Entity) = cell_data;
+        let (wall, collide, entity): (&WallTile, &Body, Entity) = cell_data;
 
         if collide.intersects_box(&bounding_box) {
             if !wall.can_be_broken {
@@ -107,7 +107,7 @@ pub fn camera_movement(
 
 pub fn check_floor_collision(
     player_query: Query<(&Player, &Transform, &PlayerMovement)>,
-    mut ground_cell_query: Query<(&Structure, &mut Visible)>,
+    mut ground_cell_query: Query<(&Body, &mut Visible)>,
 ) {
     let (_, transform, movement): (&Player, &Transform, &PlayerMovement) =
         player_query.single().unwrap();
@@ -119,7 +119,7 @@ pub fn check_floor_collision(
     );
 
     for cell_data in ground_cell_query.iter_mut() {
-        let (grid_cell, mut visible): (&Structure, Mut<'_, Visible>) = cell_data;
+        let (grid_cell, mut visible): (&Body, Mut<'_, Visible>) = cell_data;
 
         if bounding_boxes
             .iter()
