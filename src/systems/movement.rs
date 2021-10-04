@@ -7,13 +7,13 @@ use bevy::{
 
 use crate::{
     components::{
+        body::Body,
         bounding_box::BoundingBox,
         camera::GameCamera,
         movement::Direction,
         player::{Player, PlayerInventory, PlayerMovement},
-        body::Body,
+        structure::Structure,
         tool::ToolType,
-        wall::WallTile,
     },
     configuration::map::TILE_SIZE,
     sprites::Sprites,
@@ -23,7 +23,7 @@ pub fn player_movement(
     mut commands: Commands,
     sprites: Res<Sprites>,
     mut query: Query<(&Player, &PlayerMovement, &PlayerInventory, &mut Transform)>,
-    cell_query: Query<(&WallTile, &Body, Entity)>,
+    cell_query: Query<(&Structure, &Body, Entity)>,
 ) {
     let (_, movement, inventory, mut transform): (
         &Player,
@@ -40,7 +40,7 @@ pub fn player_movement(
     let mut player_would_hit_wall: bool = false;
 
     for cell_data in cell_query.iter() {
-        let (wall, collide, entity): (&WallTile, &Body, Entity) = cell_data;
+        let (wall, collide, entity): (&Structure, &Body, Entity) = cell_data;
 
         if collide.intersects_box(&bounding_box) {
             if !wall.can_be_broken {

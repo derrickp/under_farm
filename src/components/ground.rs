@@ -6,7 +6,7 @@ pub struct GroundTile;
 
 #[derive(Bundle)]
 pub struct GroundTileBundle {
-    pub cell_type: GroundTile,
+    pub tile_type: GroundTile,
     pub collide: Body,
 
     #[bundle]

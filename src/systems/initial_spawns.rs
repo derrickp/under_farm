@@ -16,7 +16,7 @@ use crate::{
         ground::{GroundTile, GroundTileBundle},
         player::PlayerBundle,
         body::Body,
-        wall::{WallTile, WallTileBundle},
+        structure::{Structure, StructureBundle},
     },
     configuration::{
         map::{world_coordinate_from_grid, TILE_SIZE},
@@ -125,11 +125,11 @@ fn get_player_component(sprites: &Sprites, grid: &Grid<i32>) -> PlayerBundle {
     }
 }
 
-fn get_outer_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> WallTileBundle {
+fn get_outer_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBundle {
     let coordinate = world_coordinate_from_grid(&cell.coordinate);
     let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
-    WallTileBundle {
-        cell_type: WallTile::default(),
+    StructureBundle {
+        tile_type: Structure::default(),
         collide: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,
@@ -153,11 +153,11 @@ fn get_outer_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> WallTileBund
     }
 }
 
-fn get_room_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> WallTileBundle {
+fn get_room_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBundle {
     let coordinate = world_coordinate_from_grid(&cell.coordinate);
     let wall_cell_center = Vec3::new(coordinate.x, coordinate.y, 1.0);
-    WallTileBundle {
-        cell_type: WallTile {
+    StructureBundle {
+        tile_type: Structure {
             can_be_broken: true,
         },
         collide: Body {
@@ -187,7 +187,7 @@ fn get_room_floor_component(sprites: &Sprites, cell: &Cell<i32>) -> GroundTileBu
     let coordinate = world_coordinate_from_grid(&cell.coordinate);
     let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
     GroundTileBundle {
-        cell_type: GroundTile,
+        tile_type: GroundTile,
         collide: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,
@@ -225,7 +225,7 @@ fn get_floor_component(
     let coordinate = world_coordinate_from_grid(&cell.coordinate);
     let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
     GroundTileBundle {
-        cell_type: GroundTile,
+        tile_type: GroundTile,
         collide: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,

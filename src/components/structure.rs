@@ -3,13 +3,13 @@ use bevy::prelude::{Bundle, SpriteSheetBundle};
 use super::body::Body;
 
 #[derive(Default)]
-pub struct WallTile {
+pub struct Structure {
     pub can_be_broken: bool,
 }
 
 #[derive(Bundle)]
-pub struct WallTileBundle {
-    pub cell_type: WallTile,
+pub struct StructureBundle {
+    pub tile_type: Structure,
     pub collide: Body,
 
     #[bundle]
