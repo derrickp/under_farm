@@ -133,7 +133,6 @@ fn get_outer_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> WallTileBund
         collide: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,
-            contains_tile: false,
             sprite: None,
             outline: None,
         },
@@ -164,7 +163,6 @@ fn get_room_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> WallTileBundl
         collide: Body {
             cell_center: wall_cell_center,
             tile_size: TILE_SIZE as f32,
-            contains_tile: false,
             sprite: None,
             outline: None,
         },
@@ -193,7 +191,6 @@ fn get_room_floor_component(sprites: &Sprites, cell: &Cell<i32>) -> GroundTileBu
         collide: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,
-            contains_tile: false,
             sprite: None,
             outline: None,
         },
@@ -232,7 +229,6 @@ fn get_floor_component(
         collide: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,
-            contains_tile: false,
             sprite: None,
             outline: None,
         },
