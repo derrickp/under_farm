@@ -12,7 +12,7 @@ use crate::{
         camera::GameCamera,
         movement::Direction,
         player::{Player, PlayerInventory, PlayerMovement},
-        structure::Structure,
+        structure::{Structure, StructureBundle},
         tool::ToolType,
     },
     configuration::map::TILE_SIZE,
@@ -40,10 +40,14 @@ pub fn player_movement(
     let mut player_would_hit_wall: bool = false;
 
     for cell_data in cell_query.iter() {
-        let (wall, collide, entity): (&Structure, &Body, Entity) = cell_data;
+        let (wall, body, entity): (&Structure, &Body, Entity) = cell_data;
 
-        if collide.intersects_box(&bounding_box) {
-            if !wall.can_be_broken {
+        if body.intersects_box(&bounding_box) {
+            if wall.can_be_walked_on {
+                continue;
+            }
+
+            if !wall.can_be_broken && !wall.can_be_walked_on {
                 player_would_hit_wall = true;
                 break;
             }
@@ -61,16 +65,7 @@ pub fn player_movement(
 
             player_would_hit_wall = true;
             commands.entity(entity).despawn();
-            commands.spawn_bundle(SpriteSheetBundle {
-                sprite: TextureAtlasSprite::new(sprites.broken_wall_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                transform: Transform {
-                    translation: Vec3::new(x, y, 1.0),
-                    scale: crate::configuration::sprites::sprite_scale(),
-                    ..Default::default()
-                },
-                ..Default::default()
-            });
+            commands.spawn_bundle(rubble(&sprites, x, y));
         }
     }
 
@@ -167,4 +162,30 @@ fn build_visibility_box(x: f32, y: f32, direction: &Direction) -> Vec<BoundingBo
     visibility_boxes.push(player_box);
 
     visibility_boxes
+}
+
+fn rubble(sprites: &Sprites, x: f32, y: f32) -> StructureBundle {
+    StructureBundle {
+        tile_type: Structure {
+            can_be_broken: false,
+            can_be_walked_on: true,
+            ..Default::default()
+        },
+        body: Body {
+            cell_center: Vec3::new(x, y, 1.0),
+            tile_size: TILE_SIZE as f32,
+            sprite: None,
+            outline: None,
+        },
+        sprite: SpriteSheetBundle {
+            sprite: TextureAtlasSprite::new(sprites.broken_wall_index as u32),
+            texture_atlas: sprites.atlas_handle.clone(),
+            transform: Transform {
+                translation: Vec3::new(x, y, 1.0),
+                scale: crate::configuration::sprites::sprite_scale(),
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+    }
 }

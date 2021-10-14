@@ -69,45 +69,12 @@ pub fn spawn_opening_bundles(
                     commands.spawn_bundle(wall_bundle);
                 }
                 CellLayerType::Rubble => {
-                    let coordinate = world_coordinate_from_grid(&cell.coordinate);
-                    let cell_center = Vec3::new(coordinate.x, coordinate.y, 2.0);
-                    commands.spawn_bundle(SpriteSheetBundle {
-                        sprite: TextureAtlasSprite::new(sprites.broken_wall_index as u32),
-                        texture_atlas: sprites.atlas_handle.clone(),
-                        transform: Transform {
-                            translation: cell_center,
-                            scale: crate::configuration::sprites::sprite_scale(),
-                            ..Default::default()
-                        },
-                        ..Default::default()
-                    });
+                    let rubble = get_rubble_component(&sprites, cell);
+                    commands.spawn_bundle(rubble);
                 }
                 CellLayerType::Table => {
-                    let coordinate = world_coordinate_from_grid(&cell.coordinate);
-                    let cell_center = Vec3::new(coordinate.x, coordinate.y, 4.0);
-                    commands.spawn_bundle(StructureBundle {
-                        tile_type: Structure::default(),
-                        collide: Body {
-                            cell_center: cell_center,
-                            tile_size: TILE_SIZE as f32,
-                            sprite: None,
-                            outline: None,
-                        },
-                        sprite: SpriteSheetBundle {
-                            sprite: TextureAtlasSprite::new(sprites.table_index as u32),
-                            texture_atlas: sprites.atlas_handle.clone(),
-                            visible: Visible {
-                                is_visible: false,
-                                is_transparent: true,
-                            },
-                            transform: Transform {
-                                translation: cell_center,
-                                scale: crate::configuration::sprites::sprite_scale(),
-                                ..Default::default()
-                            },
-                            ..Default::default()
-                        },
-                    });
+                    let table = get_table_component(&sprites, cell);
+                    commands.spawn_bundle(table);
                 }
                 _ => {}
             }
@@ -118,6 +85,62 @@ pub fn spawn_opening_bundles(
     commands.spawn_bundle(player_bundle);
 
     game_state.initial_spawn_complete = true;
+}
+
+fn get_rubble_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBundle {
+    let coordinate = world_coordinate_from_grid(&cell.coordinate);
+    let cell_center = Vec3::new(coordinate.x, coordinate.y, 4.0);
+    StructureBundle {
+        tile_type: Structure {
+            can_be_broken: false,
+            can_be_walked_on: true,
+            ..Default::default()
+        },
+        body: Body {
+            cell_center,
+            tile_size: TILE_SIZE as f32,
+            sprite: None,
+            outline: None,
+        },
+        sprite: SpriteSheetBundle {
+            sprite: TextureAtlasSprite::new(sprites.broken_wall_index as u32),
+            texture_atlas: sprites.atlas_handle.clone(),
+            transform: Transform {
+                translation: cell_center,
+                scale: crate::configuration::sprites::sprite_scale(),
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+    }
+}
+
+fn get_table_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBundle {
+    let coordinate = world_coordinate_from_grid(&cell.coordinate);
+    let cell_center = Vec3::new(coordinate.x, coordinate.y, 4.0);
+    StructureBundle {
+        tile_type: Structure::default(),
+        body: Body {
+            cell_center,
+            tile_size: TILE_SIZE as f32,
+            sprite: None,
+            outline: None,
+        },
+        sprite: SpriteSheetBundle {
+            sprite: TextureAtlasSprite::new(sprites.table_index as u32),
+            texture_atlas: sprites.atlas_handle.clone(),
+            visible: Visible {
+                is_visible: false,
+                is_transparent: true,
+            },
+            transform: Transform {
+                translation: cell_center,
+                scale: crate::configuration::sprites::sprite_scale(),
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+    }
 }
 
 fn get_player_component(sprites: &Sprites, grid: &Grid<i32>) -> PlayerBundle {
@@ -143,7 +166,7 @@ fn get_outer_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBun
     let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
     StructureBundle {
         tile_type: Structure::default(),
-        collide: Body {
+        body: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,
             sprite: None,
@@ -172,8 +195,10 @@ fn get_room_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBund
     StructureBundle {
         tile_type: Structure {
             can_be_broken: true,
+            can_be_walked_on: false,
+            ..Default::default()
         },
-        collide: Body {
+        body: Body {
             cell_center: wall_cell_center,
             tile_size: TILE_SIZE as f32,
             sprite: None,
