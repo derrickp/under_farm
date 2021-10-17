@@ -10,7 +10,7 @@ use configuration::{crops::CropConfigurations, tools::ToolConfigurations};
 use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState, GameState, InventoryState};
 use systems::{
-    actions::crop_actions,
+    actions::{crop_actions, hit_actions, reset_hit_actions},
     cameras::{add_gameplay_camera, add_ui_camera, remove_gameplay_camera},
     crops::grow_crops_system,
     initial_spawns::spawn_opening_bundles,
@@ -84,6 +84,13 @@ fn main() {
                         .label("floor_collisions")
                         .after("player_movement"),
                 )
+                .with_system(
+                    hit_actions
+                        .system()
+                        .label("hit_actions")
+                        .after("player_movement"),
+                )
+                .with_system(reset_hit_actions.system().after("hit_actions"))
                 .with_system(
                     crop_actions
                         .system()

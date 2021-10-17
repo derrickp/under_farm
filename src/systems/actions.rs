@@ -1,6 +1,6 @@
 use bevy::{
     math::{Vec2, Vec3},
-    prelude::{Commands, Query, Res, SpriteSheetBundle, Transform},
+    prelude::{Commands, Mut, Query, Res, SpriteSheetBundle, Transform},
     sprite::TextureAtlasSprite,
 };
 
@@ -10,10 +10,72 @@ use crate::{
         bounding_box::BoundingBox,
         crop::{Crop, CropBundle, CropName, CropStage, CropStages},
         player::{Player, PlayerInventory},
+        structure::{Structure, StructureType},
     },
     configuration::crops::CropConfigurations,
     sprites::Sprites,
 };
+
+pub fn hit_actions(
+    sprites: Res<Sprites>,
+    player_query: Query<(&Player, &CurrentAction)>,
+    mut structure_query: Query<(&mut Structure, &mut TextureAtlasSprite)>,
+) {
+    let (_, current_action): (&Player, &CurrentAction) = player_query.single().unwrap();
+    if let Some(hit) = current_action.hit {
+        if let Ok(entity_data) = structure_query.get_mut(hit.target) {
+            let (mut structure, mut sprite): (Mut<'_, Structure>, Mut<'_, TextureAtlasSprite>) =
+                entity_data;
+
+            structure.damage(hit.damage);
+
+            if let Some(sprite_index) = sprite_index_for_health(
+                structure.health.current_health,
+                &structure.structure_type,
+                &sprites,
+            ) {
+                sprite.index = sprite_index as u32;
+            }
+
+            if structure.is_destroyed() {
+                structure.can_be_walked_on = true;
+            }
+        }
+    }
+}
+
+pub fn reset_hit_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
+    let (_, mut current_action): (&Player, Mut<'_, CurrentAction>) = query.single_mut().unwrap();
+    current_action.hit = None;
+}
+
+fn sprite_index_for_health(
+    health: i32,
+    structure_type: &StructureType,
+    sprites: &Sprites,
+) -> Option<usize> {
+    match structure_type {
+        StructureType::Table => {
+            if health >= 1 {
+                Some(sprites.table_index)
+            } else {
+                Some(sprites.broken_small_table)
+            }
+        }
+        StructureType::Wall => {
+            if health >= 3 {
+                Some(sprites.room_wall_index)
+            } else if health == 2 {
+                Some(sprites.brick_wall_cracked_index)
+            } else if health == 1 {
+                Some(sprites.brick_wall_really_cracked_index)
+            } else {
+                Some(sprites.broken_wall_index)
+            }
+        }
+        _ => None,
+    }
+}
 
 pub fn crop_actions(
     commands: Commands,
