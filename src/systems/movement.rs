@@ -1,35 +1,37 @@
 use bevy::{
-    math::Vec3,
-    prelude::{Commands, Entity, Mut, Query, QuerySet, Res, SpriteSheetBundle, Transform, Visible},
+    prelude::{Entity, Mut, Query, QuerySet, Transform, Visible},
     render::camera::Camera,
-    sprite::TextureAtlasSprite,
 };
 
 use crate::{
     components::{
+        action::CurrentAction,
         body::Body,
         bounding_box::BoundingBox,
         camera::GameCamera,
         movement::Direction,
         player::{Player, PlayerInventory, PlayerMovement},
-        structure::{Structure, StructureBundle},
-        tool::ToolType,
+        structure::Structure,
     },
     configuration::map::TILE_SIZE,
-    sprites::Sprites,
 };
 
 pub fn player_movement(
-    mut commands: Commands,
-    sprites: Res<Sprites>,
-    mut query: Query<(&Player, &PlayerMovement, &PlayerInventory, &mut Transform)>,
+    mut query: Query<(
+        &Player,
+        &PlayerMovement,
+        &PlayerInventory,
+        &mut Transform,
+        &mut CurrentAction,
+    )>,
     cell_query: Query<(&Structure, &Body, Entity)>,
 ) {
-    let (_, movement, inventory, mut transform): (
+    let (_, movement, inventory, mut transform, mut action): (
         &Player,
         &PlayerMovement,
         &PlayerInventory,
         Mut<'_, Transform>,
+        Mut<'_, CurrentAction>,
     ) = query.single_mut().unwrap();
 
     let x = movement.speed.current.x + transform.translation.x;
@@ -58,14 +60,13 @@ pub fn player_movement(
             }
 
             let tool = inventory.current_tool.clone().unwrap();
-            if tool.tool_type != ToolType::PickAxe {
+
+            if let Some(damage) = tool.damage {
+                let damage_done = damage.damage_dealt();
+                action.hit_entity(damage_done, entity);
                 player_would_hit_wall = true;
                 break;
             }
-
-            player_would_hit_wall = true;
-            commands.entity(entity).despawn();
-            commands.spawn_bundle(rubble(&sprites, x, y));
         }
     }
 
@@ -162,30 +163,4 @@ fn build_visibility_box(x: f32, y: f32, direction: &Direction) -> Vec<BoundingBo
     visibility_boxes.push(player_box);
 
     visibility_boxes
-}
-
-fn rubble(sprites: &Sprites, x: f32, y: f32) -> StructureBundle {
-    StructureBundle {
-        tile_type: Structure {
-            can_be_broken: false,
-            can_be_walked_on: true,
-            ..Default::default()
-        },
-        body: Body {
-            cell_center: Vec3::new(x, y, 1.0),
-            tile_size: TILE_SIZE as f32,
-            sprite: None,
-            outline: None,
-        },
-        sprite: SpriteSheetBundle {
-            sprite: TextureAtlasSprite::new(sprites.broken_wall_index as u32),
-            texture_atlas: sprites.atlas_handle.clone(),
-            transform: Transform {
-                translation: Vec3::new(x, y, 1.0),
-                scale: crate::configuration::sprites::sprite_scale(),
-                ..Default::default()
-            },
-            ..Default::default()
-        },
-    }
 }
