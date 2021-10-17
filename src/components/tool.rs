@@ -1,3 +1,5 @@
+use super::health::Damage;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ToolType {
     PickAxe,
@@ -13,4 +15,5 @@ pub struct ToolName(pub String);
 pub struct Tool {
     pub name: ToolName,
     pub tool_type: ToolType,
+    pub damage: Option<Damage>,
 }

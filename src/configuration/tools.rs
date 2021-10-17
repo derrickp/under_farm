@@ -1,35 +1,49 @@
-use crate::components::tool::{Tool, ToolName, ToolType};
+use crate::components::{
+    health::Damage,
+    tool::{Tool, ToolName, ToolType},
+};
 
 pub struct ToolConfiguration {
     pub name: &'static str,
     pub tool_type: ToolType,
+    pub max_damage: i32,
+    pub min_damage: i32,
 }
 
 impl ToolConfiguration {
-    fn build(name: &'static str, tool_type: ToolType) -> Self {
-        Self { name, tool_type }
+    fn build(name: &'static str, tool_type: ToolType, max_damage: i32, min_damage: i32) -> Self {
+        Self {
+            name,
+            tool_type,
+            max_damage,
+            min_damage,
+        }
     }
 
     fn pick_axe(name: &'static str) -> Self {
-        Self::build(name, ToolType::PickAxe)
+        Self::build(name, ToolType::PickAxe, 1, 1)
     }
 
     fn shovel(name: &'static str) -> Self {
-        Self::build(name, ToolType::Shovel)
+        Self::build(name, ToolType::Shovel, 1, 1)
     }
 
     fn hammer(name: &'static str) -> Self {
-        Self::build(name, ToolType::Hammer)
+        Self::build(name, ToolType::Hammer, 1, 1)
     }
 
     fn hoe(name: &'static str) -> Self {
-        Self::build(name, ToolType::Hoe)
+        Self::build(name, ToolType::Hoe, 1, 1)
     }
 
     pub fn to_tool(&self) -> Tool {
         Tool {
             name: ToolName(self.name.to_string()),
             tool_type: self.tool_type,
+            damage: Some(Damage {
+                max_damage: self.max_damage,
+                min_damage: self.min_damage,
+            }),
         }
     }
 }
