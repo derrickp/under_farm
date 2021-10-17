@@ -15,8 +15,9 @@ use crate::{
     components::{
         body::Body,
         ground::{GroundTile, GroundTileBundle},
+        health::Health,
         player::PlayerBundle,
-        structure::{Structure, StructureBundle},
+        structure::{Structure, StructureBundle, StructureType},
     },
     configuration::{
         map::{world_coordinate_from_grid, TILE_SIZE},
@@ -119,7 +120,12 @@ fn get_table_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBundle {
     let coordinate = world_coordinate_from_grid(&cell.coordinate);
     let cell_center = Vec3::new(coordinate.x, coordinate.y, 4.0);
     StructureBundle {
-        tile_type: Structure::default(),
+        tile_type: Structure {
+            health: Health::same_health(2),
+            structure_type: StructureType::Table,
+            can_be_broken: true,
+            ..Default::default()
+        },
         body: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,
@@ -196,7 +202,8 @@ fn get_room_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBund
         tile_type: Structure {
             can_be_broken: true,
             can_be_walked_on: false,
-            ..Default::default()
+            health: Health::same_health(3),
+            structure_type: StructureType::Wall,
         },
         body: Body {
             cell_center: wall_cell_center,

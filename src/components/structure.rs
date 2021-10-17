@@ -1,17 +1,35 @@
 use bevy::prelude::{Bundle, SpriteSheetBundle};
 
-use super::body::Body;
+use super::{body::Body, health::Health};
 
 #[derive(Default)]
 pub struct Structure {
     pub can_be_broken: bool,
     pub can_be_walked_on: bool,
-    pub current_damage: usize,
-    pub structure_damage_sprites: Vec<StructureSprite>,
+    pub health: Health,
+    pub structure_type: StructureType,
 }
 
-pub struct StructureSprite {
-    pub texture_index: usize,
+pub enum StructureType {
+    Table,
+    Wall,
+    Unknown,
+}
+
+impl Default for StructureType {
+    fn default() -> Self {
+        Self::Unknown
+    }
+}
+
+impl Structure {
+    pub fn damage(&mut self, damage: i32) {
+        self.health.current_health -= damage;
+    }
+
+    pub fn is_destroyed(&self) -> bool {
+        self.health.has_no_health()
+    }
 }
 
 #[derive(Bundle)]
