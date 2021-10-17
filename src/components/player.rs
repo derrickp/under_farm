@@ -1,5 +1,5 @@
 use super::{
-    action::Action,
+    action::CurrentAction,
     movement::{Direction, Speed},
     tool::Tool,
 };
@@ -25,7 +25,7 @@ pub struct PlayerBundle {
     pub name: PlayerName,
     pub player_movement: PlayerMovement,
     pub player: Player,
-    pub action: Action,
+    pub action: CurrentAction,
     pub inventory: PlayerInventory,
 
     #[bundle]
@@ -41,7 +41,7 @@ impl Default for PlayerBundle {
                 speed: Speed::default(),
             },
             player: Player,
-            action: Action::default(),
+            action: CurrentAction::default(),
             inventory: PlayerInventory {
                 current_crop_selection: None,
                 current_tool: None,

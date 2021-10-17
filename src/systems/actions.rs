@@ -6,7 +6,7 @@ use bevy::{
 
 use crate::{
     components::{
-        action::Action,
+        action::CurrentAction,
         bounding_box::BoundingBox,
         crop::{Crop, CropBundle, CropName, CropStage, CropStages},
         player::{Player, PlayerInventory},
@@ -19,10 +19,10 @@ pub fn crop_actions(
     commands: Commands,
     crop_configurations: Res<CropConfigurations>,
     sprites: Res<Sprites>,
-    query: Query<(&Player, &Action, &Transform, &PlayerInventory)>,
+    query: Query<(&Player, &CurrentAction, &Transform, &PlayerInventory)>,
     crop_query: Query<(&Crop, &Transform)>,
 ) {
-    let (_, action, transform, inventory): (&Player, &Action, &Transform, &PlayerInventory) =
+    let (_, action, transform, inventory): (&Player, &CurrentAction, &Transform, &PlayerInventory) =
         query.single().unwrap();
     let player_bounds = BoundingBox::square(
         transform.translation.x.floor(),

@@ -8,7 +8,7 @@ use bevy::{
 
 use crate::{
     components::{
-        action::Action,
+        action::CurrentAction,
         camera::GameCamera,
         movement::Direction,
         player::{Player, PlayerMovement},
@@ -94,9 +94,9 @@ pub fn movement_input_system(
 
 pub fn action_input_system(
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&Player, &mut Action)>,
+    mut query: Query<(&Player, &mut CurrentAction)>,
 ) {
-    let (_, mut action): (&Player, Mut<'_, Action>) = query.single_mut().unwrap();
+    let (_, mut action): (&Player, Mut<'_, CurrentAction>) = query.single_mut().unwrap();
 
     if action.interact_pressed {
         action.interact_pressed = false;
