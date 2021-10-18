@@ -92,7 +92,7 @@ fn get_rubble_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBundle 
     let coordinate = world_coordinate_from_grid(&cell.coordinate);
     let cell_center = Vec3::new(coordinate.x, coordinate.y, 4.0);
     StructureBundle {
-        tile_type: Structure {
+        structure: Structure {
             can_be_broken: false,
             can_be_walked_on: true,
             ..Default::default()
@@ -120,7 +120,7 @@ fn get_table_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBundle {
     let coordinate = world_coordinate_from_grid(&cell.coordinate);
     let cell_center = Vec3::new(coordinate.x, coordinate.y, 4.0);
     StructureBundle {
-        tile_type: Structure {
+        structure: Structure {
             health: Health::same_health(2),
             structure_type: StructureType::Table,
             can_be_broken: true,
@@ -171,7 +171,7 @@ fn get_outer_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBun
     let coordinate = world_coordinate_from_grid(&cell.coordinate);
     let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
     StructureBundle {
-        tile_type: Structure::default(),
+        structure: Structure::default(),
         body: Body {
             cell_center,
             tile_size: TILE_SIZE as f32,
@@ -199,7 +199,7 @@ fn get_room_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBund
     let coordinate = world_coordinate_from_grid(&cell.coordinate);
     let wall_cell_center = Vec3::new(coordinate.x, coordinate.y, 1.0);
     StructureBundle {
-        tile_type: Structure {
+        structure: Structure {
             can_be_broken: true,
             can_be_walked_on: false,
             health: Health::same_health(3),

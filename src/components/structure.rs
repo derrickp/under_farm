@@ -34,7 +34,7 @@ impl Structure {
 
 #[derive(Bundle)]
 pub struct StructureBundle {
-    pub tile_type: Structure,
+    pub structure: Structure,
     pub body: Body,
 
     #[bundle]
