@@ -1,5 +1,5 @@
 use crate::components::{
-    health::Damage,
+    damage::Damage,
     tool::{Tool, ToolName, ToolType},
 };
 

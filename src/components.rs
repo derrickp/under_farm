@@ -3,6 +3,7 @@ pub mod body;
 pub mod bounding_box;
 pub mod camera;
 pub mod crop;
+pub mod damage;
 pub mod ground;
 pub mod health;
 pub mod inventory;

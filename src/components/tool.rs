@@ -1,4 +1,4 @@
-use super::health::Damage;
+use super::damage::Damage;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ToolType {
