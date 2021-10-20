@@ -110,7 +110,7 @@ fn spawn_crop(
     commands.spawn_bundle(CropBundle {
         sprite: SpriteSheetBundle {
             transform: Transform {
-                translation: Vec3::new(position.x, position.y, 2.0),
+                translation: Vec3::new(position.x, position.y, 3.0),
                 scale: crate::configuration::sprites::sprite_scale(),
                 ..Default::default()
             },
