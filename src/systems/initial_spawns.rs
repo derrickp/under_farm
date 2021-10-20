@@ -15,7 +15,7 @@ use crate::{
     components::{
         body::Body,
         ground::{GroundTile, GroundTileBundle},
-        health::Health,
+        health::{Health, HealthTextureMap},
         player::PlayerBundle,
         structure::{Structure, StructureBundle, StructureType},
     },
@@ -124,6 +124,18 @@ fn get_table_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBundle {
             health: Health::same_health(2),
             structure_type: StructureType::Table,
             can_be_broken: true,
+            health_textures: vec![
+                HealthTextureMap {
+                    min_health: -99,
+                    max_health: 0,
+                    texture_index: sprites.broken_small_table,
+                },
+                HealthTextureMap {
+                    min_health: 1,
+                    max_health: 3,
+                    texture_index: sprites.table_index,
+                },
+            ],
             ..Default::default()
         },
         body: Body {
@@ -204,6 +216,28 @@ fn get_room_wall_component(sprites: &Sprites, cell: &Cell<i32>) -> StructureBund
             can_be_walked_on: false,
             health: Health::same_health(3),
             structure_type: StructureType::Wall,
+            health_textures: vec![
+                HealthTextureMap {
+                    min_health: -99,
+                    max_health: 0,
+                    texture_index: sprites.broken_wall_index,
+                },
+                HealthTextureMap {
+                    min_health: 1,
+                    max_health: 1,
+                    texture_index: sprites.brick_wall_really_cracked_index,
+                },
+                HealthTextureMap {
+                    min_health: 2,
+                    max_health: 2,
+                    texture_index: sprites.brick_wall_cracked_index,
+                },
+                HealthTextureMap {
+                    min_health: 3,
+                    max_health: 3,
+                    texture_index: sprites.room_wall_index,
+                },
+            ],
         },
         body: Body {
             cell_center: wall_cell_center,
