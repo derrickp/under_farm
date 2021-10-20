@@ -16,3 +16,9 @@ impl Health {
         self.current_health == 0
     }
 }
+
+pub struct HealthTextureMap {
+    pub min_health: i32,
+    pub max_health: i32,
+    pub texture_index: usize,
+}
