@@ -10,14 +10,13 @@ use crate::{
         bounding_box::BoundingBox,
         crop::{Crop, CropBundle, CropName, CropStage, CropStages},
         player::{Player, PlayerInventory},
-        structure::{Structure, StructureType},
+        structure::Structure,
     },
     configuration::crops::CropConfigurations,
     sprites::Sprites,
 };
 
 pub fn hit_actions(
-    sprites: Res<Sprites>,
     player_query: Query<(&Player, &CurrentAction)>,
     mut structure_query: Query<(&mut Structure, &mut TextureAtlasSprite)>,
 ) {
@@ -29,11 +28,7 @@ pub fn hit_actions(
 
             structure.damage(hit.damage);
 
-            if let Some(sprite_index) = sprite_index_for_health(
-                structure.health.current_health,
-                &structure.structure_type,
-                &sprites,
-            ) {
+            if let Some(sprite_index) = structure.current_texture_index() {
                 sprite.index = sprite_index as u32;
             }
 
@@ -47,34 +42,6 @@ pub fn hit_actions(
 pub fn reset_hit_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
     let (_, mut current_action): (&Player, Mut<'_, CurrentAction>) = query.single_mut().unwrap();
     current_action.hit = None;
-}
-
-fn sprite_index_for_health(
-    health: i32,
-    structure_type: &StructureType,
-    sprites: &Sprites,
-) -> Option<usize> {
-    match structure_type {
-        StructureType::Table => {
-            if health >= 1 {
-                Some(sprites.table_index)
-            } else {
-                Some(sprites.broken_small_table)
-            }
-        }
-        StructureType::Wall => {
-            if health >= 3 {
-                Some(sprites.room_wall_index)
-            } else if health == 2 {
-                Some(sprites.brick_wall_cracked_index)
-            } else if health == 1 {
-                Some(sprites.brick_wall_really_cracked_index)
-            } else {
-                Some(sprites.broken_wall_index)
-            }
-        }
-        _ => None,
-    }
 }
 
 pub fn crop_actions(
