@@ -1,9 +1,15 @@
+use crate::{configuration::sprites::player_sprite_scale, sprites::Sprites};
+
 use super::{
     action::CurrentAction,
     movement::{Direction, Speed},
     tool::Tool,
 };
-use bevy::prelude::{Bundle, SpriteSheetBundle};
+use bevy::{
+    math::{Vec2, Vec3},
+    prelude::{Bundle, SpriteSheetBundle, Transform},
+    sprite::TextureAtlasSprite,
+};
 
 pub struct PlayerName(pub String);
 
@@ -48,6 +54,24 @@ impl Default for PlayerBundle {
                 current_tool_selection: None,
             },
             sprite: SpriteSheetBundle::default(),
+        }
+    }
+}
+
+impl PlayerBundle {
+    pub fn build_main_player(coordinate: Vec2, sprites: &Sprites) -> Self {
+        Self {
+            sprite: SpriteSheetBundle {
+                sprite: TextureAtlasSprite::new(sprites.player_sprite_index as u32),
+                texture_atlas: sprites.atlas_handle.clone(),
+                transform: Transform {
+                    translation: Vec3::new(coordinate.x, coordinate.y, 5.0),
+                    scale: player_sprite_scale(),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+            ..Default::default()
         }
     }
 }
