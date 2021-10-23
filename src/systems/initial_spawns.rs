@@ -13,7 +13,7 @@ pub fn spawn_opening_bundles(
     mut commands: Commands,
     sprites: Res<Sprites>,
     mut game_state: ResMut<GameState>,
-    mut grid: ResMut<Grid<i32>>,
+    mut grid: ResMut<Grid>,
 ) {
     if game_state.initial_spawn_complete {
         return;
