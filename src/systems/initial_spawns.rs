@@ -13,7 +13,7 @@ pub fn spawn_opening_bundles(
     mut commands: Commands,
     sprites: Res<Sprites>,
     mut game_state: ResMut<GameState>,
-    grid: Res<Grid<i32>>,
+    mut grid: ResMut<Grid<i32>>,
 ) {
     if game_state.initial_spawn_complete {
         return;
@@ -53,6 +53,7 @@ pub fn spawn_opening_bundles(
     }
 
     let player_spawn = grid.random_spawnable_coordinate().unwrap();
+    println!("{} {}", player_spawn.x, player_spawn.y);
     let coordinate = world_coordinate_from_grid(&player_spawn);
     commands.spawn_bundle(PlayerBundle::build_main_player(coordinate, &sprites));
 

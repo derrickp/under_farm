@@ -54,6 +54,7 @@ pub fn generate_world_grid(mut commands: Commands, mut load_state: ResMut<GameLo
                 fill_template_paths: Vec::new(),
             },
         ],
+        seed: "godzilla mothra",
     };
     let world = generator.generate_top_down_map().unwrap();
     println!("{}", world.room_count);
