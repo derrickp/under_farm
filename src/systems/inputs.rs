@@ -9,7 +9,7 @@ use bevy::{
 use crate::{
     components::{
         action::CurrentAction,
-        camera::GameCamera,
+        cameras::GameCamera,
         movement::Direction,
         player::{Player, PlayerMovement},
     },

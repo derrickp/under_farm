@@ -1,7 +1,7 @@
 pub mod action;
 pub mod body;
 pub mod bounding_box;
-pub mod camera;
+pub mod cameras;
 pub mod crop;
 pub mod damage;
 pub mod ground;

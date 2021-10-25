@@ -1,7 +1,7 @@
 use bevy::prelude::{Commands, OrthographicCameraBundle, ResMut, UiCameraBundle};
 
 use crate::{
-    components::camera::{GameCamera, UiCamera},
+    components::cameras::{GameCamera, UiCamera},
     states::GameState,
 };
 

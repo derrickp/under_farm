@@ -8,7 +8,7 @@ use crate::{
         action::CurrentAction,
         body::Body,
         bounding_box::BoundingBox,
-        camera::GameCamera,
+        cameras::GameCamera,
         movement::Direction,
         player::{Player, PlayerInventory, PlayerMovement},
         structure::Structure,
