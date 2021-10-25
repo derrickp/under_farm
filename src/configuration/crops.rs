@@ -1,3 +1,8 @@
+use crate::configuration::sprites::{
+    GIANT_MUSHROOM, GIANT_MUSHROOM_SPORES, KANE_SEEDS, KANE_STALKS, POTATOES, POTATO_SEEDS,
+    TURNIP_SEED, TURNIP_TOP,
+};
+
 use super::timers::WORLD_TICK_TIME;
 
 pub struct CropConfiguration {
@@ -34,14 +39,14 @@ fn kane_configuration() -> CropConfiguration {
     let stages = vec![
         CropStage {
             name: "Kane Seed",
-            sprite_location: "sprites/kane_seeds.png",
+            sprite_location: KANE_SEEDS,
             sprite_index: None,
             min_ticks_in_stage: TICKS_PER_SECOND * 15,
             chance_to_advance: 95,
         },
         CropStage {
             name: "Kane Stalk",
-            sprite_location: "sprites/kane_stalks.png",
+            sprite_location: KANE_STALKS,
             sprite_index: None,
             min_ticks_in_stage: TICKS_PER_SECOND * 30,
             chance_to_advance: 25,
@@ -55,14 +60,14 @@ fn mushroom_configuration() -> CropConfiguration {
     let stages = vec![
         CropStage {
             name: "Mushroom Spores",
-            sprite_location: "sprites/giant_mushroom_spores.png",
+            sprite_location: GIANT_MUSHROOM_SPORES,
             sprite_index: None,
             min_ticks_in_stage: TICKS_PER_SECOND * 10,
             chance_to_advance: 95,
         },
         CropStage {
             name: "Mushroom Plant",
-            sprite_location: "sprites/giant_mushroom.png",
+            sprite_location: GIANT_MUSHROOM,
             sprite_index: None,
             min_ticks_in_stage: TICKS_PER_SECOND * 30,
             chance_to_advance: 1,
@@ -75,14 +80,14 @@ fn potato_configuration() -> CropConfiguration {
     let stages = vec![
         CropStage {
             name: "Potato Seeds",
-            sprite_location: "sprites/potato_seeds.png",
+            sprite_location: POTATO_SEEDS,
             sprite_index: None,
             min_ticks_in_stage: TICKS_PER_SECOND * 5,
             chance_to_advance: 95,
         },
         CropStage {
             name: "Potatoes",
-            sprite_location: "sprites/potatoes.png",
+            sprite_location: POTATOES,
             sprite_index: None,
             min_ticks_in_stage: TICKS_PER_SECOND * 60,
             chance_to_advance: 1,
@@ -96,14 +101,14 @@ fn turnip_configuration() -> CropConfiguration {
     let stages = vec![
         CropStage {
             name: "Turnip Seeds",
-            sprite_location: "sprites/turnip_seed.png",
+            sprite_location: TURNIP_SEED,
             sprite_index: None,
             min_ticks_in_stage: TICKS_PER_SECOND * 20,
             chance_to_advance: 75,
         },
         CropStage {
             name: "Turnip",
-            sprite_location: "sprites/turnip_top.png",
+            sprite_location: TURNIP_TOP,
             sprite_index: None,
             min_ticks_in_stage: TICKS_PER_SECOND * 45,
             chance_to_advance: 5,

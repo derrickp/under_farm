@@ -5,7 +5,14 @@ use bevy::{
 };
 
 use crate::{
-    configuration::{crops::CropConfigurations, sprites::dirt_floor_sprite_names},
+    configuration::{
+        crops::CropConfigurations,
+        sprites::{
+            dirt_floor_sprite_names, BRICK_WALL, BRICK_WALL_CRACKED, BRICK_WALL_REALLY_CRACKED,
+            BRICK_WALL_RUBBLE, BROKEN_SMALL_TABLE, GOBLIN_BIG_HAT, ROOM_FLOOR_1, SMALL_TABLE,
+            UNBREAKABLE_WALL,
+        },
+    },
     sprites::{LoadedTextures, Sprites},
     states::GameLoadState,
 };
@@ -60,26 +67,23 @@ pub fn load_sprites(
         }
     }
 
-    let texture_handle = asset_server.load("sprites/goblin_big_hat.png");
+    let texture_handle = asset_server.load(GOBLIN_BIG_HAT);
     let outline_handle = asset_server.get_handle("sprites/cell_outline_32.png");
-    let outer_wall_handle = asset_server.get_handle("sprites/wall.png");
-    let room_wall_handle = asset_server.get_handle("sprites/brick_wall.png");
-    let room_floor_handle = asset_server.get_handle("sprites/sand_1.png");
-    let broken_wall_handle = asset_server.get_handle("sprites/broken_wall.png");
-    let table_handle = asset_server.get_handle("sprites/small_table.png");
-    let brick_wall_cracked = asset_server.get_handle("sprites/brick_wall_cracked.png");
-    let brick_wall_really_cracked =
-        asset_server.get_handle("sprites/brick_wall_really_cracked.png");
-    let broken_small_table = asset_server.get_handle("sprites/broken_small_table.png");
+    let outer_wall_handle = asset_server.get_handle(UNBREAKABLE_WALL);
+    let room_wall_handle = asset_server.get_handle(BRICK_WALL);
+    let room_floor_handle = asset_server.get_handle(ROOM_FLOOR_1);
+    let rubble_handle = asset_server.get_handle(BRICK_WALL_RUBBLE);
+    let table_handle = asset_server.get_handle(SMALL_TABLE);
+    let brick_wall_cracked = asset_server.get_handle(BRICK_WALL_CRACKED);
+    let brick_wall_really_cracked = asset_server.get_handle(BRICK_WALL_REALLY_CRACKED);
+    let broken_small_table = asset_server.get_handle(BROKEN_SMALL_TABLE);
 
     sprites.player_sprite_index = texture_atlas.get_texture_index(&texture_handle).unwrap();
     sprites.outline_index = texture_atlas.get_texture_index(&outline_handle).unwrap();
     sprites.outer_wall_index = texture_atlas.get_texture_index(&outer_wall_handle).unwrap();
     sprites.room_wall_index = texture_atlas.get_texture_index(&room_wall_handle).unwrap();
     sprites.room_floor_index = texture_atlas.get_texture_index(&room_floor_handle).unwrap();
-    sprites.broken_wall_index = texture_atlas
-        .get_texture_index(&broken_wall_handle)
-        .unwrap();
+    sprites.broken_wall_index = texture_atlas.get_texture_index(&rubble_handle).unwrap();
     sprites.table_index = texture_atlas.get_texture_index(&table_handle).unwrap();
     sprites.brick_wall_cracked_index = texture_atlas
         .get_texture_index(&brick_wall_cracked)
