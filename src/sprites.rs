@@ -7,7 +7,6 @@ use bevy::{
 pub struct Sprites {
     pub atlas_handle: Handle<TextureAtlas>,
     pub player_sprite_index: usize,
-    pub outline_index: usize,
     pub dirt_floor_indexes: Vec<usize>,
     pub outer_wall_index: usize,
     pub room_wall_index: usize,

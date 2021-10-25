@@ -89,7 +89,6 @@ impl StructureBundle {
                 cell_center,
                 tile_size: TILE_SIZE as f32,
                 sprite: None,
-                outline: None,
             },
             sprite: SpriteSheetBundle {
                 sprite: TextureAtlasSprite::new(sprites.table_index as u32),
@@ -120,7 +119,6 @@ impl StructureBundle {
                 cell_center,
                 tile_size: TILE_SIZE as f32,
                 sprite: None,
-                outline: None,
             },
             sprite: SpriteSheetBundle {
                 sprite: TextureAtlasSprite::new(sprites.broken_wall_index as u32),
@@ -143,7 +141,6 @@ impl StructureBundle {
                 cell_center,
                 tile_size: TILE_SIZE as f32,
                 sprite: None,
-                outline: None,
             },
             sprite: SpriteSheetBundle {
                 transform: Transform {
@@ -197,7 +194,6 @@ impl StructureBundle {
                 cell_center,
                 tile_size: TILE_SIZE as f32,
                 sprite: None,
-                outline: None,
             },
             sprite: SpriteSheetBundle {
                 transform: Transform {

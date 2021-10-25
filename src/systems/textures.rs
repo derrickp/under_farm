@@ -68,7 +68,6 @@ pub fn load_sprites(
     }
 
     let texture_handle = asset_server.load(GOBLIN_BIG_HAT);
-    let outline_handle = asset_server.get_handle("sprites/cell_outline_32.png");
     let outer_wall_handle = asset_server.get_handle(UNBREAKABLE_WALL);
     let room_wall_handle = asset_server.get_handle(BRICK_WALL);
     let room_floor_handle = asset_server.get_handle(ROOM_FLOOR_1);
@@ -79,7 +78,6 @@ pub fn load_sprites(
     let broken_small_table = asset_server.get_handle(BROKEN_SMALL_TABLE);
 
     sprites.player_sprite_index = texture_atlas.get_texture_index(&texture_handle).unwrap();
-    sprites.outline_index = texture_atlas.get_texture_index(&outline_handle).unwrap();
     sprites.outer_wall_index = texture_atlas.get_texture_index(&outer_wall_handle).unwrap();
     sprites.room_wall_index = texture_atlas.get_texture_index(&room_wall_handle).unwrap();
     sprites.room_floor_index = texture_atlas.get_texture_index(&room_floor_handle).unwrap();

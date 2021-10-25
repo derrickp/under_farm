@@ -30,7 +30,6 @@ impl GroundTileBundle {
                 cell_center,
                 tile_size: TILE_SIZE as f32,
                 sprite: None,
-                outline: None,
             },
             sprite: SpriteSheetBundle {
                 transform: Transform {
@@ -60,7 +59,6 @@ impl GroundTileBundle {
                 cell_center,
                 tile_size: TILE_SIZE as f32,
                 sprite: None,
-                outline: None,
             },
             sprite: SpriteSheetBundle {
                 transform: Transform {

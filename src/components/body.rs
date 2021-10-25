@@ -6,7 +6,6 @@ pub struct Body {
     pub tile_size: f32,
     pub cell_center: Vec3,
     pub sprite: Option<Entity>,
-    pub outline: Option<Entity>,
 }
 
 impl Body {
