@@ -16,7 +16,7 @@ use systems::{
     initial_spawns::spawn_opening_bundles,
     inputs::{
         action_input_system, movement_input_system, open_close_inventory_input_system,
-        zoom_camera_system, MovementInputTimer,
+        reset_action_input_system, zoom_camera_system, MovementInputTimer,
     },
     inventory::{
         add_inventory_text, remove_inventory_text, select_crop, update_inventory_text_colour,
@@ -66,6 +66,7 @@ fn main() {
             SystemSet::on_update(AppState::InGame)
                 .with_system(movement_input_system.system().label("movement_input"))
                 .with_system(action_input_system.system().label("action_input"))
+                .with_system(reset_action_input_system.system().after("crop_actions"))
                 .with_system(
                     player_movement
                         .system()

@@ -98,13 +98,15 @@ pub fn action_input_system(
 ) {
     let (_, mut action): (&Player, Mut<'_, CurrentAction>) = query.single_mut().unwrap();
 
-    if action.interact_pressed {
-        action.interact_pressed = false;
-    }
-
     if keyboard_input.just_pressed(KeyCode::E) {
         action.interact_pressed = true;
     }
+}
+
+pub fn reset_action_input_system(mut query: Query<(&Player, &mut CurrentAction)>) {
+    let (_, mut action): (&Player, Mut<'_, CurrentAction>) = query.single_mut().unwrap();
+
+    action.interact_pressed = false;
 }
 
 pub fn open_close_inventory_input_system(
