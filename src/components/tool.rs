@@ -1,4 +1,4 @@
-use super::damage::Damage;
+use super::{damage::Damage, name::Name};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ToolType {
@@ -9,11 +9,8 @@ pub enum ToolType {
 }
 
 #[derive(Clone, Debug)]
-pub struct ToolName(pub String);
-
-#[derive(Clone, Debug)]
 pub struct Tool {
-    pub name: ToolName,
+    pub name: Name,
     pub tool_type: ToolType,
     pub damage: Option<Damage>,
 }

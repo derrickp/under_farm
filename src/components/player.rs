@@ -3,6 +3,7 @@ use crate::{configuration::sprites::player_sprite_scale, sprites::Sprites};
 use super::{
     action::CurrentAction,
     movement::{Direction, Speed},
+    name::Name,
     tool::Tool,
 };
 use bevy::{
@@ -10,8 +11,6 @@ use bevy::{
     prelude::{Bundle, SpriteSheetBundle, Transform},
     sprite::TextureAtlasSprite,
 };
-
-pub struct PlayerName(pub String);
 
 pub struct PlayerInventory {
     pub current_crop_selection: Option<usize>,
@@ -28,7 +27,7 @@ pub struct PlayerMovement {
 
 #[derive(Bundle)]
 pub struct PlayerBundle {
-    pub name: PlayerName,
+    pub name: Name,
     pub player_movement: PlayerMovement,
     pub player: Player,
     pub action: CurrentAction,
@@ -41,7 +40,7 @@ pub struct PlayerBundle {
 impl Default for PlayerBundle {
     fn default() -> Self {
         PlayerBundle {
-            name: PlayerName("Goblin?!".to_string()),
+            name: Name("Goblin?!".to_string()),
             player_movement: PlayerMovement {
                 direction: Direction::None,
                 speed: Speed::default(),

@@ -1,7 +1,4 @@
-use crate::components::{
-    damage::Damage,
-    tool::{Tool, ToolName, ToolType},
-};
+use crate::components::{damage::Damage, name::Name, tool::{Tool, ToolType}};
 
 pub struct ToolConfiguration {
     pub name: &'static str,
@@ -38,7 +35,7 @@ impl ToolConfiguration {
 
     pub fn to_tool(&self) -> Tool {
         Tool {
-            name: ToolName(self.name.to_string()),
+            name: Name(self.name.to_string()),
             tool_type: self.tool_type,
             damage: Some(Damage {
                 max_damage: self.max_damage,

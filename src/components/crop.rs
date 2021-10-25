@@ -1,6 +1,6 @@
 use bevy::prelude::{Bundle, SpriteSheetBundle};
 
-pub struct CropName(pub String);
+use super::name::Name;
 
 pub struct Crop {
     pub current_stage_index: usize,
@@ -19,7 +19,7 @@ pub struct CropStages {
 
 #[derive(Bundle)]
 pub struct CropBundle {
-    pub name: CropName,
+    pub name: Name,
     pub crop: Crop,
     pub stages: CropStages,
 

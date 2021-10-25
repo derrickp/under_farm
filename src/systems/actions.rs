@@ -8,7 +8,8 @@ use crate::{
     components::{
         action::CurrentAction,
         bounding_box::BoundingBox,
-        crop::{Crop, CropBundle, CropName, CropStage, CropStages},
+        crop::{Crop, CropBundle, CropStage, CropStages},
+        name::Name,
         player::{Player, PlayerInventory},
         structure::Structure,
     },
@@ -118,7 +119,7 @@ fn spawn_crop(
             texture_atlas: sprites.atlas_handle.clone(),
             ..Default::default()
         },
-        name: CropName(crop_name.to_string()),
+        name: Name(crop_name.to_string()),
         stages: CropStages { stages },
         crop: Crop {
             current_stage_index: 0,

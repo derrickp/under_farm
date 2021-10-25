@@ -8,6 +8,7 @@ pub mod ground;
 pub mod health;
 pub mod inventory;
 pub mod movement;
+pub mod name;
 pub mod player;
 pub mod structure;
 pub mod tool;
