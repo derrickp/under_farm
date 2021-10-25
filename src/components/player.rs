@@ -40,7 +40,7 @@ pub struct PlayerBundle {
 impl Default for PlayerBundle {
     fn default() -> Self {
         PlayerBundle {
-            name: Name("Goblin?!".to_string()),
+            name: Name("Goblin?!"),
             player_movement: PlayerMovement {
                 direction: Direction::None,
                 speed: Speed::default(),

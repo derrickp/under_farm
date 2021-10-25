@@ -105,7 +105,7 @@ fn spawn_crop(
     position: Vec2,
     mut commands: Commands,
     sprites: Res<Sprites>,
-    crop_name: &str,
+    crop_name: &'static str,
     stages: Vec<CropStage>,
 ) {
     commands.spawn_bundle(CropBundle {
@@ -119,7 +119,7 @@ fn spawn_crop(
             texture_atlas: sprites.atlas_handle.clone(),
             ..Default::default()
         },
-        name: Name(crop_name.to_string()),
+        name: Name(crop_name),
         stages: CropStages { stages },
         crop: Crop {
             current_stage_index: 0,
