@@ -1,6 +1,6 @@
 use bevy::prelude::{Commands, Res, ResMut};
 
-use tdlg::{cell::CellLayerType, grid::Grid};
+use tdlg::{cells::layer::LayerType, grid::Grid};
 
 use crate::{
     components::{ground::GroundTileBundle, player::PlayerBundle, structure::StructureBundle},
@@ -23,28 +23,28 @@ pub fn spawn_opening_bundles(
         for layer in cell.layers.iter() {
             let coordinate = world_coordinate_from_grid(&cell.coordinate);
             match *layer {
-                CellLayerType::Floor => {
+                LayerType::Floor => {
                     commands.spawn_bundle(GroundTileBundle::build_floor(&coordinate, &sprites));
                 }
-                CellLayerType::RoomWall => {
+                LayerType::RoomWall => {
                     commands.spawn_bundle(GroundTileBundle::build_floor(&coordinate, &sprites));
                     commands.spawn_bundle(StructureBundle::build_room_wall(&coordinate, &sprites));
                 }
-                CellLayerType::RoomFloor => {
+                LayerType::RoomFloor => {
                     commands
                         .spawn_bundle(GroundTileBundle::build_room_floor(&coordinate, &sprites));
                 }
-                CellLayerType::Door => {
+                LayerType::Door => {
                     commands
                         .spawn_bundle(GroundTileBundle::build_room_floor(&coordinate, &sprites));
                 }
-                CellLayerType::OuterWall => {
+                LayerType::OuterWall => {
                     commands.spawn_bundle(StructureBundle::build_outer_wall(&coordinate, &sprites));
                 }
-                CellLayerType::Rubble => {
+                LayerType::Rubble => {
                     commands.spawn_bundle(StructureBundle::build_rubble(&coordinate, &sprites));
                 }
-                CellLayerType::Table => {
+                LayerType::Table => {
                     commands.spawn_bundle(StructureBundle::build_table(&coordinate, &sprites));
                 }
                 _ => {}
