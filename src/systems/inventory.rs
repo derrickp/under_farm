@@ -26,9 +26,7 @@ pub fn add_inventory_text(
     commands
         .spawn_bundle(InventoryTextBundle {
             inventory_text: InventoryText,
-            status: InventoryTextStatus {
-                index: 99
-            },
+            status: InventoryTextStatus { index: 99 },
             text: TextBundle {
                 style: Style {
                     align_self: AlignSelf::FlexEnd,
@@ -137,10 +135,7 @@ pub fn add_inventory_text(
     }
 }
 
-pub fn remove_inventory_text(
-    mut commands: Commands,
-    query: Query<(&InventoryText, Entity)>,
-) {
+pub fn remove_inventory_text(mut commands: Commands, query: Query<(&InventoryText, Entity)>) {
     for data in query.iter() {
         let (_, entity): (&InventoryText, Entity) = data;
         commands.entity(entity).despawn();
