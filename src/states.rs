@@ -33,8 +33,3 @@ impl Default for GameState {
         }
     }
 }
-
-#[derive(Default)]
-pub struct InventoryState {
-    pub inventory_text: Option<Vec<Entity>>,
-}

@@ -14,50 +14,48 @@ use crate::{
         player::{Player, PlayerInventory},
     },
     configuration::{crops::CropConfigurations, tools::ToolConfigurations},
-    states::{AppState, InventoryState},
+    states::AppState,
 };
 
 pub fn add_inventory_text(
     mut commands: Commands,
-    mut inventory_state: ResMut<InventoryState>,
     asset_server: Res<AssetServer>,
     crop_configurations: Res<CropConfigurations>,
     tool_configurations: Res<ToolConfigurations>,
 ) {
-    if inventory_state.inventory_text.is_some() {
-        return;
-    }
-
-    let mut inventory_text: Vec<Entity> = Vec::new();
-
-    let title_entity = commands
-        .spawn_bundle(TextBundle {
-            style: Style {
-                align_self: AlignSelf::FlexEnd,
-                position_type: PositionType::Absolute,
-                position: Rect {
-                    top: Val::Px(15.0),
-                    left: Val::Px(15.0),
+    commands
+        .spawn_bundle(InventoryTextBundle {
+            inventory_text: InventoryText,
+            status: InventoryTextStatus {
+                index: 99
+            },
+            text: TextBundle {
+                style: Style {
+                    align_self: AlignSelf::FlexEnd,
+                    position_type: PositionType::Absolute,
+                    position: Rect {
+                        top: Val::Px(15.0),
+                        left: Val::Px(15.0),
+                        ..Default::default()
+                    },
                     ..Default::default()
                 },
+                // Use the `Text::with_section` constructor
+                text: Text::with_section(
+                    // Accepts a `String` or any type that converts into a `String`, such as `&str`
+                    "inventory",
+                    TextStyle {
+                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                        font_size: 20.0,
+                        color: Color::WHITE,
+                    },
+                    // Note: You can use `Default::default()` in place of the `TextAlignment`
+                    Default::default(),
+                ),
                 ..Default::default()
             },
-            // Use the `Text::with_section` constructor
-            text: Text::with_section(
-                // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                "inventory",
-                TextStyle {
-                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                    font_size: 20.0,
-                    color: Color::WHITE,
-                },
-                // Note: You can use `Default::default()` in place of the `TextAlignment`
-                Default::default(),
-            ),
-            ..Default::default()
         })
         .id();
-    inventory_text.push(title_entity);
 
     for (index, crop_config) in crop_configurations.configurations.iter().enumerate() {
         if crop_config.stages.is_empty() {
@@ -65,7 +63,7 @@ pub fn add_inventory_text(
         }
 
         let top = 15.0 + (50.0 * (index as f32 + 1.0));
-        let text_entity = commands
+        commands
             .spawn_bundle(InventoryTextBundle {
                 inventory_text: InventoryText,
                 status: InventoryTextStatus { index },
@@ -96,7 +94,6 @@ pub fn add_inventory_text(
                 },
             })
             .id();
-        inventory_text.push(text_entity);
     }
 
     let count_crop_configs = crop_configurations.configurations.len();
@@ -104,7 +101,7 @@ pub fn add_inventory_text(
     for (index, tool_config) in tool_configurations.configurations.iter().enumerate() {
         let text_entry_index = index + count_crop_configs;
         let top = 15.0 + (50.0 * (text_entry_index as f32 + 1.0));
-        let text_entity = commands
+        commands
             .spawn_bundle(InventoryTextBundle {
                 inventory_text: InventoryText,
                 status: InventoryTextStatus {
@@ -137,24 +134,17 @@ pub fn add_inventory_text(
                 },
             })
             .id();
-        inventory_text.push(text_entity);
     }
-
-    inventory_state.inventory_text = Some(inventory_text);
 }
 
-pub fn remove_inventory_text(mut commands: Commands, mut inventory_state: ResMut<InventoryState>) {
-    if inventory_state.inventory_text.is_none() {
-        return;
+pub fn remove_inventory_text(
+    mut commands: Commands,
+    query: Query<(&InventoryText, Entity)>,
+) {
+    for data in query.iter() {
+        let (_, entity): (&InventoryText, Entity) = data;
+        commands.entity(entity).despawn();
     }
-
-    if let Some(entities) = inventory_state.inventory_text.clone() {
-        for entity in entities {
-            commands.entity(entity).despawn();
-        }
-    }
-
-    inventory_state.inventory_text = None;
 }
 
 pub fn update_inventory_text_colour(
