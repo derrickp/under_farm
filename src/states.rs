@@ -1,4 +1,4 @@
-use bevy::{math::Vec3, prelude::Entity};
+use bevy::math::Vec3;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum AppState {
@@ -18,8 +18,6 @@ pub struct GameLoadState {
 #[derive(Debug, Clone, PartialEq)]
 pub struct GameState {
     pub initial_spawn_complete: bool,
-    pub game_camera: Option<Entity>,
-    pub ui_camera: Option<Entity>,
     pub game_camera_scale: Vec3,
 }
 
@@ -27,9 +25,7 @@ impl Default for GameState {
     fn default() -> Self {
         GameState {
             initial_spawn_complete: false,
-            game_camera: None,
             game_camera_scale: Vec3::splat(1.0),
-            ui_camera: None,
         }
     }
 }
