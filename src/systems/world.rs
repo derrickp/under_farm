@@ -4,9 +4,10 @@ use bevy::{
 };
 use tdlg::{generator::Generator, loading::RoomPaths};
 
-use crate::{components::world::WorldTickTimer, states::GameLoadState};
+use crate::{
+    components::world::WorldTickTimer, configuration::map::MAP_SIZE, states::GameLoadState,
+};
 
-const DEFAULT_GRID_SIZE: usize = 150;
 const NUMBER_OF_ROOMS: usize = 100;
 
 pub fn tick_game_world(time: Res<Time>, mut query: Query<&mut WorldTickTimer>) {
@@ -20,7 +21,7 @@ pub fn tick_game_world(time: Res<Time>, mut query: Query<&mut WorldTickTimer>) {
 
 pub fn generate_world_grid(mut commands: Commands, mut load_state: ResMut<GameLoadState>) {
     let generator = Generator {
-        grid_size: DEFAULT_GRID_SIZE,
+        grid_size: MAP_SIZE,
         target_number_rooms: NUMBER_OF_ROOMS,
         all_room_paths: vec![
             RoomPaths {
