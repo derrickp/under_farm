@@ -1,24 +1,26 @@
-use bevy::prelude::{Commands, Res, ResMut};
+use bevy::prelude::{Commands, Query, Res, ResMut};
 
 use tdlg::{cells::layer::LayerType, grid::Grid};
 
 use crate::{
     components::{
-        cameras::GameCameraState, ground::GroundTileBundle, player::PlayerBundle, spawns::Spawns,
+        cameras::GameCameraState,
+        ground::GroundTileBundle,
+        player::{Player, PlayerBundle},
+        spawns::Spawns,
         structure::StructureBundle,
     },
     configuration::map::world_coordinate_from_grid,
     sprites::Sprites,
-    states::GameState,
 };
 
 pub fn spawn_opening_bundles(
     mut commands: Commands,
     sprites: Res<Sprites>,
-    mut game_state: ResMut<GameState>,
     mut grid: ResMut<Grid>,
+    query: Query<&Player>,
 ) {
-    if game_state.initial_spawn_complete {
+    if query.single().is_ok() {
         return;
     }
 
@@ -62,6 +64,4 @@ pub fn spawn_opening_bundles(
 
     commands.spawn().insert(GameCameraState::default());
     commands.spawn().insert(Spawns::default());
-
-    game_state.initial_spawn_complete = true;
 }
