@@ -4,7 +4,7 @@ use tdlg::{cells::layer::LayerType, grid::Grid};
 
 use crate::{
     components::{
-        cameras::GameCameraState, ground::GroundTileBundle, player::PlayerBundle,
+        cameras::GameCameraState, ground::GroundTileBundle, player::PlayerBundle, spawns::Spawns,
         structure::StructureBundle,
     },
     configuration::map::world_coordinate_from_grid,
@@ -61,6 +61,7 @@ pub fn spawn_opening_bundles(
     commands.spawn_bundle(PlayerBundle::build_main_player(coordinate, &sprites));
 
     commands.spawn().insert(GameCameraState::default());
+    commands.spawn().insert(Spawns::default());
 
     game_state.initial_spawn_complete = true;
 }
