@@ -6,10 +6,13 @@ use crate::{
 };
 
 pub fn remove_gameplay_camera(mut commands: Commands, query: Query<(&GameCamera, Entity)>) {
-    if let Ok(data) = query.single() {
-        let (_, entity): (&GameCamera, Entity) = data;
-        commands.entity(entity).despawn();
-    }
+    let data = match query.single() {
+        Ok(it) => it,
+        _ => return,
+    };
+
+    let (_, entity): (&GameCamera, Entity) = data;
+    commands.entity(entity).despawn();
 }
 
 pub fn add_gameplay_camera(
@@ -17,17 +20,21 @@ pub fn add_gameplay_camera(
     game_state: Res<GameState>,
     query: Query<&GameCamera>,
 ) {
-    if query.single().is_err() {
-        let mut ortho_camera = OrthographicCameraBundle::new_2d();
-        ortho_camera.transform.scale = game_state.game_camera_scale;
-        commands.spawn_bundle(ortho_camera).insert(GameCamera);
+    if query.single().is_ok() {
+        return;
     }
+
+    let mut ortho_camera = OrthographicCameraBundle::new_2d();
+    ortho_camera.transform.scale = game_state.game_camera_scale;
+    commands.spawn_bundle(ortho_camera).insert(GameCamera);
 }
 
 pub fn add_ui_camera(mut commands: Commands, query: Query<&UiCamera>) {
-    if query.single().is_err() {
-        commands
-            .spawn_bundle(UiCameraBundle::default())
-            .insert(UiCamera);
+    if query.single().is_ok() {
+        return;
     }
+
+    commands
+        .spawn_bundle(UiCameraBundle::default())
+        .insert(UiCamera);
 }
