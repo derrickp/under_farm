@@ -226,7 +226,6 @@ fn set_item_selection(
             inventory.current_crop_selection = None;
         }
     } else {
-        println!("choosing crop");
         let config = crop_configurations.configurations.get(index);
         if config.is_some() {
             inventory.current_tool = None;

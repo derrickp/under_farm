@@ -55,7 +55,6 @@ pub fn grow_crops_system(
                         crop.current_stage_index += 1;
                     }
                     _ => {
-                        println!("killed crop");
                         if let Ok(mut spawns) = spawns_query.single_mut() {
                             spawns.crops.push(CropSpawn {
                                 configuration_index: crop.config_index,
