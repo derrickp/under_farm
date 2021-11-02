@@ -3,7 +3,10 @@ use bevy::prelude::{Commands, Res, ResMut};
 use tdlg::{cells::layer::LayerType, grid::Grid};
 
 use crate::{
-    components::{ground::GroundTileBundle, player::PlayerBundle, structure::StructureBundle},
+    components::{
+        cameras::GameCameraState, ground::GroundTileBundle, player::PlayerBundle,
+        structure::StructureBundle,
+    },
     configuration::map::world_coordinate_from_grid,
     sprites::Sprites,
     states::GameState,
@@ -56,6 +59,8 @@ pub fn spawn_opening_bundles(
     println!("{} {}", player_spawn.x, player_spawn.y);
     let coordinate = world_coordinate_from_grid(&player_spawn);
     commands.spawn_bundle(PlayerBundle::build_main_player(coordinate, &sprites));
+
+    commands.spawn().insert(GameCameraState::default());
 
     game_state.initial_spawn_complete = true;
 }

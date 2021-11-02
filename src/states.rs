@@ -1,5 +1,3 @@
-use bevy::math::Vec3;
-
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum AppState {
     Startup,
@@ -15,17 +13,7 @@ pub struct GameLoadState {
     pub game_world_generated: bool,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct GameState {
     pub initial_spawn_complete: bool,
-    pub game_camera_scale: Vec3,
-}
-
-impl Default for GameState {
-    fn default() -> Self {
-        GameState {
-            initial_spawn_complete: false,
-            game_camera_scale: Vec3::splat(1.0),
-        }
-    }
 }

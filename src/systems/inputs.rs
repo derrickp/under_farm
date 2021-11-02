@@ -9,12 +9,12 @@ use bevy::{
 use crate::{
     components::{
         action::CurrentAction,
-        cameras::GameCamera,
+        cameras::{GameCamera, GameCameraState},
         movement::Direction,
         player::{Player, PlayerMovement},
     },
     configuration::{map::TILE_SIZE, timers::movement_timer},
-    states::{AppState, GameState},
+    states::AppState,
 };
 
 pub struct MovementInputTimer(pub Timer);
@@ -128,19 +128,27 @@ pub fn open_close_inventory_input_system(
 
 pub fn zoom_camera_system(
     keyboard_input: Res<Input<KeyCode>>,
-    mut game_state: ResMut<GameState>,
     mut query: Query<(&GameCamera, &Camera, &mut Transform)>,
+    mut camera_state_query: Query<&mut GameCameraState>,
 ) {
     if !keyboard_input.just_pressed(KeyCode::Z) {
         return;
     }
 
-    for data in query.iter_mut() {
-        let (_, _, mut transform): (&GameCamera, &Camera, Mut<'_, Transform>) = data;
-        let new_scale = next_camera_scale(transform.scale);
-        game_state.game_camera_scale = new_scale;
-        transform.scale = new_scale;
-    }
+    let (_, _, mut transform): (&GameCamera, &Camera, Mut<'_, Transform>) = match query.single_mut()
+    {
+        Ok(it) => it,
+        _ => return,
+    };
+
+    let mut camera_state: Mut<'_, GameCameraState> = match camera_state_query.single_mut() {
+        Ok(it) => it,
+        _ => return,
+    };
+
+    let new_scale = next_camera_scale(transform.scale);
+    camera_state.scale = new_scale;
+    transform.scale = new_scale;
 }
 
 fn next_camera_scale(scale: Vec3) -> Vec3 {
