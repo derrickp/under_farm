@@ -6,8 +6,8 @@ use bevy::{
 use rand::Rng;
 
 use crate::components::{
-    crop::{Crop, CropStages},
-    spawns::{CropSpawn, Spawns},
+    crop::{Crop, CropSpawn, CropStages},
+    spawns::Spawns,
     world::WorldTickTimer,
 };
 

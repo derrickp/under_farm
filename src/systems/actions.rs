@@ -7,9 +7,9 @@ use bevy::{
 use crate::components::{
     action::CurrentAction,
     bounding_box::BoundingBox,
-    crop::Crop,
+    crop::{Crop, CropSpawn},
     player::{Player, PlayerInventory},
-    spawns::{CropSpawn, Spawns},
+    spawns::Spawns,
     structure::Structure,
 };
 
