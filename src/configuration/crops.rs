@@ -7,17 +7,12 @@ use super::timers::WORLD_TICK_TIME;
 
 pub struct CropConfiguration {
     pub name: &'static str,
-    pub sprite_index: Option<u32>,
     pub stages: Vec<CropStage>,
 }
 
 impl CropConfiguration {
     pub fn build_basic(name: &'static str, stages: Vec<CropStage>) -> Self {
-        CropConfiguration {
-            name,
-            stages,
-            sprite_index: None,
-        }
+        CropConfiguration { name, stages }
     }
 }
 
