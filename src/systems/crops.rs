@@ -1,18 +1,29 @@
 use bevy::{
-    prelude::{Commands, Entity, Mut, Query, Res},
+    math::Vec2,
+    prelude::{Commands, Entity, Mut, Query, Res, Transform},
     sprite::TextureAtlasSprite,
 };
 use rand::Rng;
 
 use crate::{
-    components::crop::{Crop, CropStages},
+    components::{
+        crop::{Crop, CropStages},
+        spawns::{CropSpawn, Spawns},
+    },
     world::WorldTickTimer,
 };
 
 pub fn grow_crops_system(
     mut commands: Commands,
     timer: Res<WorldTickTimer>,
-    mut query: Query<(Entity, &mut Crop, &mut CropStages, &mut TextureAtlasSprite)>,
+    mut query: Query<(
+        Entity,
+        &Transform,
+        &mut Crop,
+        &mut CropStages,
+        &mut TextureAtlasSprite,
+    )>,
+    mut spawns_query: Query<&mut Spawns>,
 ) {
     if !timer.0.just_finished() {
         return;
@@ -21,8 +32,9 @@ pub fn grow_crops_system(
     let mut rng = rand::thread_rng();
     let chance_to_grow: u32 = rng.gen_range(1..100);
     for crop_data in query.iter_mut() {
-        let (entity, mut crop, mut stages, mut sprite): (
+        let (entity, transform, mut crop, mut stages, mut sprite): (
             Entity,
+            &Transform,
             Mut<'_, Crop>,
             Mut<'_, CropStages>,
             Mut<'_, TextureAtlasSprite>,
@@ -40,6 +52,16 @@ pub fn grow_crops_system(
                         crop.current_stage_index += 1;
                     }
                     _ => {
+                        if let Ok(mut spawns) = spawns_query.single_mut() {
+                            spawns.crops.push(CropSpawn {
+                                configuration_index: crop.config_index,
+                                location: Vec2::new(
+                                    transform.translation.x,
+                                    transform.translation.y,
+                                ),
+                            });
+                        }
+
                         commands.entity(entity).despawn();
                     }
                 }

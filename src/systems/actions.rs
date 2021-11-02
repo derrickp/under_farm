@@ -1,20 +1,16 @@
 use bevy::{
-    math::{Vec2, Vec3},
-    prelude::{Commands, Mut, Query, Res, SpriteSheetBundle, Transform},
+    math::Vec2,
+    prelude::{Mut, Query, Transform},
     sprite::TextureAtlasSprite,
 };
 
-use crate::{
-    components::{
-        action::CurrentAction,
-        bounding_box::BoundingBox,
-        crop::{Crop, CropBundle, CropStage, CropStages},
-        name::Name,
-        player::{Player, PlayerInventory},
-        structure::Structure,
-    },
-    configuration::crops::CropConfigurations,
-    sprites::Sprites,
+use crate::components::{
+    action::CurrentAction,
+    bounding_box::BoundingBox,
+    crop::Crop,
+    player::{Player, PlayerInventory},
+    spawns::{CropSpawn, Spawns},
+    structure::Structure,
 };
 
 pub fn hit_actions(
@@ -46,11 +42,9 @@ pub fn reset_hit_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
 }
 
 pub fn crop_actions(
-    commands: Commands,
-    crop_configurations: Res<CropConfigurations>,
-    sprites: Res<Sprites>,
     query: Query<(&Player, &CurrentAction, &Transform, &PlayerInventory)>,
     crop_query: Query<(&Crop, &Transform)>,
+    mut spawns_query: Query<&mut Spawns>,
 ) {
     let (_, action, transform, inventory): (&Player, &CurrentAction, &Transform, &PlayerInventory) =
         query.single().unwrap();
@@ -75,54 +69,15 @@ pub fn crop_actions(
         }
 
         if let Some(config_index) = inventory.current_crop_selection {
-            let config_result = crop_configurations
-                .configurations
-                .get(config_index as usize);
-            if let Some(config) = config_result {
-                let stages: Vec<CropStage> = config
-                    .stages
-                    .iter()
-                    .map(|stage| CropStage {
-                        ticks_in_stage: 0,
-                        min_ticks_in_stage: stage.min_ticks_in_stage,
-                        chance_to_advance: stage.chance_to_advance,
-                        sprite_index: stage.sprite_index.unwrap(),
-                    })
-                    .collect();
-                spawn_crop(
-                    Vec2::new(transform.translation.x, transform.translation.y),
-                    commands,
-                    sprites,
-                    config.name,
-                    stages,
-                );
-            }
+            let mut spawns = match spawns_query.single_mut() {
+                Ok(it) => it,
+                _ => return,
+            };
+
+            spawns.crops.push(CropSpawn {
+                configuration_index: config_index,
+                location: Vec2::new(transform.translation.x, transform.translation.y),
+            });
         }
     }
-}
-
-fn spawn_crop(
-    position: Vec2,
-    mut commands: Commands,
-    sprites: Res<Sprites>,
-    crop_name: &'static str,
-    stages: Vec<CropStage>,
-) {
-    commands.spawn_bundle(CropBundle {
-        sprite: SpriteSheetBundle {
-            transform: Transform {
-                translation: Vec3::new(position.x, position.y, 3.0),
-                scale: crate::configuration::sprites::sprite_scale(),
-                ..Default::default()
-            },
-            sprite: TextureAtlasSprite::new(stages.get(0).unwrap().sprite_index),
-            texture_atlas: sprites.atlas_handle.clone(),
-            ..Default::default()
-        },
-        name: Name(crop_name),
-        stages: CropStages { stages },
-        crop: Crop {
-            current_stage_index: 0,
-        },
-    });
 }

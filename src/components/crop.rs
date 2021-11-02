@@ -4,6 +4,7 @@ use super::name::Name;
 
 pub struct Crop {
     pub current_stage_index: usize,
+    pub config_index: usize,
 }
 
 pub struct CropStage {
