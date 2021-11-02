@@ -23,6 +23,7 @@ use systems::{
     },
     loading::{check_load_state, start_game},
     movement::{camera_movement, check_floor_collision, player_movement},
+    spawns::{reset_crop_spawns, spawn_crops},
     textures::{check_textures, load_sprites, load_textures},
     world::{generate_world_grid, tick_game_world},
 };
@@ -104,7 +105,15 @@ fn main() {
                         .system()
                         .label("grow_crops_system")
                         .after("tick_game_world"),
-                ),
+                )
+                .with_system(
+                    spawn_crops
+                        .system()
+                        .label("spawn_crops")
+                        .after("crop_actions")
+                        .after("grow_crops_system"),
+                )
+                .with_system(reset_crop_spawns.system().after("spawn_crops")),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::InventoryScreen)
