@@ -1,5 +1,6 @@
 use bevy::math::Vec3;
 
+pub const CROP_SPRITE_SCALE: f32 = 3.0;
 pub const SPRITE_SCALE: f32 = 4.0;
 pub const PLAYER_SPRITE_SCALE: f32 = 2.0;
 pub const SPRITE_SIZE: f32 = 32.0;
