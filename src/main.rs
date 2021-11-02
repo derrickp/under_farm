@@ -8,7 +8,7 @@ mod world;
 use bevy::{input::system::exit_on_esc_system, prelude::*};
 use configuration::{crops::CropConfigurations, tools::ToolConfigurations};
 use sprites::{LoadedTextures, Sprites};
-use states::{AppState, GameLoadState, GameState};
+use states::{AppState, GameLoadState};
 use systems::{
     actions::{crop_actions, hit_actions, reset_hit_actions},
     cameras::{add_gameplay_camera, add_ui_camera, remove_gameplay_camera},
@@ -35,7 +35,6 @@ fn main() {
         .init_resource::<Sprites>()
         .init_resource::<LoadedTextures>()
         .init_resource::<GameLoadState>()
-        .init_resource::<GameState>()
         .init_resource::<CropConfigurations>()
         .init_resource::<ToolConfigurations>()
         .init_resource::<MovementInputTimer>()

@@ -12,8 +12,3 @@ pub struct GameLoadState {
     pub textures_set: bool,
     pub game_world_generated: bool,
 }
-
-#[derive(Debug, Clone, PartialEq, Default)]
-pub struct GameState {
-    pub initial_spawn_complete: bool,
-}
