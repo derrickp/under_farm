@@ -9,6 +9,7 @@ use crate::{
         player::{Player, PlayerBundle},
         spawns::Spawns,
         structure::StructureBundle,
+        world::WorldTickTimer,
     },
     configuration::map::world_coordinate_from_grid,
     sprites::Sprites,
@@ -64,4 +65,5 @@ pub fn spawn_opening_bundles(
 
     commands.spawn().insert(GameCameraState::default());
     commands.spawn().insert(Spawns::default());
+    commands.spawn().insert(WorldTickTimer::default());
 }

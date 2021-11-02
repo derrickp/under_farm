@@ -1,21 +1,18 @@
 use bevy::{
     math::Vec2,
-    prelude::{Commands, Entity, Mut, Query, Res, Transform},
+    prelude::{Commands, Entity, Mut, Query, Transform},
     sprite::TextureAtlasSprite,
 };
 use rand::Rng;
 
-use crate::{
-    components::{
-        crop::{Crop, CropStages},
-        spawns::{CropSpawn, Spawns},
-    },
+use crate::components::{
+    crop::{Crop, CropStages},
+    spawns::{CropSpawn, Spawns},
     world::WorldTickTimer,
 };
 
 pub fn grow_crops_system(
     mut commands: Commands,
-    timer: Res<WorldTickTimer>,
     mut query: Query<(
         Entity,
         &Transform,
@@ -24,7 +21,13 @@ pub fn grow_crops_system(
         &mut TextureAtlasSprite,
     )>,
     mut spawns_query: Query<&mut Spawns>,
+    timer_query: Query<&WorldTickTimer>,
 ) {
+    let timer = match timer_query.single() {
+        Ok(it) => it,
+        _ => return,
+    };
+
     if !timer.0.just_finished() {
         return;
     }
@@ -52,6 +55,7 @@ pub fn grow_crops_system(
                         crop.current_stage_index += 1;
                     }
                     _ => {
+                        println!("killed crop");
                         if let Ok(mut spawns) = spawns_query.single_mut() {
                             spawns.crops.push(CropSpawn {
                                 configuration_index: crop.config_index,

@@ -3,7 +3,6 @@ mod configuration;
 mod sprites;
 mod states;
 mod systems;
-mod world;
 
 use bevy::{input::system::exit_on_esc_system, prelude::*};
 use configuration::{crops::CropConfigurations, tools::ToolConfigurations};
@@ -27,7 +26,6 @@ use systems::{
     textures::{check_textures, load_sprites, load_textures},
     world::{generate_world_grid, tick_game_world},
 };
-use world::WorldTickTimer;
 
 fn main() {
     App::build()
@@ -38,7 +36,6 @@ fn main() {
         .init_resource::<CropConfigurations>()
         .init_resource::<ToolConfigurations>()
         .init_resource::<MovementInputTimer>()
-        .init_resource::<WorldTickTimer>()
         .add_state(AppState::Startup)
         .add_plugins(DefaultPlugins)
         .add_system_set(SystemSet::on_enter(AppState::Startup).with_system(load_textures.system()))

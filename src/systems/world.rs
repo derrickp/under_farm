@@ -1,15 +1,20 @@
 use bevy::{
     core::Time,
-    prelude::{Commands, Res, ResMut},
+    prelude::{Commands, Query, Res, ResMut},
 };
 use tdlg::{generator::Generator, loading::RoomPaths};
 
-use crate::{states::GameLoadState, world::WorldTickTimer};
+use crate::{components::world::WorldTickTimer, states::GameLoadState};
 
 const DEFAULT_GRID_SIZE: usize = 150;
 const NUMBER_OF_ROOMS: usize = 100;
 
-pub fn tick_game_world(time: Res<Time>, mut timer: ResMut<WorldTickTimer>) {
+pub fn tick_game_world(time: Res<Time>, mut query: Query<&mut WorldTickTimer>) {
+    let mut timer = match query.single_mut() {
+        Ok(it) => it,
+        _ => return,
+    };
+
     timer.0.tick(time.delta());
 }
 
