@@ -12,5 +12,6 @@ pub mod name;
 pub mod player;
 pub mod spawns;
 pub mod structure;
+pub mod text;
 pub mod tool;
 pub mod world;
