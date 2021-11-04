@@ -17,27 +17,35 @@ pub fn hit_actions(
     player_query: Query<(&Player, &CurrentAction)>,
     mut structure_query: Query<(&mut Structure, &mut TextureAtlasSprite)>,
 ) {
-    let (_, current_action): (&Player, &CurrentAction) = player_query.single().unwrap();
-    if let Some(hit) = current_action.hit {
-        if let Ok(entity_data) = structure_query.get_mut(hit.target) {
-            let (mut structure, mut sprite): (Mut<'_, Structure>, Mut<'_, TextureAtlasSprite>) =
-                entity_data;
+    let (_, current_action): (&Player, &CurrentAction) = match player_query.single() {
+        Ok(it) => it,
+        _ => return,
+    };
 
-            structure.damage(hit.damage);
+    let hit = match current_action.hit {
+        Some(it) => it,
+        _ => return,
+    };
 
-            if let Some(sprite_index) = structure.current_texture_index() {
-                sprite.index = sprite_index as u32;
-            }
+    let (mut structure, mut sprite): (Mut<Structure>, Mut<TextureAtlasSprite>) =
+        match structure_query.get_mut(hit.target) {
+            Ok(it) => it,
+            _ => return,
+        };
 
-            if structure.is_destroyed() {
-                structure.can_be_walked_on = true;
-            }
-        }
+    structure.damage(hit.damage);
+
+    if let Some(sprite_index) = structure.current_texture_index() {
+        sprite.index = sprite_index as u32;
+    }
+
+    if structure.is_destroyed() {
+        structure.can_be_walked_on = true;
     }
 }
 
 pub fn reset_hit_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
-    let (_, mut current_action): (&Player, Mut<'_, CurrentAction>) = query.single_mut().unwrap();
+    let (_, mut current_action): (&Player, Mut<CurrentAction>) = query.single_mut().unwrap();
     current_action.hit = None;
 }
 
@@ -54,30 +62,35 @@ pub fn crop_actions(
         60.0,
     );
 
-    if action.interact_pressed {
-        for crop_data in crop_query.iter() {
-            let (_, crop_transform): (&Crop, &Transform) = crop_data;
-            let crop_bounds = BoundingBox::square(
-                crop_transform.translation.x.floor(),
-                crop_transform.translation.y.floor(),
-                60.0,
-            );
+    if !action.interact_pressed {
+        return;
+    }
 
-            if crop_bounds.intersects(&player_bounds) {
-                return;
-            }
-        }
+    for crop_data in crop_query.iter() {
+        let (_, crop_transform): (&Crop, &Transform) = crop_data;
+        let crop_bounds = BoundingBox::square(
+            crop_transform.translation.x.floor(),
+            crop_transform.translation.y.floor(),
+            60.0,
+        );
 
-        if let Some(config_index) = inventory.current_crop_selection {
-            let mut spawns = match spawns_query.single_mut() {
-                Ok(it) => it,
-                _ => return,
-            };
-
-            spawns.crops.push(CropSpawn {
-                configuration_index: config_index,
-                location: Vec2::new(transform.translation.x, transform.translation.y),
-            });
+        if crop_bounds.intersects(&player_bounds) {
+            return;
         }
     }
+
+    let config_index = match inventory.current_crop_selection {
+        Some(it) => it,
+        _ => return,
+    };
+
+    let mut spawns = match spawns_query.single_mut() {
+        Ok(it) => it,
+        _ => return,
+    };
+
+    spawns.crops.push(CropSpawn {
+        configuration_index: config_index,
+        location: Vec2::new(transform.translation.x, transform.translation.y),
+    });
 }
