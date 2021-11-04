@@ -13,3 +13,10 @@ pub fn world_coordinate_from_grid(grid_coordinate: &Coordinate) -> Vec2 {
 
     Vec2::new(x, y)
 }
+
+pub fn grid_coordinate_from_world(world_coordinate: &Vec2) -> Coordinate {
+    let x: i32 = ((world_coordinate.x + (TILE_SIZE * (MAP_SIZE / 2) as f32)) / TILE_SIZE) as i32;
+    let y: i32 = ((world_coordinate.y + (TILE_SIZE * (MAP_SIZE / 2) as f32)) / TILE_SIZE) as i32;
+
+    Coordinate::new(x, y)
+}
