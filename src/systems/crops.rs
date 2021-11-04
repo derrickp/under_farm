@@ -38,9 +38,9 @@ pub fn grow_crops_system(
         let (entity, transform, mut crop, mut stages, mut sprite): (
             Entity,
             &Transform,
-            Mut<'_, Crop>,
-            Mut<'_, CropStages>,
-            Mut<'_, TextureAtlasSprite>,
+            Mut<Crop>,
+            Mut<CropStages>,
+            Mut<TextureAtlasSprite>,
         ) = crop_data;
 
         if let Some(stage) = stages.stages.get_mut(crop.current_stage_index) {

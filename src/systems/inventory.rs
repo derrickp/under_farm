@@ -148,8 +148,7 @@ pub fn update_inventory_text_colour(
 ) {
     let (_, inventory): (&Player, &PlayerInventory) = inventory_query.single().unwrap();
     for text_data in text_query.iter_mut() {
-        let (_, status, mut text): (&InventoryText, &InventoryTextStatus, Mut<'_, Text>) =
-            text_data;
+        let (_, status, mut text): (&InventoryText, &InventoryTextStatus, Mut<Text>) = text_data;
         if inventory.current_tool.is_some() {
             if let Some(selected_tool_index) = inventory.current_tool_selection {
                 if selected_tool_index == status.index {
@@ -183,7 +182,7 @@ pub fn select_crop(
         return;
     }
 
-    let (_, inventory): (&Player, Mut<'_, PlayerInventory>) = query.single_mut().unwrap();
+    let (_, inventory): (&Player, Mut<PlayerInventory>) = query.single_mut().unwrap();
 
     let index_result = pressed_key_to_index(event_reader);
 
@@ -213,7 +212,7 @@ fn pressed_key_to_index(mut event_reader: EventReader<KeyboardInput>) -> Option<
 }
 
 fn set_item_selection(
-    mut inventory: Mut<'_, PlayerInventory>,
+    mut inventory: Mut<PlayerInventory>,
     crop_configurations: Res<'_, CropConfigurations>,
     tool_configurations: Res<'_, ToolConfigurations>,
     index: usize,

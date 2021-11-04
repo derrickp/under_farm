@@ -35,8 +35,8 @@ pub fn player_movement(
         &Player,
         &PlayerMovement,
         &PlayerInventory,
-        Mut<'_, Transform>,
-        Mut<'_, CurrentAction>,
+        Mut<Transform>,
+        Mut<CurrentAction>,
     ) = query.single_mut().unwrap();
 
     let x = movement.speed.current.x + transform.translation.x;
@@ -86,7 +86,7 @@ pub fn player_movement(
 pub fn update_player_grid_coordinate(
     mut query: Query<(&Player, &Transform, &mut PlayerCoordinates)>,
 ) {
-    let (_, transform, mut player_coordinates): (&Player, &Transform, Mut<'_, PlayerCoordinates>) =
+    let (_, transform, mut player_coordinates): (&Player, &Transform, Mut<PlayerCoordinates>) =
         match query.single_mut() {
             Ok(it) => it,
             _ => return,
@@ -101,7 +101,7 @@ pub fn update_player_text(
     mut query: Query<(&PlayerStatsText, &mut Text)>,
     player_query: Query<&PlayerCoordinates>,
 ) {
-    let (_, mut text): (&PlayerStatsText, Mut<'_, Text>) = match query.single_mut() {
+    let (_, mut text): (&PlayerStatsText, Mut<Text>) = match query.single_mut() {
         Ok(it) => it,
         _ => return,
     };
@@ -131,7 +131,7 @@ pub fn camera_movement(
     }
 
     for camera_data in query_set.q1_mut().iter_mut() {
-        let (_, _, mut camera_transform): (&GameCamera, &Camera, Mut<'_, Transform>) = camera_data;
+        let (_, _, mut camera_transform): (&GameCamera, &Camera, Mut<Transform>) = camera_data;
 
         camera_transform.translation.x = player_x;
         camera_transform.translation.y = player_y;
@@ -152,7 +152,7 @@ pub fn check_floor_collision(
     );
 
     for cell_data in ground_cell_query.iter_mut() {
-        let (grid_cell, mut visible): (&Body, Mut<'_, Visible>) = cell_data;
+        let (grid_cell, mut visible): (&Body, Mut<Visible>) = cell_data;
 
         if bounding_boxes
             .iter()

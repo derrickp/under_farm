@@ -40,7 +40,7 @@ pub fn movement_input_system(
     keyboard_input: Res<Input<KeyCode>>,
     mut query: Query<(&Player, &mut PlayerMovement)>,
 ) {
-    let (_, mut movement): (&Player, Mut<'_, PlayerMovement>) = query.single_mut().unwrap();
+    let (_, mut movement): (&Player, Mut<PlayerMovement>) = query.single_mut().unwrap();
 
     movement.speed.current = Vec2::ZERO;
     movement.direction = Direction::None;
@@ -97,7 +97,7 @@ pub fn action_input_system(
     keyboard_input: Res<Input<KeyCode>>,
     mut query: Query<(&Player, &mut CurrentAction)>,
 ) {
-    let (_, mut action): (&Player, Mut<'_, CurrentAction>) = query.single_mut().unwrap();
+    let (_, mut action): (&Player, Mut<CurrentAction>) = query.single_mut().unwrap();
 
     if keyboard_input.just_pressed(KeyCode::E) {
         action.interact_pressed = true;
@@ -105,7 +105,7 @@ pub fn action_input_system(
 }
 
 pub fn reset_action_input_system(mut query: Query<(&Player, &mut CurrentAction)>) {
-    let (_, mut action): (&Player, Mut<'_, CurrentAction>) = query.single_mut().unwrap();
+    let (_, mut action): (&Player, Mut<CurrentAction>) = query.single_mut().unwrap();
 
     action.interact_pressed = false;
 }
@@ -135,7 +135,7 @@ pub fn toggle_coordinates_system(
         return;
     }
 
-    let (_, mut visible): (&PlayerStatsText, Mut<'_, Visible>) = match query.single_mut() {
+    let (_, mut visible): (&PlayerStatsText, Mut<Visible>) = match query.single_mut() {
         Ok(it) => it,
         _ => return,
     };
@@ -152,13 +152,12 @@ pub fn zoom_camera_system(
         return;
     }
 
-    let (_, _, mut transform): (&GameCamera, &Camera, Mut<'_, Transform>) = match query.single_mut()
-    {
+    let (_, _, mut transform): (&GameCamera, &Camera, Mut<Transform>) = match query.single_mut() {
         Ok(it) => it,
         _ => return,
     };
 
-    let mut camera_state: Mut<'_, GameCameraState> = match camera_state_query.single_mut() {
+    let mut camera_state: Mut<GameCameraState> = match camera_state_query.single_mut() {
         Ok(it) => it,
         _ => return,
     };

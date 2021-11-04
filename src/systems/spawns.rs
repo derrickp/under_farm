@@ -35,7 +35,7 @@ pub fn spawn_crops(
 }
 
 pub fn reset_crop_spawns(mut query: Query<&mut Spawns>) {
-    let mut spawns: Mut<'_, Spawns> = match query.single_mut() {
+    let mut spawns: Mut<Spawns> = match query.single_mut() {
         Ok(it) => it,
         _ => return,
     };
