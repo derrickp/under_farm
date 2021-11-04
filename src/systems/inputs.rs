@@ -2,7 +2,7 @@ use bevy::{
     core::{Time, Timer},
     input::Input,
     math::{Vec2, Vec3},
-    prelude::{KeyCode, Mut, Query, Res, ResMut, State, Transform},
+    prelude::{KeyCode, Mut, Query, Res, ResMut, State, Transform, Visible},
     render::camera::Camera,
 };
 
@@ -12,6 +12,7 @@ use crate::{
         cameras::{GameCamera, GameCameraState},
         movement::Direction,
         player::{Player, PlayerMovement},
+        text::PlayerStatsText,
     },
     configuration::{map::TILE_SIZE, timers::movement_timer},
     states::AppState,
@@ -124,6 +125,22 @@ pub fn open_close_inventory_input_system(
             state.set(AppState::InGame).unwrap();
         }
     }
+}
+
+pub fn toggle_coordinates_system(
+    keyboard_input: Res<Input<KeyCode>>,
+    mut query: Query<(&PlayerStatsText, &mut Visible)>,
+) {
+    if !keyboard_input.just_pressed(KeyCode::Slash) {
+        return;
+    }
+
+    let (_, mut visible): (&PlayerStatsText, Mut<'_, Visible>) = match query.single_mut() {
+        Ok(it) => it,
+        _ => return,
+    };
+
+    visible.is_visible = !visible.is_visible;
 }
 
 pub fn zoom_camera_system(
