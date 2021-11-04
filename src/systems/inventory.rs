@@ -52,8 +52,7 @@ pub fn add_inventory_text(
                 ),
                 ..Default::default()
             },
-        })
-        .id();
+        });
 
     for (index, crop_config) in crop_configurations.configurations.iter().enumerate() {
         if crop_config.stages.is_empty() {
@@ -90,8 +89,7 @@ pub fn add_inventory_text(
                     ),
                     ..Default::default()
                 },
-            })
-            .id();
+            });
     }
 
     let count_crop_configs = crop_configurations.configurations.len();
@@ -130,8 +128,7 @@ pub fn add_inventory_text(
                     ),
                     ..Default::default()
                 },
-            })
-            .id();
+            });
     }
 }
 
@@ -146,25 +143,32 @@ pub fn update_inventory_text_colour(
     inventory_query: Query<(&Player, &PlayerInventory)>,
     mut text_query: Query<(&InventoryText, &InventoryTextStatus, &mut Text)>,
 ) {
-    let (_, inventory): (&Player, &PlayerInventory) = inventory_query.single().unwrap();
+    let (_, inventory): (&Player, &PlayerInventory) = match inventory_query.single() {
+        Ok(it) => it,
+        _ => return,
+    };
+
     for text_data in text_query.iter_mut() {
         let (_, status, mut text): (&InventoryText, &InventoryTextStatus, Mut<Text>) = text_data;
+        let section = match text.sections.get_mut(0) {
+            Some(it) => it,
+            _ => return,
+        };
+
         if inventory.current_tool.is_some() {
-            if let Some(selected_tool_index) = inventory.current_tool_selection {
-                if selected_tool_index == status.index {
-                    let section = text.sections.get_mut(0).unwrap();
-                    section.style.color = Color::YELLOW;
-                } else {
-                    let section = text.sections.get_mut(0).unwrap();
-                    section.style.color = Color::WHITE;
-                }
+            let selected_tool_index = match inventory.current_tool_selection {
+                Some(it) => it,
+                _ => return,
+            };
+            if selected_tool_index == status.index {
+                section.style.color = Color::YELLOW;
+            } else {
+                section.style.color = Color::WHITE;
             }
         } else if let Some(selected_index) = inventory.current_crop_selection {
             if selected_index == status.index {
-                let section = text.sections.get_mut(0).unwrap();
                 section.style.color = Color::YELLOW;
             } else {
-                let section = text.sections.get_mut(0).unwrap();
                 section.style.color = Color::WHITE;
             }
         }

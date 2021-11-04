@@ -43,31 +43,34 @@ pub fn grow_crops_system(
             Mut<TextureAtlasSprite>,
         ) = crop_data;
 
-        if let Some(stage) = stages.stages.get_mut(crop.current_stage_index) {
-            stage.ticks_in_stage += 1;
-            if stage.ticks_in_stage > stage.min_ticks_in_stage
-                && chance_to_grow < stage.chance_to_advance
-            {
-                let next_stage_result = stages.stages.get(crop.current_stage_index + 1);
-                match next_stage_result {
-                    Some(next_stage) => {
-                        sprite.index = next_stage.sprite_index;
-                        crop.current_stage_index += 1;
-                    }
-                    _ => {
-                        if let Ok(mut spawns) = spawns_query.single_mut() {
-                            spawns.crops.push(CropSpawn {
-                                configuration_index: crop.config_index,
-                                location: Vec2::new(
-                                    transform.translation.x,
-                                    transform.translation.y,
-                                ),
-                            });
-                        }
+        let stage = match stages.stages.get_mut(crop.current_stage_index) {
+            Some(it) => it,
+            _ => return,
+        };
 
-                        commands.entity(entity).despawn();
-                    }
+        stage.ticks_in_stage += 1;
+        if stage.ticks_in_stage < stage.min_ticks_in_stage {
+            return;
+        }
+
+        if chance_to_grow > stage.chance_to_advance {
+            return;
+        }
+
+        match stages.stages.get(crop.current_stage_index + 1) {
+            Some(next_stage) => {
+                sprite.index = next_stage.sprite_index;
+                crop.current_stage_index += 1;
+            }
+            _ => {
+                if let Ok(mut spawns) = spawns_query.single_mut() {
+                    spawns.crops.push(CropSpawn {
+                        configuration_index: crop.config_index,
+                        location: Vec2::new(transform.translation.x, transform.translation.y),
+                    });
                 }
+
+                commands.entity(entity).despawn();
             }
         }
     }
