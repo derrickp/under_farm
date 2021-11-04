@@ -1,6 +1,8 @@
 use bevy::{
+    math::Vec2,
     prelude::{Entity, Mut, Query, QuerySet, Transform, Visible},
     render::camera::Camera,
+    text::Text,
 };
 
 use crate::{
@@ -12,18 +14,21 @@ use crate::{
         movement::Direction,
         player::{Player, PlayerCoordinates, PlayerInventory, PlayerMovement},
         structure::Structure,
+        text::PlayerStatsText,
     },
-    configuration::map::TILE_SIZE,
+    configuration::map::{grid_coordinate_from_world, TILE_SIZE},
 };
 
+type PlayerMovementQuery = (
+    &'static Player,
+    &'static PlayerMovement,
+    &'static PlayerInventory,
+    &'static mut Transform,
+    &'static mut CurrentAction,
+);
+
 pub fn player_movement(
-    mut query: Query<(
-        &Player,
-        &PlayerMovement,
-        &PlayerInventory,
-        &mut Transform,
-        &mut CurrentAction,
-    )>,
+    mut query: Query<PlayerMovementQuery>,
     cell_query: Query<(&Structure, &Body, Entity)>,
 ) {
     let (_, movement, inventory, mut transform, mut action): (
@@ -90,6 +95,24 @@ pub fn update_player_grid_coordinate(
     let world_coordinate = Vec2::new(transform.translation.x, transform.translation.y);
     let current = grid_coordinate_from_world(&world_coordinate);
     player_coordinates.current = Some(current);
+}
+
+pub fn update_player_text(
+    mut query: Query<(&PlayerStatsText, &mut Text)>,
+    player_query: Query<&PlayerCoordinates>,
+) {
+    let (_, mut text): (&PlayerStatsText, Mut<'_, Text>) = match query.single_mut() {
+        Ok(it) => it,
+        _ => return,
+    };
+    let player_coordinates: &PlayerCoordinates = match player_query.single() {
+        Ok(it) => it,
+        _ => return,
+    };
+
+    let section = text.sections.get_mut(0).unwrap();
+    let current = player_coordinates.current.unwrap();
+    section.value = format!("Coordinate {}  {}", current.x, current.y);
 }
 
 type PlayerTransform = (&'static Player, &'static Transform);

@@ -1,4 +1,7 @@
-use bevy::prelude::{Commands, Query, Res, ResMut};
+use bevy::{
+    prelude::{AssetServer, Commands, Query, Res, ResMut},
+    window::Windows,
+};
 
 use tdlg::{cells::layer::LayerType, grid::Grid};
 
@@ -9,6 +12,7 @@ use crate::{
         player::{Player, PlayerBundle},
         spawns::Spawns,
         structure::StructureBundle,
+        text::PlayerStatsTextBundle,
         world::WorldTickTimer,
     },
     configuration::map::world_coordinate_from_grid,
@@ -20,6 +24,8 @@ pub fn spawn_opening_bundles(
     sprites: Res<Sprites>,
     mut grid: ResMut<Grid>,
     query: Query<&Player>,
+    asset_server: Res<AssetServer>,
+    windows: Res<Windows>,
 ) {
     if query.single().is_ok() {
         return;
@@ -61,7 +67,10 @@ pub fn spawn_opening_bundles(
     let player_spawn = grid.random_spawnable_coordinate().unwrap();
     let coordinate = world_coordinate_from_grid(&player_spawn);
     let player_bundle = PlayerBundle::build_main_player(coordinate, &sprites);
+    let player_text_bundle =
+        PlayerStatsTextBundle::from_player_bundle(&player_bundle, &asset_server, &windows);
     commands.spawn_bundle(player_bundle);
+    commands.spawn_bundle(player_text_bundle);
 
     commands.spawn().insert(GameCameraState::default());
     commands.spawn().insert(Spawns::default());
