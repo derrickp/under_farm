@@ -59,9 +59,9 @@ pub fn spawn_opening_bundles(
     }
 
     let player_spawn = grid.random_spawnable_coordinate().unwrap();
-    println!("{} {}", player_spawn.x, player_spawn.y);
     let coordinate = world_coordinate_from_grid(&player_spawn);
-    commands.spawn_bundle(PlayerBundle::build_main_player(coordinate, &sprites));
+    let player_bundle = PlayerBundle::build_main_player(coordinate, &sprites);
+    commands.spawn_bundle(player_bundle);
 
     commands.spawn().insert(GameCameraState::default());
     commands.spawn().insert(Spawns::default());

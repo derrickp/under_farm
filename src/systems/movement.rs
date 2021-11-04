@@ -10,7 +10,7 @@ use crate::{
         bounding_box::BoundingBox,
         cameras::GameCamera,
         movement::Direction,
-        player::{Player, PlayerInventory, PlayerMovement},
+        player::{Player, PlayerCoordinates, PlayerInventory, PlayerMovement},
         structure::Structure,
     },
     configuration::map::TILE_SIZE,
@@ -76,6 +76,20 @@ pub fn player_movement(
 
     transform.translation.x = x;
     transform.translation.y = y;
+}
+
+pub fn update_player_grid_coordinate(
+    mut query: Query<(&Player, &Transform, &mut PlayerCoordinates)>,
+) {
+    let (_, transform, mut player_coordinates): (&Player, &Transform, Mut<'_, PlayerCoordinates>) =
+        match query.single_mut() {
+            Ok(it) => it,
+            _ => return,
+        };
+
+    let world_coordinate = Vec2::new(transform.translation.x, transform.translation.y);
+    let current = grid_coordinate_from_world(&world_coordinate);
+    player_coordinates.current = Some(current);
 }
 
 type PlayerTransform = (&'static Player, &'static Transform);

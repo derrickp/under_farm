@@ -1,4 +1,7 @@
-use crate::{configuration::sprites::player_sprite_scale, sprites::Sprites};
+use crate::{
+    configuration::{map::grid_coordinate_from_world, sprites::player_sprite_scale},
+    sprites::Sprites,
+};
 
 use super::{
     action::CurrentAction,
@@ -11,6 +14,7 @@ use bevy::{
     prelude::{Bundle, SpriteSheetBundle, Transform},
     sprite::TextureAtlasSprite,
 };
+use tdlg::coordinate::Coordinate;
 
 pub struct PlayerInventory {
     pub current_crop_selection: Option<usize>,
@@ -25,6 +29,11 @@ pub struct PlayerMovement {
     pub direction: Direction,
 }
 
+#[derive(Default)]
+pub struct PlayerCoordinates {
+    pub current: Option<Coordinate>,
+}
+
 #[derive(Bundle)]
 pub struct PlayerBundle {
     pub name: Name,
@@ -32,6 +41,7 @@ pub struct PlayerBundle {
     pub player: Player,
     pub action: CurrentAction,
     pub inventory: PlayerInventory,
+    pub coordinates: PlayerCoordinates,
 
     #[bundle]
     pub sprite: SpriteSheetBundle,
@@ -52,6 +62,7 @@ impl Default for PlayerBundle {
                 current_tool: None,
                 current_tool_selection: None,
             },
+            coordinates: PlayerCoordinates { current: None },
             sprite: SpriteSheetBundle::default(),
         }
     }
@@ -60,6 +71,9 @@ impl Default for PlayerBundle {
 impl PlayerBundle {
     pub fn build_main_player(coordinate: Vec2, sprites: &Sprites) -> Self {
         Self {
+            coordinates: PlayerCoordinates {
+                current: Some(grid_coordinate_from_world(&coordinate)),
+            },
             sprite: SpriteSheetBundle {
                 sprite: TextureAtlasSprite::new(sprites.player_sprite_index as u32),
                 texture_atlas: sprites.atlas_handle.clone(),
