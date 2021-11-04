@@ -15,13 +15,17 @@ use systems::{
     initial_spawns::spawn_opening_bundles,
     inputs::{
         action_input_system, movement_input_system, open_close_inventory_input_system,
-        reset_action_input_system, zoom_camera_system, MovementInputTimer,
+        reset_action_input_system, toggle_coordinates_system, zoom_camera_system,
+        MovementInputTimer,
     },
     inventory::{
         add_inventory_text, remove_inventory_text, select_crop, update_inventory_text_colour,
     },
     loading::{check_load_state, start_game},
-    movement::{camera_movement, check_floor_collision, player_movement},
+    movement::{
+        camera_movement, check_floor_collision, player_movement, update_player_grid_coordinate,
+        update_player_text,
+    },
     spawns::{reset_crop_spawns, spawn_crops},
     textures::{check_textures, load_sprites, load_textures},
     world::{generate_world_grid, tick_game_world},
@@ -70,6 +74,17 @@ fn main() {
                         .after("movement_input"),
                 )
                 .with_system(
+                    update_player_grid_coordinate
+                        .system()
+                        .label("update_player_grid_coordinate")
+                        .after("player_movement"),
+                )
+                .with_system(
+                    update_player_text
+                        .system()
+                        .after("update_player_grid_coordinate"),
+                )
+                .with_system(
                     camera_movement
                         .system()
                         .label("camera_movement")
@@ -95,6 +110,7 @@ fn main() {
                         .after("player_movement"),
                 )
                 .with_system(zoom_camera_system.system())
+                .with_system(toggle_coordinates_system.system())
                 .with_system(tick_game_world.system().label("tick_game_world"))
                 .with_system(
                     grow_crops_system
