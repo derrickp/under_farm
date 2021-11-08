@@ -1,6 +1,6 @@
 use crate::configuration::sprites::{
-    GIANT_MUSHROOM, GIANT_MUSHROOM_SPORES, KANE_SEEDS, KANE_STALKS, POTATOES, POTATO_SEEDS,
-    TURNIP_SEED, TURNIP_TOP,
+    GIANT_MUSHROOM, GIANT_MUSHROOM_SPORES, GIANT_MUSHROOM_SPROUTS, KANE_SEEDS, KANE_STALKS,
+    POTATOES, POTATO_SEEDS, TURNIP_SEED, TURNIP_TOP,
 };
 
 use super::timers::WORLD_TICK_TIME;
@@ -56,6 +56,13 @@ fn mushroom_configuration() -> CropConfiguration {
         CropStage {
             name: "Mushroom Spores",
             sprite_location: GIANT_MUSHROOM_SPORES,
+            sprite_index: None,
+            min_ticks_in_stage: TICKS_PER_SECOND * 10,
+            chance_to_advance: 90,
+        },
+        CropStage {
+            name: "Mushroom Sprouts",
+            sprite_location: GIANT_MUSHROOM_SPROUTS,
             sprite_index: None,
             min_ticks_in_stage: TICKS_PER_SECOND * 10,
             chance_to_advance: 95,

@@ -28,6 +28,7 @@ pub const UNBREAKABLE_WALL: &str = "sprites/wall.png";
 
 pub const GIANT_MUSHROOM: &str = "sprites/giant_mushroom.png";
 pub const GIANT_MUSHROOM_SPORES: &str = "sprites/giant_mushroom_spores.png";
+pub const GIANT_MUSHROOM_SPROUTS: &str = "sprites/giant_mushroom_sprouts.png";
 pub const KANE_SEEDS: &str = "sprites/kane_seeds.png";
 pub const KANE_STALKS: &str = "sprites/kane_stalks.png";
 pub const POTATO_SEEDS: &str = "sprites/potato_seeds.png";
