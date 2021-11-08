@@ -5,6 +5,8 @@ use crate::configuration::sprites::{
 
 use super::timers::WORLD_TICK_TIME;
 
+use rand::Rng;
+
 pub struct CropConfiguration {
     pub name: &'static str,
     pub stages: Vec<CropStage>,
@@ -21,8 +23,22 @@ pub struct CropStage {
     pub sprite_location: &'static str,
     pub sprite_index: Option<u32>,
     pub min_ticks_in_stage: u32,
+    pub max_ticks_in_stage: u32,
     pub chance_to_advance: u32,
 }
+
+impl CropStage {
+    pub fn configured_ticks_in_stage(&self) -> u32 {
+        let mut ticks = self.min_ticks_in_stage;
+
+        if self.min_ticks_in_stage != self.max_ticks_in_stage {
+            let mut rng = rand::thread_rng();
+            ticks = rng.gen_range(self.min_ticks_in_stage..self.max_ticks_in_stage);
+        }
+
+        TICKS_PER_SECOND * ticks
+    }
+ }
 
 pub struct CropConfigurations {
     pub configurations: Vec<CropConfiguration>,
@@ -36,14 +52,16 @@ fn kane_configuration() -> CropConfiguration {
             name: "Kane Seed",
             sprite_location: KANE_SEEDS,
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 15,
+            min_ticks_in_stage: 15,
+            max_ticks_in_stage: 30,
             chance_to_advance: 95,
         },
         CropStage {
             name: "Kane Stalk",
             sprite_location: KANE_STALKS,
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 30,
+            min_ticks_in_stage: 30,
+            max_ticks_in_stage: 45,
             chance_to_advance: 25,
         },
     ];
@@ -57,21 +75,24 @@ fn mushroom_configuration() -> CropConfiguration {
             name: "Mushroom Spores",
             sprite_location: GIANT_MUSHROOM_SPORES,
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 10,
+            min_ticks_in_stage: 10,
+            max_ticks_in_stage: 15,
             chance_to_advance: 90,
         },
         CropStage {
             name: "Mushroom Sprouts",
             sprite_location: GIANT_MUSHROOM_SPROUTS,
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 10,
+            min_ticks_in_stage: 10,
+            max_ticks_in_stage: 20,
             chance_to_advance: 95,
         },
         CropStage {
             name: "Mushroom Plant",
             sprite_location: GIANT_MUSHROOM,
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 30,
+            min_ticks_in_stage: 30,
+            max_ticks_in_stage: 40,
             chance_to_advance: 1,
         },
     ];
@@ -84,14 +105,16 @@ fn potato_configuration() -> CropConfiguration {
             name: "Potato Seeds",
             sprite_location: POTATO_SEEDS,
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 5,
+            min_ticks_in_stage: 5,
+            max_ticks_in_stage: 10,
             chance_to_advance: 95,
         },
         CropStage {
             name: "Potatoes",
             sprite_location: POTATOES,
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 60,
+            min_ticks_in_stage: 60,
+            max_ticks_in_stage: 90,
             chance_to_advance: 1,
         },
     ];
@@ -105,14 +128,16 @@ fn turnip_configuration() -> CropConfiguration {
             name: "Turnip Seeds",
             sprite_location: TURNIP_SEED,
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 20,
+            min_ticks_in_stage: 20,
+            max_ticks_in_stage: 30,
             chance_to_advance: 75,
         },
         CropStage {
             name: "Turnip",
             sprite_location: TURNIP_TOP,
             sprite_index: None,
-            min_ticks_in_stage: TICKS_PER_SECOND * 45,
+            min_ticks_in_stage: 45,
+            max_ticks_in_stage: 60,
             chance_to_advance: 5,
         },
     ];

@@ -49,7 +49,7 @@ impl CropBundle {
             .iter()
             .map(|stage| CropStage {
                 ticks_in_stage: 0,
-                min_ticks_in_stage: stage.min_ticks_in_stage,
+                min_ticks_in_stage: stage.configured_ticks_in_stage(),
                 chance_to_advance: stage.chance_to_advance,
                 sprite_index: stage.sprite_index.unwrap(),
             })

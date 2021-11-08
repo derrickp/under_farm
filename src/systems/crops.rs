@@ -33,10 +33,7 @@ pub fn grow_crops_system(
     }
 
     let mut rng = rand::thread_rng();
-    let chance_to_grow: u32 = rng.gen_range(1..100);
-    let mut crop_count = 0;
     for crop_data in query.iter_mut() {
-        crop_count += 1;
         let (entity, transform, mut crop, mut stages, mut sprite): (
             Entity,
             &Transform,
@@ -57,6 +54,8 @@ pub fn grow_crops_system(
         if stage.ticks_in_stage < stage.min_ticks_in_stage {
             continue;
         }
+
+        let chance_to_grow: u32 = rng.gen_range(1..100);
 
         if chance_to_grow > stage.chance_to_advance {
             continue;
@@ -79,6 +78,4 @@ pub fn grow_crops_system(
             }
         }
     }
-
-    println!("{}", crop_count);
 }
