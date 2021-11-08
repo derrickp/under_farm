@@ -13,6 +13,7 @@ pub struct Sprites {
     pub room_floor_index: usize,
     pub broken_wall_index: usize,
     pub table_index: usize,
+    pub brick_wall_minor_cracked_index: usize,
     pub brick_wall_cracked_index: usize,
     pub brick_wall_really_cracked_index: usize,
     pub broken_small_table: usize,

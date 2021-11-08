@@ -8,9 +8,9 @@ use crate::{
     configuration::{
         crops::CropConfigurations,
         sprites::{
-            dirt_floor_sprite_names, BRICK_WALL, BRICK_WALL_CRACKED, BRICK_WALL_REALLY_CRACKED,
-            BRICK_WALL_RUBBLE, BROKEN_SMALL_TABLE, GOBLIN_BIG_HAT, ROOM_FLOOR_1, SMALL_TABLE,
-            UNBREAKABLE_WALL,
+            dirt_floor_sprite_names, BRICK_WALL, BRICK_WALL_CRACKED, BRICK_WALL_MINOR_CRACKED,
+            BRICK_WALL_REALLY_CRACKED, BRICK_WALL_RUBBLE, BROKEN_SMALL_TABLE, GOBLIN_BIG_HAT,
+            ROOM_FLOOR_1, SMALL_TABLE, UNBREAKABLE_WALL,
         },
     },
     sprites::{LoadedTextures, Sprites},
@@ -73,6 +73,7 @@ pub fn load_sprites(
     let room_floor_handle = asset_server.get_handle(ROOM_FLOOR_1);
     let rubble_handle = asset_server.get_handle(BRICK_WALL_RUBBLE);
     let table_handle = asset_server.get_handle(SMALL_TABLE);
+    let brick_wall_minor_cracked = asset_server.get_handle(BRICK_WALL_MINOR_CRACKED);
     let brick_wall_cracked = asset_server.get_handle(BRICK_WALL_CRACKED);
     let brick_wall_really_cracked = asset_server.get_handle(BRICK_WALL_REALLY_CRACKED);
     let broken_small_table = asset_server.get_handle(BROKEN_SMALL_TABLE);
@@ -83,6 +84,9 @@ pub fn load_sprites(
     sprites.room_floor_index = texture_atlas.get_texture_index(&room_floor_handle).unwrap();
     sprites.broken_wall_index = texture_atlas.get_texture_index(&rubble_handle).unwrap();
     sprites.table_index = texture_atlas.get_texture_index(&table_handle).unwrap();
+    sprites.brick_wall_minor_cracked_index = texture_atlas
+        .get_texture_index(&brick_wall_minor_cracked)
+        .unwrap();
     sprites.brick_wall_cracked_index = texture_atlas
         .get_texture_index(&brick_wall_cracked)
         .unwrap();

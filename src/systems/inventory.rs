@@ -23,16 +23,51 @@ pub fn add_inventory_text(
     crop_configurations: Res<CropConfigurations>,
     tool_configurations: Res<ToolConfigurations>,
 ) {
-    commands
-        .spawn_bundle(InventoryTextBundle {
+    commands.spawn_bundle(InventoryTextBundle {
+        inventory_text: InventoryText,
+        status: InventoryTextStatus { index: 99 },
+        text: TextBundle {
+            style: Style {
+                align_self: AlignSelf::FlexEnd,
+                position_type: PositionType::Absolute,
+                position: Rect {
+                    top: Val::Px(15.0),
+                    left: Val::Px(15.0),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+            // Use the `Text::with_section` constructor
+            text: Text::with_section(
+                // Accepts a `String` or any type that converts into a `String`, such as `&str`
+                "inventory",
+                TextStyle {
+                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                    font_size: 20.0,
+                    color: Color::WHITE,
+                },
+                // Note: You can use `Default::default()` in place of the `TextAlignment`
+                Default::default(),
+            ),
+            ..Default::default()
+        },
+    });
+
+    for (index, crop_config) in crop_configurations.configurations.iter().enumerate() {
+        if crop_config.stages.is_empty() {
+            continue;
+        }
+
+        let top = 15.0 + (50.0 * (index as f32 + 1.0));
+        commands.spawn_bundle(InventoryTextBundle {
             inventory_text: InventoryText,
-            status: InventoryTextStatus { index: 99 },
+            status: InventoryTextStatus { index },
             text: TextBundle {
                 style: Style {
                     align_self: AlignSelf::FlexEnd,
                     position_type: PositionType::Absolute,
                     position: Rect {
-                        top: Val::Px(15.0),
+                        top: Val::Px(top),
                         left: Val::Px(15.0),
                         ..Default::default()
                     },
@@ -41,7 +76,7 @@ pub fn add_inventory_text(
                 // Use the `Text::with_section` constructor
                 text: Text::with_section(
                     // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                    "inventory",
+                    format!("{} {}", index + 1, crop_config.name),
                     TextStyle {
                         font: asset_server.load("fonts/FiraSans-Bold.ttf"),
                         font_size: 20.0,
@@ -53,43 +88,6 @@ pub fn add_inventory_text(
                 ..Default::default()
             },
         });
-
-    for (index, crop_config) in crop_configurations.configurations.iter().enumerate() {
-        if crop_config.stages.is_empty() {
-            continue;
-        }
-
-        let top = 15.0 + (50.0 * (index as f32 + 1.0));
-        commands
-            .spawn_bundle(InventoryTextBundle {
-                inventory_text: InventoryText,
-                status: InventoryTextStatus { index },
-                text: TextBundle {
-                    style: Style {
-                        align_self: AlignSelf::FlexEnd,
-                        position_type: PositionType::Absolute,
-                        position: Rect {
-                            top: Val::Px(top),
-                            left: Val::Px(15.0),
-                            ..Default::default()
-                        },
-                        ..Default::default()
-                    },
-                    // Use the `Text::with_section` constructor
-                    text: Text::with_section(
-                        // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                        format!("{} {}", index + 1, crop_config.name),
-                        TextStyle {
-                            font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                            font_size: 20.0,
-                            color: Color::WHITE,
-                        },
-                        // Note: You can use `Default::default()` in place of the `TextAlignment`
-                        Default::default(),
-                    ),
-                    ..Default::default()
-                },
-            });
     }
 
     let count_crop_configs = crop_configurations.configurations.len();
@@ -97,38 +95,37 @@ pub fn add_inventory_text(
     for (index, tool_config) in tool_configurations.configurations.iter().enumerate() {
         let text_entry_index = index + count_crop_configs;
         let top = 15.0 + (50.0 * (text_entry_index as f32 + 1.0));
-        commands
-            .spawn_bundle(InventoryTextBundle {
-                inventory_text: InventoryText,
-                status: InventoryTextStatus {
-                    index: text_entry_index,
-                },
-                text: TextBundle {
-                    style: Style {
-                        align_self: AlignSelf::FlexEnd,
-                        position_type: PositionType::Absolute,
-                        position: Rect {
-                            top: Val::Px(top),
-                            left: Val::Px(15.0),
-                            ..Default::default()
-                        },
+        commands.spawn_bundle(InventoryTextBundle {
+            inventory_text: InventoryText,
+            status: InventoryTextStatus {
+                index: text_entry_index,
+            },
+            text: TextBundle {
+                style: Style {
+                    align_self: AlignSelf::FlexEnd,
+                    position_type: PositionType::Absolute,
+                    position: Rect {
+                        top: Val::Px(top),
+                        left: Val::Px(15.0),
                         ..Default::default()
                     },
-                    // Use the `Text::with_section` constructor
-                    text: Text::with_section(
-                        // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                        format!("{} {}", text_entry_index + 1, tool_config.name),
-                        TextStyle {
-                            font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                            font_size: 20.0,
-                            color: Color::WHITE,
-                        },
-                        // Note: You can use `Default::default()` in place of the `TextAlignment`
-                        Default::default(),
-                    ),
                     ..Default::default()
                 },
-            });
+                // Use the `Text::with_section` constructor
+                text: Text::with_section(
+                    // Accepts a `String` or any type that converts into a `String`, such as `&str`
+                    format!("{} {}", text_entry_index + 1, tool_config.name),
+                    TextStyle {
+                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                        font_size: 20.0,
+                        color: Color::WHITE,
+                    },
+                    // Note: You can use `Default::default()` in place of the `TextAlignment`
+                    Default::default(),
+                ),
+                ..Default::default()
+            },
+        });
     }
 }
 

@@ -165,7 +165,7 @@ impl StructureBundle {
             structure: Structure {
                 can_be_broken: true,
                 can_be_walked_on: false,
-                health: Health::same_health(3),
+                health: Health::same_health(22),
                 structure_type: StructureType::Wall,
                 health_textures: vec![
                     HealthTextureMap {
@@ -175,17 +175,22 @@ impl StructureBundle {
                     },
                     HealthTextureMap {
                         min_health: 1,
-                        max_health: 1,
+                        max_health: 6,
                         texture_index: sprites.brick_wall_really_cracked_index,
                     },
                     HealthTextureMap {
-                        min_health: 2,
-                        max_health: 2,
+                        min_health: 7,
+                        max_health: 11,
                         texture_index: sprites.brick_wall_cracked_index,
                     },
                     HealthTextureMap {
-                        min_health: 3,
-                        max_health: 3,
+                        min_health: 12,
+                        max_health: 16,
+                        texture_index: sprites.brick_wall_minor_cracked_index,
+                    },
+                    HealthTextureMap {
+                        min_health: 17,
+                        max_health: 22,
                         texture_index: sprites.room_wall_index,
                     },
                 ],
