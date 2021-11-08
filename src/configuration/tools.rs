@@ -39,7 +39,7 @@ impl ToolConfiguration {
 
     pub fn to_tool(&self) -> Tool {
         Tool {
-            name: Name(self.name),
+            name: Name(self.name.to_string()),
             tool_type: self.tool_type,
             damage: Some(Damage {
                 max_damage: self.max_damage,

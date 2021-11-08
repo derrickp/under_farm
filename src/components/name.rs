@@ -1,2 +1,2 @@
 #[derive(Clone, Debug)]
-pub struct Name(pub &'static str);
+pub struct Name(pub String);

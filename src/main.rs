@@ -32,12 +32,15 @@ use systems::{
 };
 
 fn main() {
+    // TODO Should probably move this at some point...
+    let crop_configurations = CropConfigurations::load();
+
     App::build()
         .insert_resource(ClearColor(Color::rgb(0.05, 0.05, 0.05)))
         .init_resource::<Sprites>()
         .init_resource::<LoadedTextures>()
         .init_resource::<GameLoadState>()
-        .init_resource::<CropConfigurations>()
+        .insert_resource(crop_configurations)
         .init_resource::<ToolConfigurations>()
         .init_resource::<MovementInputTimer>()
         .add_state(AppState::Startup)

@@ -50,7 +50,7 @@ impl CropBundle {
             .map(|stage| CropStage {
                 ticks_in_stage: 0,
                 min_ticks_in_stage: stage.configured_ticks_in_stage(),
-                chance_to_advance: stage.chance_to_advance,
+                chance_to_advance: stage.chance_to_advance(),
                 sprite_index: stage.sprite_index.unwrap(),
             })
             .collect();
@@ -65,7 +65,7 @@ impl CropBundle {
                 texture_atlas: sprites.atlas_handle.clone(),
                 ..Default::default()
             },
-            name: Name(config.name),
+            name: Name(config.name.to_string()),
             stages: CropStages { stages },
             crop: Crop {
                 config_index: spawn.configuration_index,
