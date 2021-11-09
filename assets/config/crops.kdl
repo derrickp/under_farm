@@ -1,0 +1,20 @@
+crop "Kane" {
+    stage "Kane Seed" sprite="sprites/kane_seeds.png" min_ticks=15 max_ticks=30 advance_chance=95
+    stage "Kane Stalks" sprite="sprites/kane_stalks.png" min_ticks=30 max_ticks=45 advance_chance=25
+}
+
+crop "Mushroom" {
+    stage "Mushroom Spores" sprite="sprites/giant_mushroom_spores.png" min_ticks=10 max_ticks=15 advance_chance=90
+    stage "Mushroom Sprouts" sprite="sprites/giant_mushroom_sprouts.png" min_ticks=10 max_ticks=20 advance_chance=95
+    stage "Mushroom Plant" sprite="sprites/giant_mushroom.png" min_ticks=30 max_ticks=40 advance_chance=1
+}
+
+crop "Potato" {
+    stage "Potato Seeds" sprite="sprites/potato_seeds.png" min_ticks=5 max_ticks=10 advance_chance=95
+    stage "Potatoes" sprite="sprites/potatoes.png" min_ticks=60 max_ticks=90 advance_chance=1
+}
+
+crop "Turnip" {
+    stage "Turnip Seeds" sprite="sprites/turnip_seed.png" min_ticks=20 max_ticks=30 advance_chance=75
+    stage "Turnip Top" sprite="sprites/turnip_top.png" min_ticks=45 max_ticks=60 advance_chance=5
+}
