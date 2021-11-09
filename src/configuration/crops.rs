@@ -2,27 +2,54 @@ use std::fs;
 
 use super::timers::WORLD_TICK_TIME;
 
+use kdl::{KdlNode, KdlValue};
 use rand::Rng;
-use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone)]
+fn trim_kdl(value: String) -> String {
+    value.replace("\"", "").replace("\\", "")
+}
+
+#[derive(Clone)]
 struct CropStageFileConfig {
-    name: String,
     sprite_location: String,
     min_ticks_in_stage: u32,
     max_ticks_in_stage: u32,
     chance_to_advance: u32,
 }
 
-#[derive(Serialize, Deserialize)]
-struct CropFileConfiguration {
-    name: String,
-    stages: Vec<CropStageFileConfig>,
-}
+const DEFAULT_MIN_TICK: u32 = 10;
+const DEFAULT_MAX_TICK: u32 = 15;
+const DEFAULT_CHANCE_TO_ADVANCE: u32 = 10;
 
-#[derive(Serialize, Deserialize)]
-struct CropFileConfigurations {
-    configurations: Vec<CropFileConfiguration>,
+impl CropStageFileConfig {
+    fn from_kdl(node: &KdlNode) -> Self {
+        let sprite = match node.properties.get("sprite") {
+            Some(KdlValue::String(it)) => trim_kdl(it.clone()),
+            _ => "".to_string(),
+        };
+
+        let min_ticks = match node.properties.get("min_ticks") {
+            Some(KdlValue::Int(it)) => *it as u32,
+            _ => DEFAULT_MIN_TICK,
+        };
+
+        let max_ticks = match node.properties.get("max_ticks") {
+            Some(KdlValue::Int(it)) => *it as u32,
+            _ => DEFAULT_MAX_TICK,
+        };
+
+        let advance_chance = match node.properties.get("advance_chance") {
+            Some(KdlValue::Int(it)) => *it as u32,
+            _ => DEFAULT_CHANCE_TO_ADVANCE,
+        };
+
+        Self {
+            sprite_location: sprite,
+            min_ticks_in_stage: min_ticks,
+            max_ticks_in_stage: max_ticks,
+            chance_to_advance: advance_chance,
+        }
+    }
 }
 
 pub struct CropConfiguration {
@@ -66,28 +93,29 @@ const TICKS_PER_SECOND: u32 = (1.0 / WORLD_TICK_TIME) as u32;
 
 impl CropConfigurations {
     pub fn load() -> Self {
-        let config_file_name = "./assets/config/crops.json";
-        let contents = fs::read_to_string(config_file_name).unwrap();
-        let config: CropFileConfigurations = serde_json::from_str(&contents).unwrap();
-
-        let crops: Vec<CropConfiguration> = config
-            .configurations
+        let config_file_name = "./assets/config/crops.kdl";
+        let content = fs::read_to_string(config_file_name).unwrap();
+        let crop_nodes = kdl::parse_document(content).unwrap();
+        let configurations: Vec<CropConfiguration> = crop_nodes
             .iter()
-            .map(|file_config| CropConfiguration {
-                name: file_config.name.clone(),
-                stages: file_config
-                    .stages
+            .map(|crop_node| {
+                let name = match crop_node.values.get(0) {
+                    Some(KdlValue::String(it)) => trim_kdl(it.clone()),
+                    _ => "".to_string(),
+                };
+                let stages: Vec<CropStage> = crop_node
+                    .children
                     .iter()
-                    .map(|file_stage_config| CropStage {
-                        file_config: file_stage_config.clone(),
+                    .map(|stage_node| CropStage {
                         sprite_index: None,
+                        file_config: CropStageFileConfig::from_kdl(stage_node),
                     })
-                    .collect(),
+                    .collect();
+
+                CropConfiguration { name, stages }
             })
             .collect();
 
-        Self {
-            configurations: crops,
-        }
+        Self { configurations }
     }
 }
