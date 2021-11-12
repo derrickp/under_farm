@@ -1,11 +1,10 @@
-use bevy::{math::Vec3, prelude::Entity};
+use bevy::math::Vec3;
 
 use super::bounding_box::BoundingBox;
 
 pub struct Body {
     pub tile_size: f32,
     pub cell_center: Vec3,
-    pub sprite: Option<Entity>,
 }
 
 impl Body {

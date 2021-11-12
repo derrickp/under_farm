@@ -50,11 +50,11 @@ pub fn player_movement(
         let (wall, body, entity): (&Structure, &Body, Entity) = cell_data;
 
         if body.intersects_box(&bounding_box) {
-            if wall.can_be_walked_on {
+            if wall.can_be_walked_on() {
                 continue;
             }
 
-            if !wall.can_be_broken && !wall.can_be_walked_on {
+            if !wall.can_be_broken() && !wall.can_be_walked_on() {
                 player_would_hit_wall = true;
                 break;
             }

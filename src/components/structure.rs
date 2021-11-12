@@ -1,10 +1,13 @@
 use bevy::{
     math::{Vec2, Vec3},
-    prelude::{Bundle, SpriteSheetBundle, Transform, Visible},
-    sprite::TextureAtlasSprite,
+    prelude::{Bundle, Handle, SpriteSheetBundle, Transform, Visible},
+    sprite::{TextureAtlas, TextureAtlasSprite},
 };
 
-use crate::{configuration::map::TILE_SIZE, sprites::Sprites};
+use crate::configuration::{
+    map::TILE_SIZE,
+    structures::{StructureConfig, StructureHealthConfig},
+};
 
 use super::{
     body::Body,
@@ -13,22 +16,41 @@ use super::{
 
 #[derive(Default)]
 pub struct Structure {
-    pub can_be_broken: bool,
-    pub can_be_walked_on: bool,
     pub health: Health,
-    pub structure_type: StructureType,
-    pub health_textures: Vec<HealthTextureMap>,
+    pub health_configs: Vec<StructureHealth>,
+    default_can_be_walked_on: bool,
+    default_can_be_broken: bool,
 }
 
-pub enum StructureType {
-    Table,
-    Wall,
-    Unknown,
+pub struct StructureHealth {
+    health_texture: HealthTextureMap,
+    pub can_be_walked_on: bool,
+    pub can_be_broken: bool,
 }
 
-impl Default for StructureType {
-    fn default() -> Self {
-        Self::Unknown
+impl StructureHealth {
+    pub fn matches_health(&self, health: i32) -> bool {
+        health >= self.health_texture.min_health && health <= self.health_texture.max_health
+    }
+
+    pub fn texture_index(&self) -> usize {
+        self.health_texture.texture_index
+    }
+}
+
+impl From<&StructureHealthConfig> for StructureHealth {
+    fn from(value: &StructureHealthConfig) -> Self {
+        let health_texture = HealthTextureMap {
+            min_health: value.min_health(),
+            max_health: value.max_health(),
+            texture_index: value.sprite_index.unwrap() as usize,
+        };
+
+        Self {
+            health_texture,
+            can_be_broken: value.can_be_broken(),
+            can_be_walked_on: value.can_be_walked_on(),
+        }
     }
 }
 
@@ -37,20 +59,34 @@ impl Structure {
         self.health.current_health -= damage;
     }
 
-    pub fn is_destroyed(&self) -> bool {
-        self.health.has_no_health()
+    pub fn current_texture_index(&self) -> Option<usize> {
+        match self.current_config() {
+            Some(config) => Some(config.texture_index()),
+            _ => None,
+        }
     }
 
-    pub fn current_texture_index(&self) -> Option<usize> {
-        let current = self.health.current_health;
-        if let Some(health_texture) = self
-            .health_textures
-            .iter()
-            .find(|map| current >= map.min_health && current <= map.max_health)
-        {
-            return Some(health_texture.texture_index);
+    pub fn can_be_broken(&self) -> bool {
+        let config = self.current_config();
+        match config {
+            Some(structure_health) => structure_health.can_be_broken,
+            _ => self.default_can_be_broken,
         }
-        None
+    }
+
+    pub fn can_be_walked_on(&self) -> bool {
+        let config = self.current_config();
+        match config {
+            Some(structure_health) => structure_health.can_be_walked_on,
+            _ => self.default_can_be_walked_on,
+        }
+    }
+
+    fn current_config(&self) -> Option<&StructureHealth> {
+        let current = self.health.current_health;
+        self.health_configs
+            .iter()
+            .find(|config| config.matches_health(current))
     }
 }
 
@@ -64,156 +100,59 @@ pub struct StructureBundle {
 }
 
 impl StructureBundle {
-    pub fn build_table(coordinate: &Vec2, sprites: &Sprites) -> Self {
-        let cell_center = Vec3::new(coordinate.x, coordinate.y, 2.0);
-        Self {
-            structure: Structure {
-                health: Health::same_health(2),
-                structure_type: StructureType::Table,
-                can_be_broken: true,
-                health_textures: vec![
-                    HealthTextureMap {
-                        min_health: -99,
-                        max_health: 0,
-                        texture_index: sprites.broken_small_table,
-                    },
-                    HealthTextureMap {
-                        min_health: 1,
-                        max_health: 3,
-                        texture_index: sprites.table_index,
-                    },
-                ],
-                ..Default::default()
-            },
-            body: Body {
-                cell_center,
-                tile_size: TILE_SIZE as f32,
-                sprite: None,
-            },
-            sprite: SpriteSheetBundle {
-                sprite: TextureAtlasSprite::new(sprites.table_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                visible: Visible {
-                    is_visible: false,
-                    is_transparent: true,
-                },
-                transform: Transform {
-                    translation: cell_center,
-                    scale: crate::configuration::sprites::sprite_scale(),
-                    ..Default::default()
-                },
-                ..Default::default()
-            },
-        }
-    }
-
-    pub fn build_rubble(coordinate: &Vec2, sprites: &Sprites) -> Self {
-        let cell_center = Vec3::new(coordinate.x, coordinate.y, 2.0);
-        Self {
-            structure: Structure {
-                can_be_broken: false,
-                can_be_walked_on: true,
-                ..Default::default()
-            },
-            body: Body {
-                cell_center,
-                tile_size: TILE_SIZE as f32,
-                sprite: None,
-            },
-            sprite: SpriteSheetBundle {
-                sprite: TextureAtlasSprite::new(sprites.broken_wall_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                transform: Transform {
-                    translation: cell_center,
-                    scale: crate::configuration::sprites::sprite_scale(),
-                    ..Default::default()
-                },
-                ..Default::default()
-            },
-        }
-    }
-
-    pub fn build_outer_wall(coordinate: &Vec2, sprites: &Sprites) -> Self {
-        let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
-        Self {
-            structure: Structure::default(),
-            body: Body {
-                cell_center,
-                tile_size: TILE_SIZE as f32,
-                sprite: None,
-            },
-            sprite: SpriteSheetBundle {
-                transform: Transform {
-                    translation: cell_center,
-                    scale: crate::configuration::sprites::sprite_scale(),
-                    ..Default::default()
-                },
-                sprite: TextureAtlasSprite::new(sprites.outer_wall_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                visible: Visible {
-                    is_visible: true,
-                    is_transparent: true,
-                },
-                ..Default::default()
-            },
-        }
-    }
-
-    pub fn build_room_wall(coordinate: &Vec2, sprites: &Sprites) -> Self {
+    pub fn build(
+        coordinate: &Vec2,
+        atlas_handle: &Handle<TextureAtlas>,
+        structure_config: &StructureConfig,
+    ) -> Self {
         let cell_center = Vec3::new(coordinate.x, coordinate.y, 1.0);
+        let health_configs: Vec<StructureHealth> = structure_config
+            .health_configs
+            .iter()
+            .map(|health_config| StructureHealth::from(health_config))
+            .collect();
+
+        let structure = Structure {
+            health: Health::same_health(structure_config.starting_health),
+            health_configs,
+            ..Default::default()
+        };
+        let starting_sprite = structure.current_texture_index().unwrap() as u32;
+
         Self {
-            structure: Structure {
-                can_be_broken: true,
-                can_be_walked_on: false,
-                health: Health::same_health(22),
-                structure_type: StructureType::Wall,
-                health_textures: vec![
-                    HealthTextureMap {
-                        min_health: -99,
-                        max_health: 0,
-                        texture_index: sprites.broken_wall_index,
-                    },
-                    HealthTextureMap {
-                        min_health: 1,
-                        max_health: 6,
-                        texture_index: sprites.brick_wall_really_cracked_index,
-                    },
-                    HealthTextureMap {
-                        min_health: 7,
-                        max_health: 11,
-                        texture_index: sprites.brick_wall_cracked_index,
-                    },
-                    HealthTextureMap {
-                        min_health: 12,
-                        max_health: 16,
-                        texture_index: sprites.brick_wall_minor_cracked_index,
-                    },
-                    HealthTextureMap {
-                        min_health: 17,
-                        max_health: 22,
-                        texture_index: sprites.room_wall_index,
-                    },
-                ],
-            },
+            structure,
             body: Body {
                 cell_center,
                 tile_size: TILE_SIZE as f32,
-                sprite: None,
             },
-            sprite: SpriteSheetBundle {
-                transform: Transform {
-                    translation: cell_center,
-                    scale: crate::configuration::sprites::sprite_scale(),
-                    ..Default::default()
-                },
-                sprite: TextureAtlasSprite::new(sprites.room_wall_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                visible: Visible {
-                    is_visible: true,
-                    is_transparent: true,
-                },
+            sprite: Self::sprite(
+                atlas_handle,
+                cell_center,
+                starting_sprite,
+                structure_config.initial_visible,
+            ),
+        }
+    }
+
+    fn sprite(
+        atlas: &Handle<TextureAtlas>,
+        center: Vec3,
+        sprite: u32,
+        visible: bool,
+    ) -> SpriteSheetBundle {
+        SpriteSheetBundle {
+            transform: Transform {
+                translation: center,
+                scale: crate::configuration::sprites::sprite_scale(),
                 ..Default::default()
             },
+            sprite: TextureAtlasSprite::new(sprite),
+            texture_atlas: atlas.clone(),
+            visible: Visible {
+                is_visible: visible,
+                is_transparent: true,
+            },
+            ..Default::default()
         }
     }
 }

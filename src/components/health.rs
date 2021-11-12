@@ -11,10 +11,6 @@ impl Health {
             max_health: health,
         }
     }
-
-    pub fn has_no_health(&self) -> bool {
-        self.current_health == 0
-    }
 }
 
 pub struct HealthTextureMap {

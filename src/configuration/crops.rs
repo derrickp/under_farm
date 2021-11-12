@@ -5,10 +5,6 @@ use super::timers::WORLD_TICK_TIME;
 use kdl::{KdlNode, KdlValue};
 use rand::Rng;
 
-fn trim_kdl(value: String) -> String {
-    value.replace("\"", "").replace("\\", "")
-}
-
 #[derive(Clone)]
 struct CropStageFileConfig {
     sprite_location: String,
@@ -21,10 +17,10 @@ const DEFAULT_MIN_TICK: u32 = 10;
 const DEFAULT_MAX_TICK: u32 = 15;
 const DEFAULT_CHANCE_TO_ADVANCE: u32 = 10;
 
-impl CropStageFileConfig {
-    fn from_kdl(node: &KdlNode) -> Self {
+impl From<&KdlNode> for CropStageFileConfig {
+    fn from(node: &KdlNode) -> Self {
         let sprite = match node.properties.get("sprite") {
-            Some(KdlValue::String(it)) => trim_kdl(it.clone()),
+            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
             _ => "".to_string(),
         };
 
@@ -92,15 +88,14 @@ pub struct CropConfigurations {
 const TICKS_PER_SECOND: u32 = (1.0 / WORLD_TICK_TIME) as u32;
 
 impl CropConfigurations {
-    pub fn load() -> Self {
-        let config_file_name = "./assets/config/crops.kdl";
-        let content = fs::read_to_string(config_file_name).unwrap();
+    pub fn load(path: &str) -> Self {
+        let content = fs::read_to_string(path).unwrap();
         let crop_nodes = kdl::parse_document(content).unwrap();
         let configurations: Vec<CropConfiguration> = crop_nodes
             .iter()
             .map(|crop_node| {
                 let name = match crop_node.values.get(0) {
-                    Some(KdlValue::String(it)) => trim_kdl(it.clone()),
+                    Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
                     _ => "".to_string(),
                 };
                 let stages: Vec<CropStage> = crop_node
@@ -108,7 +103,7 @@ impl CropConfigurations {
                     .iter()
                     .map(|stage_node| CropStage {
                         sprite_index: None,
-                        file_config: CropStageFileConfig::from_kdl(stage_node),
+                        file_config: CropStageFileConfig::from(stage_node),
                     })
                     .collect();
 

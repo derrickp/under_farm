@@ -15,7 +15,7 @@ use crate::{
         text::PlayerStatsTextBundle,
         world::WorldTickTimer,
     },
-    configuration::map::world_coordinate_from_grid,
+    configuration::{map::world_coordinate_from_grid, structures::StructuresConfig},
     sprites::Sprites,
 };
 
@@ -26,6 +26,7 @@ pub fn spawn_opening_bundles(
     query: Query<&Player>,
     asset_server: Res<AssetServer>,
     windows: Res<Windows>,
+    structures_config: Res<StructuresConfig>,
 ) {
     if query.single().is_ok() {
         return;
@@ -39,8 +40,13 @@ pub fn spawn_opening_bundles(
                     commands.spawn_bundle(GroundTileBundle::build_floor(&coordinate, &sprites));
                 }
                 LayerType::RoomWall => {
+                    let structure_config = structures_config.config_by_key("room_wall").unwrap();
                     commands.spawn_bundle(GroundTileBundle::build_floor(&coordinate, &sprites));
-                    commands.spawn_bundle(StructureBundle::build_room_wall(&coordinate, &sprites));
+                    commands.spawn_bundle(StructureBundle::build(
+                        &coordinate,
+                        &sprites.atlas_handle,
+                        structure_config,
+                    ));
                 }
                 LayerType::RoomFloor => {
                     commands
@@ -51,13 +57,28 @@ pub fn spawn_opening_bundles(
                         .spawn_bundle(GroundTileBundle::build_room_floor(&coordinate, &sprites));
                 }
                 LayerType::OuterWall => {
-                    commands.spawn_bundle(StructureBundle::build_outer_wall(&coordinate, &sprites));
+                    let structure_config = structures_config.config_by_key("outer_wall").unwrap();
+                    commands.spawn_bundle(StructureBundle::build(
+                        &coordinate,
+                        &sprites.atlas_handle,
+                        structure_config,
+                    ));
                 }
                 LayerType::Rubble => {
-                    commands.spawn_bundle(StructureBundle::build_rubble(&coordinate, &sprites));
+                    let structure_config = structures_config.config_by_key("rubble").unwrap();
+                    commands.spawn_bundle(StructureBundle::build(
+                        &coordinate,
+                        &sprites.atlas_handle,
+                        structure_config,
+                    ));
                 }
                 LayerType::Table => {
-                    commands.spawn_bundle(StructureBundle::build_table(&coordinate, &sprites));
+                    let structure_config = structures_config.config_by_key("table").unwrap();
+                    commands.spawn_bundle(StructureBundle::build(
+                        &coordinate,
+                        &sprites.atlas_handle,
+                        structure_config,
+                    ));
                 }
                 _ => {}
             }
@@ -71,6 +92,10 @@ pub fn spawn_opening_bundles(
         PlayerStatsTextBundle::from_player_bundle(&player_bundle, &asset_server, &windows);
     commands.spawn_bundle(player_bundle);
     commands.spawn_bundle(player_text_bundle);
+
+    for configuration in structures_config.configurations.iter() {
+        println!("{}", configuration.key);
+    }
 
     commands.spawn().insert(GameCameraState::default());
     commands.spawn().insert(Spawns::default());

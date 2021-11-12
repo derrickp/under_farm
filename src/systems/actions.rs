@@ -38,10 +38,6 @@ pub fn hit_actions(
     if let Some(sprite_index) = structure.current_texture_index() {
         sprite.index = sprite_index as u32;
     }
-
-    if structure.is_destroyed() {
-        structure.can_be_walked_on = true;
-    }
 }
 
 pub fn reset_hit_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
