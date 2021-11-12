@@ -1,0 +1,20 @@
+structure "Room Wall" key="room_wall" type="wall" health=22 visible=true {
+    health_config sprite="sprites/brick_wall.png" min_health=17 max_health=22 can_be_broken=true can_be_walked_on=false
+    health_config sprite="sprites/brick_wall_minor_cracked.png" min_health=12 max_health=16 can_be_broken=true can_be_walked_on=false
+    health_config sprite="sprites/brick_wall_cracked.png" min_health=7 max_health=11 can_be_broken=true can_be_walked_on=false
+    health_config sprite="sprites/brick_wall_really_cracked.png" min_health=1 max_health=6 can_be_broken=true can_be_walked_on=false
+    health_config sprite="sprites/broken_wall.png" min_health=-99 max_health=0 can_be_broken=false can_be_walked_on=true
+}
+
+structure "Table" key="table" type="table" health=3 visible=false {
+    health_config sprite="sprites/small_table.png" min_health=1 max_health=3 can_be_broken=true can_be_walked_on=false
+    health_config sprite="sprites/broken_small_table.png" min_health=-99 max_health=0 can_be_broken=false can_be_walked_on=true
+}
+
+structure "Rubble" key="rubble" type="wall" health=0 {
+    health_config sprite="sprites/broken_wall.png" min_health=-99 max_health=0 can_be_broken=false can_be_walked_on=true
+}
+
+structure "Outer Wall" key="outer_wall" type="wall" health=1000 {
+    health_config sprite="sprites/wall.png" min_health=0 max_health=1000 can_be_broken=false can_be_walked_on=false
+}
