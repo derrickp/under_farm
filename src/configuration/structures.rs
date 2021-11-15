@@ -1,6 +1,6 @@
-use std::fs;
-
 use kdl::{KdlNode, KdlValue};
+
+use super::kdl_utils::parse;
 
 #[derive(Clone)]
 pub struct StructureConfig {
@@ -151,12 +151,9 @@ impl StructuresConfig {
     pub fn config_by_key(&self, key: &str) -> Option<&StructureConfig> {
         self.configurations.iter().find(|c| c.key == key)
     }
-}
 
-impl StructuresConfig {
     pub fn load(path: &str) -> Self {
-        let content = fs::read_to_string(path).unwrap();
-        let structure_nodes = kdl::parse_document(content).unwrap();
+        let structure_nodes = parse(path).unwrap();
         let configurations: Vec<StructureConfig> = structure_nodes
             .iter()
             .map(|structure_node| StructureConfig::from(structure_node))

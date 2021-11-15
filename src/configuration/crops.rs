@@ -1,6 +1,4 @@
-use std::fs;
-
-use super::timers::WORLD_TICK_TIME;
+use super::{kdl_utils::parse, load::Load, timers::WORLD_TICK_TIME};
 
 use kdl::{KdlNode, KdlValue};
 use rand::Rng;
@@ -87,10 +85,9 @@ pub struct CropConfigurations {
 
 const TICKS_PER_SECOND: u32 = (1.0 / WORLD_TICK_TIME) as u32;
 
-impl CropConfigurations {
-    pub fn load(path: &str) -> Self {
-        let content = fs::read_to_string(path).unwrap();
-        let crop_nodes = kdl::parse_document(content).unwrap();
+impl Load for CropConfigurations {
+    fn load(path: &str) -> Self {
+        let crop_nodes = parse(path).unwrap();
         let configurations: Vec<CropConfiguration> = crop_nodes
             .iter()
             .map(|crop_node| {
