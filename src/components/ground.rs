@@ -4,7 +4,10 @@ use bevy::{
     sprite::TextureAtlasSprite,
 };
 
-use crate::{configuration::map::TILE_SIZE, sprites::Sprites};
+use crate::{
+    configuration::{floors::FloorConfig, map::TILE_SIZE},
+    sprites::Sprites,
+};
 
 use super::body::Body;
 
@@ -22,35 +25,16 @@ pub struct GroundTileBundle {
 }
 
 impl GroundTileBundle {
-    pub fn build_room_floor(coordinate: &Vec2, sprites: &Sprites) -> Self {
-        let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
-        Self {
-            tile_type: GroundTile,
-            collide: Body {
-                cell_center,
-                tile_size: TILE_SIZE as f32,
-            },
-            sprite: SpriteSheetBundle {
-                transform: Transform {
-                    translation: cell_center,
-                    scale: crate::configuration::sprites::sprite_scale(),
-                    ..Default::default()
-                },
-                sprite: TextureAtlasSprite::new(sprites.room_floor_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                visible: Visible {
-                    is_visible: false,
-                    is_transparent: false,
-                },
-                ..Default::default()
-            },
-        }
-    }
-
-    pub fn build_floor(coordinate: &Vec2, sprites: &Sprites) -> Self {
+    pub fn build(coordinate: &Vec2, sprites: &Sprites, floor_config: &FloorConfig) -> Self {
         let mut rng = rand::thread_rng();
-        let random_index: usize = rng.gen_range(0..sprites.dirt_floor_indexes.len());
-        let dirt_floor_index = *sprites.dirt_floor_indexes.get(random_index).unwrap();
+        let num_options = floor_config.sprite_options.len();
+        let random_index: usize = rng.gen_range(0..num_options);
+        let floor_index = floor_config
+            .sprite_options
+            .get(random_index)
+            .unwrap()
+            .sprite_index
+            .unwrap();
         let cell_center = Vec3::new(coordinate.x, coordinate.y, 0.0);
         Self {
             tile_type: GroundTile,
@@ -64,7 +48,7 @@ impl GroundTileBundle {
                     scale: crate::configuration::sprites::sprite_scale(),
                     ..Default::default()
                 },
-                sprite: TextureAtlasSprite::new(dirt_floor_index as u32),
+                sprite: TextureAtlasSprite::new(floor_index),
                 texture_atlas: sprites.atlas_handle.clone(),
                 visible: Visible {
                     is_visible: false,

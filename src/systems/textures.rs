@@ -6,8 +6,7 @@ use bevy::{
 
 use crate::{
     configuration::{
-        crops::CropConfigurations,
-        sprites::{dirt_floor_sprite_names, GOBLIN_BIG_HAT, ROOM_FLOOR_1},
+        crops::CropConfigurations, floors::FloorConfigurations, sprites::GOBLIN_BIG_HAT,
         structures::StructuresConfig,
     },
     sprites::{LoadedTextures, Sprites},
@@ -34,6 +33,7 @@ pub fn load_sprites(
     mut sprites: ResMut<Sprites>,
     mut crop_configurations: ResMut<CropConfigurations>,
     mut structures_config: ResMut<StructuresConfig>,
+    mut floor_configs: ResMut<FloorConfigurations>,
     loaded_textures: Res<LoadedTextures>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mut textures: ResMut<Assets<Texture>>,
@@ -66,19 +66,17 @@ pub fn load_sprites(
         }
     }
 
-    sprites.dirt_floor_indexes = Vec::new();
-    for name in dirt_floor_sprite_names() {
-        let handle = asset_server.get_handle(name);
-        if let Some(index) = texture_atlas.get_texture_index(&handle) {
-            sprites.dirt_floor_indexes.push(index);
+    for config in floor_configs.configurations.as_mut_slice() {
+        for mut sprite_options in config.sprite_options.as_mut_slice() {
+            let handle = asset_server.get_handle(sprite_options.sprite_location());
+            if let Some(index) = texture_atlas.get_texture_index(&handle) {
+                sprite_options.sprite_index = Some(index as u32);
+            }
         }
     }
 
     let texture_handle = asset_server.load(GOBLIN_BIG_HAT);
-    let room_floor_handle = asset_server.get_handle(ROOM_FLOOR_1);
-
     sprites.player_sprite_index = texture_atlas.get_texture_index(&texture_handle).unwrap();
-    sprites.room_floor_index = texture_atlas.get_texture_index(&room_floor_handle).unwrap();
 
     let atlas_handle = texture_atlases.add(texture_atlas);
     sprites.atlas_handle = atlas_handle;

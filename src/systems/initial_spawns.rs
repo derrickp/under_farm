@@ -15,7 +15,9 @@ use crate::{
         text::PlayerStatsTextBundle,
         world::WorldTickTimer,
     },
-    configuration::{map::world_coordinate_from_grid, structures::StructuresConfig},
+    configuration::{
+        floors::FloorConfigurations, map::world_coordinate_from_grid, structures::StructuresConfig,
+    },
     sprites::Sprites,
 };
 
@@ -27,6 +29,7 @@ pub fn spawn_opening_bundles(
     asset_server: Res<AssetServer>,
     windows: Res<Windows>,
     structures_config: Res<StructuresConfig>,
+    floor_configs: Res<FloorConfigurations>,
 ) {
     if query.single().is_ok() {
         return;
@@ -35,13 +38,22 @@ pub fn spawn_opening_bundles(
     for cell in grid.cells.values() {
         for layer in cell.layers.iter() {
             let coordinate = world_coordinate_from_grid(&cell.coordinate);
+            let floor_config = floor_configs.config_by_key("cave_floor").unwrap();
             match *layer {
                 LayerType::Floor => {
-                    commands.spawn_bundle(GroundTileBundle::build_floor(&coordinate, &sprites));
+                    commands.spawn_bundle(GroundTileBundle::build(
+                        &coordinate,
+                        &sprites,
+                        floor_config,
+                    ));
                 }
                 LayerType::RoomWall => {
                     let structure_config = structures_config.config_by_key("room_wall").unwrap();
-                    commands.spawn_bundle(GroundTileBundle::build_floor(&coordinate, &sprites));
+                    commands.spawn_bundle(GroundTileBundle::build(
+                        &coordinate,
+                        &sprites,
+                        floor_config,
+                    ));
                     commands.spawn_bundle(StructureBundle::build(
                         &coordinate,
                         &sprites.atlas_handle,
@@ -49,12 +61,12 @@ pub fn spawn_opening_bundles(
                     ));
                 }
                 LayerType::RoomFloor => {
-                    commands
-                        .spawn_bundle(GroundTileBundle::build_room_floor(&coordinate, &sprites));
+                    let config = floor_configs.config_by_key("room_floor").unwrap();
+                    commands.spawn_bundle(GroundTileBundle::build(&coordinate, &sprites, config));
                 }
                 LayerType::Door => {
-                    commands
-                        .spawn_bundle(GroundTileBundle::build_room_floor(&coordinate, &sprites));
+                    let config = floor_configs.config_by_key("room_floor").unwrap();
+                    commands.spawn_bundle(GroundTileBundle::build(&coordinate, &sprites, config));
                 }
                 LayerType::OuterWall => {
                     let structure_config = structures_config.config_by_key("outer_wall").unwrap();
