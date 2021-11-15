@@ -1,0 +1,12 @@
+floor "Cave Floor" key="cave_floor" {
+    option sprite="sprites/purple_floor_1.png"
+    option sprite="sprites/purple_floor_2.png"
+    option sprite="sprites/purple_floor_3.png"
+    option sprite="sprites/purple_floor_4.png"
+    option sprite="sprites/purple_floor_5.png"
+}
+
+floor "Room Floor" key="room_floor" {
+    option sprite="sprites/sand_1.png"
+    option sprite="sprites/sand_2.png"
+}
