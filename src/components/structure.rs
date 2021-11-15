@@ -60,10 +60,7 @@ impl Structure {
     }
 
     pub fn current_texture_index(&self) -> Option<usize> {
-        match self.current_config() {
-            Some(config) => Some(config.texture_index()),
-            _ => None,
-        }
+        self.current_config().map(|config| config.texture_index())
     }
 
     pub fn can_be_broken(&self) -> bool {
@@ -109,7 +106,7 @@ impl StructureBundle {
         let health_configs: Vec<StructureHealth> = structure_config
             .health_configs
             .iter()
-            .map(|health_config| StructureHealth::from(health_config))
+            .map(StructureHealth::from)
             .collect();
 
         let structure = Structure {

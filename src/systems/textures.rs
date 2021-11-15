@@ -6,7 +6,7 @@ use bevy::{
 
 use crate::{
     configuration::{
-        crops::CropConfigurations, floors::FloorConfigurations, sprites::GOBLIN_BIG_HAT,
+        crops::CropConfigurations, floors::FloorConfigurations, player::PlayerConfig,
         structures::StructuresConfig,
     },
     sprites::{LoadedTextures, Sprites},
@@ -29,11 +29,13 @@ pub fn check_textures(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn load_sprites(
     mut sprites: ResMut<Sprites>,
     mut crop_configurations: ResMut<CropConfigurations>,
     mut structures_config: ResMut<StructuresConfig>,
     mut floor_configs: ResMut<FloorConfigurations>,
+    mut player_config: ResMut<PlayerConfig>,
     loaded_textures: Res<LoadedTextures>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mut textures: ResMut<Assets<Texture>>,
@@ -75,8 +77,12 @@ pub fn load_sprites(
         }
     }
 
-    let texture_handle = asset_server.load(GOBLIN_BIG_HAT);
-    sprites.player_sprite_index = texture_atlas.get_texture_index(&texture_handle).unwrap();
+    for config in player_config.sprite_configs.options.as_mut_slice() {
+        let handle = asset_server.get_handle(config.sprite_location());
+        if let Some(index) = texture_atlas.get_texture_index(&handle) {
+            config.sprite_index = Some(index as u32);
+        }
+    }
 
     let atlas_handle = texture_atlases.add(texture_atlas);
     sprites.atlas_handle = atlas_handle;

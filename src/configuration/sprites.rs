@@ -5,8 +5,6 @@ pub const SPRITE_SCALE: f32 = 4.0;
 pub const PLAYER_SPRITE_SCALE: f32 = 2.0;
 pub const SPRITE_SIZE: f32 = 32.0;
 
-pub const GOBLIN_BIG_HAT: &str = "sprites/goblin_big_hat.png";
-
 pub fn sprite_scale() -> Vec3 {
     Vec3::splat(SPRITE_SCALE)
 }

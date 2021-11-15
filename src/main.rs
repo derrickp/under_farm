@@ -6,7 +6,7 @@ mod systems;
 
 use bevy::{input::system::exit_on_esc_system, prelude::*};
 use configuration::{
-    crops::CropConfigurations, floors::FloorConfigurations, load::Load,
+    crops::CropConfigurations, floors::FloorConfigurations, load::Load, player::PlayerConfig,
     structures::StructuresConfig, tools::ToolConfigurations,
 };
 use sprites::{LoadedTextures, Sprites};
@@ -39,6 +39,7 @@ fn main() {
     let crop_configurations = CropConfigurations::load("./assets/config/crops.kdl");
     let structure_configurations = StructuresConfig::load("./assets/config/structures.kdl");
     let floor_configurations = FloorConfigurations::load("./assets/config/floors.kdl");
+    let player_config = PlayerConfig::load("./assets/config/player.kdl");
 
     App::build()
         .insert_resource(ClearColor(Color::rgb(0.05, 0.05, 0.05)))
@@ -48,6 +49,7 @@ fn main() {
         .insert_resource(crop_configurations)
         .insert_resource(structure_configurations)
         .insert_resource(floor_configurations)
+        .insert_resource(player_config)
         .init_resource::<ToolConfigurations>()
         .init_resource::<MovementInputTimer>()
         .add_state(AppState::Startup)

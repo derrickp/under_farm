@@ -16,10 +16,7 @@ impl Load for FloorConfigurations {
     fn load(path: &str) -> Self {
         let floor_nodes = parse(path).unwrap();
 
-        let configurations = floor_nodes
-            .iter()
-            .map(|floor_node| FloorConfig::from(floor_node))
-            .collect();
+        let configurations = floor_nodes.iter().map(FloorConfig::from).collect();
         Self { configurations }
     }
 }

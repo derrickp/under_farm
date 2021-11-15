@@ -16,11 +16,13 @@ use crate::{
         world::WorldTickTimer,
     },
     configuration::{
-        floors::FloorConfigurations, map::world_coordinate_from_grid, structures::StructuresConfig,
+        floors::FloorConfigurations, map::world_coordinate_from_grid, player::PlayerConfig,
+        structures::StructuresConfig,
     },
     sprites::Sprites,
 };
 
+#[allow(clippy::too_many_arguments)]
 pub fn spawn_opening_bundles(
     mut commands: Commands,
     sprites: Res<Sprites>,
@@ -30,6 +32,7 @@ pub fn spawn_opening_bundles(
     windows: Res<Windows>,
     structures_config: Res<StructuresConfig>,
     floor_configs: Res<FloorConfigurations>,
+    player_config: Res<PlayerConfig>,
 ) {
     if query.single().is_ok() {
         return;
@@ -99,7 +102,7 @@ pub fn spawn_opening_bundles(
 
     let player_spawn = grid.random_spawnable_coordinate().unwrap();
     let coordinate = world_coordinate_from_grid(&player_spawn);
-    let player_bundle = PlayerBundle::build_main_player(coordinate, &sprites);
+    let player_bundle = PlayerBundle::build_main_player(coordinate, &sprites, &player_config);
     let player_text_bundle =
         PlayerStatsTextBundle::from_player_bundle(&player_bundle, &asset_server, &windows);
     commands.spawn_bundle(player_bundle);

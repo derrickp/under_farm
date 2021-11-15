@@ -1,0 +1,5 @@
+info name="Zoblin"
+
+sprites {
+    config sprite="sprites/goblin_big_hat.png"
+}

@@ -83,7 +83,7 @@ impl From<&KdlNode> for StructureConfig {
         let health_configs = node
             .children
             .iter()
-            .map(|health_node| StructureHealthConfig::from(health_node))
+            .map(StructureHealthConfig::from)
             .collect();
 
         Self {
@@ -154,10 +154,8 @@ impl StructuresConfig {
 
     pub fn load(path: &str) -> Self {
         let structure_nodes = parse(path).unwrap();
-        let configurations: Vec<StructureConfig> = structure_nodes
-            .iter()
-            .map(|structure_node| StructureConfig::from(structure_node))
-            .collect();
+        let configurations: Vec<StructureConfig> =
+            structure_nodes.iter().map(StructureConfig::from).collect();
         Self { configurations }
     }
 }

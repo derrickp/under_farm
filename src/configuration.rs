@@ -3,6 +3,7 @@ pub mod floors;
 pub mod kdl_utils;
 pub mod load;
 pub mod map;
+pub mod player;
 pub mod sprites;
 pub mod structures;
 pub mod timers;

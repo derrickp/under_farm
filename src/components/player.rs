@@ -1,5 +1,7 @@
 use crate::{
-    configuration::{map::grid_coordinate_from_world, sprites::player_sprite_scale},
+    configuration::{
+        map::grid_coordinate_from_world, player::PlayerConfig, sprites::player_sprite_scale,
+    },
     sprites::Sprites,
 };
 
@@ -47,10 +49,23 @@ pub struct PlayerBundle {
     pub sprite: SpriteSheetBundle,
 }
 
-impl Default for PlayerBundle {
-    fn default() -> Self {
-        PlayerBundle {
-            name: Name("Goblin?!".to_string()),
+impl PlayerBundle {
+    pub fn build_main_player(coordinate: Vec2, sprites: &Sprites, config: &PlayerConfig) -> Self {
+        Self {
+            name: Name(config.info.name.clone()),
+            coordinates: PlayerCoordinates {
+                current: Some(grid_coordinate_from_world(&coordinate)),
+            },
+            sprite: SpriteSheetBundle {
+                sprite: TextureAtlasSprite::new(config.starting_sprite().sprite_index.unwrap()),
+                texture_atlas: sprites.atlas_handle.clone(),
+                transform: Transform {
+                    translation: Vec3::new(coordinate.x, coordinate.y, 5.0),
+                    scale: player_sprite_scale(),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
             player_movement: PlayerMovement {
                 direction: Direction::None,
                 speed: Speed::default(),
@@ -62,29 +77,6 @@ impl Default for PlayerBundle {
                 current_tool: None,
                 current_tool_selection: None,
             },
-            coordinates: PlayerCoordinates { current: None },
-            sprite: SpriteSheetBundle::default(),
-        }
-    }
-}
-
-impl PlayerBundle {
-    pub fn build_main_player(coordinate: Vec2, sprites: &Sprites) -> Self {
-        Self {
-            coordinates: PlayerCoordinates {
-                current: Some(grid_coordinate_from_world(&coordinate)),
-            },
-            sprite: SpriteSheetBundle {
-                sprite: TextureAtlasSprite::new(sprites.player_sprite_index as u32),
-                texture_atlas: sprites.atlas_handle.clone(),
-                transform: Transform {
-                    translation: Vec3::new(coordinate.x, coordinate.y, 5.0),
-                    scale: player_sprite_scale(),
-                    ..Default::default()
-                },
-                ..Default::default()
-            },
-            ..Default::default()
         }
     }
 }
