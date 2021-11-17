@@ -13,14 +13,14 @@ use crate::{
         inventory::{InventoryText, InventoryTextBundle, InventoryTextStatus},
         player::{Player, PlayerInventory},
     },
-    configuration::{crops::CropConfigurations, tools::ToolConfigurations},
+    configuration::{crops::CropsConfig, game::GameConfiguration, tools::ToolConfigurations},
     states::AppState,
 };
 
 pub fn add_inventory_text(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    crop_configurations: Res<CropConfigurations>,
+    game_config: Res<GameConfiguration>,
     tool_configurations: Res<ToolConfigurations>,
 ) {
     commands.spawn_bundle(InventoryTextBundle {
@@ -53,7 +53,7 @@ pub fn add_inventory_text(
         },
     });
 
-    for (index, crop_config) in crop_configurations.configurations.iter().enumerate() {
+    for (index, crop_config) in game_config.crops_config.configurations.iter().enumerate() {
         if crop_config.stages.is_empty() {
             continue;
         }
@@ -90,7 +90,7 @@ pub fn add_inventory_text(
         });
     }
 
-    let count_crop_configs = crop_configurations.configurations.len();
+    let count_crop_configs = game_config.crops_config.configurations.len();
 
     for (index, tool_config) in tool_configurations.configurations.iter().enumerate() {
         let text_entry_index = index + count_crop_configs;
@@ -175,7 +175,7 @@ pub fn update_inventory_text_colour(
 pub fn select_crop(
     event_reader: EventReader<KeyboardInput>,
     state: ResMut<State<AppState>>,
-    crop_configurations: Res<CropConfigurations>,
+    game_config: Res<GameConfiguration>,
     tool_configurations: Res<ToolConfigurations>,
     mut query: Query<(&Player, &mut PlayerInventory)>,
 ) {
@@ -188,7 +188,12 @@ pub fn select_crop(
     let index_result = pressed_key_to_index(event_reader);
 
     if let Some(index) = index_result {
-        set_item_selection(inventory, crop_configurations, tool_configurations, index);
+        set_item_selection(
+            inventory,
+            &game_config.crops_config,
+            tool_configurations,
+            index,
+        );
     }
 }
 
@@ -214,8 +219,8 @@ fn pressed_key_to_index(mut event_reader: EventReader<KeyboardInput>) -> Option<
 
 fn set_item_selection(
     mut inventory: Mut<PlayerInventory>,
-    crop_configurations: Res<'_, CropConfigurations>,
-    tool_configurations: Res<'_, ToolConfigurations>,
+    crop_configurations: &CropsConfig,
+    tool_configurations: Res<ToolConfigurations>,
     index: usize,
 ) {
     if index >= crop_configurations.configurations.len() {

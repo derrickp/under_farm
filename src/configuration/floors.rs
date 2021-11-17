@@ -2,17 +2,17 @@ use kdl::{KdlNode, KdlValue};
 
 use super::{kdl_utils::parse, load::Load};
 
-pub struct FloorConfigurations {
+pub struct FloorsConfig {
     pub configurations: Vec<FloorConfig>,
 }
 
-impl FloorConfigurations {
+impl FloorsConfig {
     pub fn config_by_key(&self, key: &str) -> Option<&FloorConfig> {
         self.configurations.iter().find(|c| c.key == key)
     }
 }
 
-impl Load for FloorConfigurations {
+impl Load for FloorsConfig {
     fn load(path: &str) -> Self {
         let floor_nodes = parse(path).unwrap();
 

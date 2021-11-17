@@ -2,14 +2,14 @@ use bevy::prelude::{Commands, Mut, Query, Res};
 
 use crate::{
     components::{crop::CropBundle, spawns::Spawns},
-    configuration::crops::CropConfigurations,
+    configuration::game::GameConfiguration,
     sprites::Sprites,
 };
 
 pub fn spawn_crops(
     mut commands: Commands,
     sprites: Res<Sprites>,
-    crop_configurations: Res<CropConfigurations>,
+    game_config: Res<GameConfiguration>,
     query: Query<&Spawns>,
 ) {
     let spawns: &Spawns = match query.single() {
@@ -22,7 +22,8 @@ pub fn spawn_crops(
     }
 
     for spawn in spawns.crops.iter() {
-        let config = match crop_configurations
+        let config = match game_config
+            .crops_config
             .configurations
             .get(spawn.configuration_index)
         {

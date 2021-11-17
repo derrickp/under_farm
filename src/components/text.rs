@@ -7,8 +7,6 @@ use bevy::{
 };
 use tdlg::coordinate::Coordinate;
 
-use super::player::PlayerBundle;
-
 pub struct PlayerStatsText;
 
 #[derive(Bundle)]
@@ -20,16 +18,11 @@ pub struct PlayerStatsTextBundle {
 }
 
 impl PlayerStatsTextBundle {
-    pub fn from_player_bundle(
-        player_bundle: &PlayerBundle,
+    pub fn build(
+        coordinate: &Coordinate,
         asset_server: &Res<AssetServer>,
         windows: &Res<Windows>,
     ) -> Self {
-        let current = match player_bundle.coordinates.current {
-            Some(it) => it,
-            _ => Coordinate::new(0, 0),
-        };
-
         let window = windows.get_primary().unwrap();
         let x = window.width() * 0.87;
         let y = window.height() * 0.95;
@@ -50,7 +43,7 @@ impl PlayerStatsTextBundle {
                 // Use the `Text::with_section` constructor
                 text: Text::with_section(
                     // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                    format!("Coordinate {}  {}", current.x, current.y),
+                    format!("Coordinate {}  {}", coordinate.x, coordinate.y),
                     TextStyle {
                         font: asset_server.load("fonts/FiraSans-Bold.ttf"),
                         font_size: 20.0,

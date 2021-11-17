@@ -1,5 +1,6 @@
 pub mod crops;
 pub mod floors;
+pub mod game;
 pub mod kdl_utils;
 pub mod load;
 pub mod map;

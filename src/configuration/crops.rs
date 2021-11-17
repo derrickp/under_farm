@@ -79,13 +79,13 @@ impl CropStage {
     }
 }
 
-pub struct CropConfigurations {
+pub struct CropsConfig {
     pub configurations: Vec<CropConfiguration>,
 }
 
 const TICKS_PER_SECOND: u32 = (1.0 / WORLD_TICK_TIME) as u32;
 
-impl Load for CropConfigurations {
+impl Load for CropsConfig {
     fn load(path: &str) -> Self {
         let crop_nodes = parse(path).unwrap();
         let configurations: Vec<CropConfiguration> = crop_nodes

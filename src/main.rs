@@ -5,17 +5,14 @@ mod states;
 mod systems;
 
 use bevy::{input::system::exit_on_esc_system, prelude::*};
-use configuration::{
-    crops::CropConfigurations, floors::FloorConfigurations, load::Load, player::PlayerConfig,
-    structures::StructuresConfig, tools::ToolConfigurations,
-};
+use configuration::{game::GameConfiguration, load::Load, tools::ToolConfigurations};
 use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState};
 use systems::{
     actions::{crop_actions, hit_actions, reset_hit_actions},
     cameras::{add_gameplay_camera, add_ui_camera, remove_gameplay_camera},
     crops::grow_crops_system,
-    initial_spawns::spawn_opening_bundles,
+    initial_spawns::{spawn_opening_bundles, spawn_player_text},
     inputs::{
         action_input_system, movement_input_system, open_close_inventory_input_system,
         reset_action_input_system, toggle_coordinates_system, zoom_camera_system,
@@ -36,20 +33,14 @@ use systems::{
 
 fn main() {
     // TODO Should probably move this at some point...
-    let crop_configurations = CropConfigurations::load("./assets/config/crops.kdl");
-    let structure_configurations = StructuresConfig::load("./assets/config/structures.kdl");
-    let floor_configurations = FloorConfigurations::load("./assets/config/floors.kdl");
-    let player_config = PlayerConfig::load("./assets/config/player.kdl");
+    let game_config = GameConfiguration::load("./assets/config");
 
     App::build()
         .insert_resource(ClearColor(Color::rgb(0.05, 0.05, 0.05)))
         .init_resource::<Sprites>()
         .init_resource::<LoadedTextures>()
         .init_resource::<GameLoadState>()
-        .insert_resource(crop_configurations)
-        .insert_resource(structure_configurations)
-        .insert_resource(floor_configurations)
-        .insert_resource(player_config)
+        .insert_resource(game_config)
         .init_resource::<ToolConfigurations>()
         .init_resource::<MovementInputTimer>()
         .add_state(AppState::Startup)
@@ -71,6 +62,7 @@ fn main() {
         .add_system_set(
             SystemSet::on_enter(AppState::InGame)
                 .with_system(spawn_opening_bundles.system().label("opening_spawn"))
+                .with_system(spawn_player_text.system())
                 .with_system(add_gameplay_camera.system())
                 .with_system(add_ui_camera.system()),
         )
