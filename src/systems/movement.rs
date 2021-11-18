@@ -1,6 +1,6 @@
 use bevy::{
     math::Vec2,
-    prelude::{Entity, Mut, Query, QuerySet, Transform, Visible},
+    prelude::{Entity, Mut, Query, QuerySet, Res, Transform, Visible},
     render::camera::Camera,
     text::Text,
 };
@@ -16,7 +16,7 @@ use crate::{
         structure::Structure,
         text::PlayerStatsText,
     },
-    configuration::map::{grid_coordinate_from_world, TILE_SIZE},
+    configuration::{game::GameConfiguration, map::grid_coordinate_from_world},
 };
 
 type PlayerMovementQuery = (
@@ -85,6 +85,7 @@ pub fn player_movement(
 
 pub fn update_player_grid_coordinate(
     mut query: Query<(&Player, &Transform, &mut PlayerCoordinates)>,
+    game_config: Res<GameConfiguration>,
 ) {
     let (_, transform, mut player_coordinates): (&Player, &Transform, Mut<PlayerCoordinates>) =
         match query.single_mut() {
@@ -93,7 +94,11 @@ pub fn update_player_grid_coordinate(
         };
 
     let world_coordinate = Vec2::new(transform.translation.x, transform.translation.y);
-    let current = grid_coordinate_from_world(&world_coordinate);
+    let current = grid_coordinate_from_world(
+        &world_coordinate,
+        game_config.map_size(),
+        game_config.tile_size(),
+    );
     player_coordinates.current = Some(current);
 }
 
@@ -141,6 +146,7 @@ pub fn camera_movement(
 pub fn check_floor_collision(
     player_query: Query<(&Player, &Transform, &PlayerMovement)>,
     mut ground_cell_query: Query<(&Body, &mut Visible)>,
+    game_config: Res<GameConfiguration>,
 ) {
     let (_, transform, movement): (&Player, &Transform, &PlayerMovement) =
         player_query.single().unwrap();
@@ -149,6 +155,7 @@ pub fn check_floor_collision(
         transform.translation.x,
         transform.translation.y,
         &movement.direction,
+        game_config.tile_size(),
     );
 
     for cell_data in ground_cell_query.iter_mut() {
@@ -164,35 +171,35 @@ pub fn check_floor_collision(
     }
 }
 
-fn build_visibility_box(x: f32, y: f32, direction: &Direction) -> Vec<BoundingBox> {
-    let width = TILE_SIZE - 2.0;
+fn build_visibility_box(x: f32, y: f32, direction: &Direction, tile_size: f32) -> Vec<BoundingBox> {
+    let width = tile_size - 2.0;
 
     let player_box = BoundingBox::square(x, y, width);
 
     let mut visibility_boxes: Vec<BoundingBox> = match direction {
-        Direction::North => vec![BoundingBox::square(x, y + TILE_SIZE, width)],
-        Direction::South => vec![BoundingBox::square(x, y - TILE_SIZE, width)],
-        Direction::East => vec![BoundingBox::square(x + TILE_SIZE, y, width)],
-        Direction::West => vec![BoundingBox::square(x - TILE_SIZE, y, width)],
+        Direction::North => vec![BoundingBox::square(x, y + tile_size, width)],
+        Direction::South => vec![BoundingBox::square(x, y - tile_size, width)],
+        Direction::East => vec![BoundingBox::square(x + tile_size, y, width)],
+        Direction::West => vec![BoundingBox::square(x - tile_size, y, width)],
         Direction::NorthEast => vec![
-            BoundingBox::square(x, y + TILE_SIZE, width),
-            BoundingBox::square(x + TILE_SIZE, y, width),
-            BoundingBox::square(x + TILE_SIZE, y + TILE_SIZE, width),
+            BoundingBox::square(x, y + tile_size, width),
+            BoundingBox::square(x + tile_size, y, width),
+            BoundingBox::square(x + tile_size, y + tile_size, width),
         ],
         Direction::NorthWest => vec![
-            BoundingBox::square(x, y + TILE_SIZE, width),
-            BoundingBox::square(x - TILE_SIZE, y, width),
-            BoundingBox::square(x - TILE_SIZE, y + TILE_SIZE, width),
+            BoundingBox::square(x, y + tile_size, width),
+            BoundingBox::square(x - tile_size, y, width),
+            BoundingBox::square(x - tile_size, y + tile_size, width),
         ],
         Direction::SouthEast => vec![
-            BoundingBox::square(x, y - TILE_SIZE, width),
-            BoundingBox::square(x + TILE_SIZE, y, width),
-            BoundingBox::square(x + TILE_SIZE, y - TILE_SIZE, width),
+            BoundingBox::square(x, y - tile_size, width),
+            BoundingBox::square(x + tile_size, y, width),
+            BoundingBox::square(x + tile_size, y - tile_size, width),
         ],
         Direction::SouthWest => vec![
-            BoundingBox::square(x, y - TILE_SIZE, width),
-            BoundingBox::square(x - TILE_SIZE, y, width),
-            BoundingBox::square(x - TILE_SIZE, y - TILE_SIZE, width),
+            BoundingBox::square(x, y - tile_size, width),
+            BoundingBox::square(x - tile_size, y, width),
+            BoundingBox::square(x - tile_size, y - tile_size, width),
         ],
         _ => Vec::new(),
     };

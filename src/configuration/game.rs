@@ -13,11 +13,71 @@ pub struct GameConfiguration {
     pub structures_config: StructuresConfig,
     pub player_config: PlayerConfig,
     pub world_config: WorldGenerationConfig,
+    pub sprite_config: SpriteConfig,
     pub seed: String,
+}
+
+impl GameConfiguration {
+    pub fn map_size(&self) -> usize {
+        self.world_config.world_stats.map_size
+    }
+
+    pub fn tile_size(&self) -> f32 {
+        self.sprite_config.size * self.sprite_config.scale
+    }
 }
 
 pub struct BasicConfig {
     seed: String,
+}
+
+pub struct SpriteConfig {
+    pub crop_scale: f32,
+    pub scale: f32,
+    pub player_scale: f32,
+    pub size: f32,
+}
+
+impl Default for SpriteConfig {
+    fn default() -> Self {
+        Self {
+            crop_scale: 3.0,
+            scale: 4.0,
+            player_scale: 2.0,
+            size: 32.0,
+        }
+    }
+}
+
+impl From<&KdlNode> for SpriteConfig {
+    fn from(node: &KdlNode) -> Self {
+        let size = match node.properties.get("size") {
+            Some(KdlValue::Float(it)) => *it as f32,
+            _ => 32.0,
+        };
+
+        let crop_scale = match node.properties.get("crop_scale") {
+            Some(KdlValue::Float(it)) => *it as f32,
+            _ => 3.0,
+        };
+
+        let scale = match node.properties.get("scale") {
+            Some(KdlValue::Float(it)) => *it as f32,
+            _ => 2.0,
+        };
+
+        let player_scale = match node.properties.get("player_scale") {
+            Some(KdlValue::Float(it)) => *it as f32,
+            _ => 2.0,
+        };
+
+        Self {
+            size,
+            crop_scale,
+            scale,
+            player_scale,
+        }
+    }
 }
 
 impl From<&KdlNode> for BasicConfig {
@@ -47,6 +107,11 @@ impl Load for GameConfiguration {
             .unwrap();
         let basic_config = BasicConfig::from(basic_node);
 
+        let sprite_config = game_config_nodes
+            .iter()
+            .find(|node| node.name.eq_ignore_ascii_case("sprite_stats"))
+            .map_or_else(SpriteConfig::default, SpriteConfig::from);
+
         let crops_config = CropsConfig::load(&crops_config_path);
         let floors_config = FloorsConfig::load(&floors_config_path);
         let structures_config = StructuresConfig::load(&structures_config_path);
@@ -59,6 +124,7 @@ impl Load for GameConfiguration {
             structures_config,
             player_config,
             world_config,
+            sprite_config,
             seed: basic_config.seed,
         }
     }

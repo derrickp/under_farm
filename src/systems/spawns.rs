@@ -31,7 +31,13 @@ pub fn spawn_crops(
             _ => continue,
         };
 
-        commands.spawn_bundle(CropBundle::build(spawn, &sprites, config));
+        commands.spawn_bundle(CropBundle::build(
+            spawn,
+            &sprites,
+            config,
+            game_config.sprite_config.crop_scale,
+            game_config.sprite_config.scale,
+        ));
     }
 }
 

@@ -4,10 +4,7 @@ use bevy::{
     sprite::TextureAtlasSprite,
 };
 
-use crate::{
-    configuration::{crops::CropConfiguration, sprites::CROP_SPRITE_SCALE},
-    sprites::Sprites,
-};
+use crate::{configuration::crops::CropConfiguration, sprites::Sprites};
 
 use super::name::Name;
 
@@ -43,7 +40,13 @@ pub struct CropBundle {
 }
 
 impl CropBundle {
-    pub fn build(spawn: &CropSpawn, sprites: &Sprites, config: &CropConfiguration) -> Self {
+    pub fn build(
+        spawn: &CropSpawn,
+        sprites: &Sprites,
+        config: &CropConfiguration,
+        crop_sprite_scale: f32,
+        sprite_scale: f32,
+    ) -> Self {
         let stages: Vec<CropStage> = config
             .stages
             .iter()
@@ -57,8 +60,8 @@ impl CropBundle {
         Self {
             sprite: SpriteSheetBundle {
                 transform: Transform {
-                    translation: Vec3::new(spawn.location.x, spawn.location.y, CROP_SPRITE_SCALE),
-                    scale: crate::configuration::sprites::sprite_scale(),
+                    translation: Vec3::new(spawn.location.x, spawn.location.y, crop_sprite_scale),
+                    scale: Vec3::splat(sprite_scale),
                     ..Default::default()
                 },
                 sprite: TextureAtlasSprite::new(stages.get(0).unwrap().sprite_index),

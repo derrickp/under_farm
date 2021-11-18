@@ -4,10 +4,7 @@ use bevy::{
     sprite::TextureAtlasSprite,
 };
 
-use crate::{
-    configuration::{floors::FloorConfig, map::TILE_SIZE},
-    sprites::Sprites,
-};
+use crate::{configuration::floors::FloorConfig, sprites::Sprites};
 
 use super::body::Body;
 
@@ -25,7 +22,13 @@ pub struct GroundTileBundle {
 }
 
 impl GroundTileBundle {
-    pub fn build(coordinate: &Vec2, sprites: &Sprites, floor_config: &FloorConfig) -> Self {
+    pub fn build(
+        coordinate: &Vec2,
+        sprites: &Sprites,
+        floor_config: &FloorConfig,
+        sprite_scale: f32,
+        tile_size: f32,
+    ) -> Self {
         let mut rng = rand::thread_rng();
         let num_options = floor_config.sprite_options.len();
         let random_index: usize = rng.gen_range(0..num_options);
@@ -40,12 +43,12 @@ impl GroundTileBundle {
             tile_type: GroundTile,
             collide: Body {
                 cell_center,
-                tile_size: TILE_SIZE as f32,
+                tile_size,
             },
             sprite: SpriteSheetBundle {
                 transform: Transform {
                     translation: cell_center,
-                    scale: crate::configuration::sprites::sprite_scale(),
+                    scale: Vec3::splat(sprite_scale),
                     ..Default::default()
                 },
                 sprite: TextureAtlasSprite::new(floor_index),

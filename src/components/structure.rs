@@ -5,7 +5,7 @@ use bevy::{
 };
 
 use crate::configuration::{
-    map::TILE_SIZE,
+    game::SpriteConfig,
     structures::{StructureConfig, StructureHealthConfig},
 };
 
@@ -101,6 +101,8 @@ impl StructureBundle {
         coordinate: &Vec2,
         atlas_handle: &Handle<TextureAtlas>,
         structure_config: &StructureConfig,
+        sprite_config: &SpriteConfig,
+        tile_size: f32,
     ) -> Self {
         let cell_center = Vec3::new(coordinate.x, coordinate.y, 1.0);
         let health_configs: Vec<StructureHealth> = structure_config
@@ -120,13 +122,14 @@ impl StructureBundle {
             structure,
             body: Body {
                 cell_center,
-                tile_size: TILE_SIZE as f32,
+                tile_size,
             },
             sprite: Self::sprite(
                 atlas_handle,
                 cell_center,
                 starting_sprite,
                 structure_config.initial_visible,
+                sprite_config.scale,
             ),
         }
     }
@@ -136,11 +139,12 @@ impl StructureBundle {
         center: Vec3,
         sprite: u32,
         visible: bool,
+        sprite_scale: f32,
     ) -> SpriteSheetBundle {
         SpriteSheetBundle {
             transform: Transform {
                 translation: center,
-                scale: crate::configuration::sprites::sprite_scale(),
+                scale: Vec3::splat(sprite_scale),
                 ..Default::default()
             },
             sprite: TextureAtlasSprite::new(sprite),

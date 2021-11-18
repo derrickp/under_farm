@@ -1,7 +1,5 @@
 use crate::{
-    configuration::{
-        map::grid_coordinate_from_world, player::PlayerConfig, sprites::player_sprite_scale,
-    },
+    configuration::{map::grid_coordinate_from_world, player::PlayerConfig},
     sprites::Sprites,
 };
 
@@ -50,18 +48,25 @@ pub struct PlayerBundle {
 }
 
 impl PlayerBundle {
-    pub fn build_main_player(coordinate: Vec2, sprites: &Sprites, config: &PlayerConfig) -> Self {
+    pub fn build_main_player(
+        coordinate: Vec2,
+        sprites: &Sprites,
+        config: &PlayerConfig,
+        map_size: usize,
+        tile_size: f32,
+        player_sprite_scale: f32,
+    ) -> Self {
         Self {
             name: Name(config.info.name.clone()),
             coordinates: PlayerCoordinates {
-                current: Some(grid_coordinate_from_world(&coordinate)),
+                current: Some(grid_coordinate_from_world(&coordinate, map_size, tile_size)),
             },
             sprite: SpriteSheetBundle {
                 sprite: TextureAtlasSprite::new(config.starting_sprite().sprite_index.unwrap()),
                 texture_atlas: sprites.atlas_handle.clone(),
                 transform: Transform {
                     translation: Vec3::new(coordinate.x, coordinate.y, 5.0),
-                    scale: player_sprite_scale(),
+                    scale: Vec3::splat(player_sprite_scale),
                     ..Default::default()
                 },
                 ..Default::default()

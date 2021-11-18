@@ -14,7 +14,7 @@ use crate::{
         player::{Player, PlayerMovement},
         text::PlayerStatsText,
     },
-    configuration::{map::TILE_SIZE, timers::movement_timer},
+    configuration::{game::GameConfiguration, timers::movement_timer},
     states::AppState,
 };
 
@@ -26,12 +26,12 @@ impl Default for MovementInputTimer {
     }
 }
 
-fn x_axis_speed() -> Vec2 {
-    Vec2::new(TILE_SIZE, 0.0)
+fn x_axis_speed(tile_size: f32) -> Vec2 {
+    Vec2::new(tile_size, 0.0)
 }
 
-fn y_axis_speed() -> Vec2 {
-    Vec2::new(0.0, TILE_SIZE)
+fn y_axis_speed(tile_size: f32) -> Vec2 {
+    Vec2::new(0.0, tile_size)
 }
 
 pub fn movement_input_system(
@@ -39,6 +39,7 @@ pub fn movement_input_system(
     mut timer: ResMut<MovementInputTimer>,
     keyboard_input: Res<Input<KeyCode>>,
     mut query: Query<(&Player, &mut PlayerMovement)>,
+    game_config: Res<GameConfiguration>,
 ) {
     let (_, mut movement): (&Player, Mut<PlayerMovement>) = query.single_mut().unwrap();
 
@@ -46,22 +47,22 @@ pub fn movement_input_system(
     movement.direction = Direction::None;
 
     if keyboard_input.just_pressed(KeyCode::Left) {
-        movement.speed.current -= x_axis_speed();
+        movement.speed.current -= x_axis_speed(game_config.tile_size());
         movement.direction = movement.direction + Direction::West;
     }
 
     if keyboard_input.just_pressed(KeyCode::Right) {
-        movement.speed.current += x_axis_speed();
+        movement.speed.current += x_axis_speed(game_config.tile_size());
         movement.direction = movement.direction + Direction::East;
     }
 
     if keyboard_input.just_pressed(KeyCode::Up) {
-        movement.speed.current += y_axis_speed();
+        movement.speed.current += y_axis_speed(game_config.tile_size());
         movement.direction = movement.direction + Direction::North;
     }
 
     if keyboard_input.just_pressed(KeyCode::Down) {
-        movement.speed.current -= y_axis_speed();
+        movement.speed.current -= y_axis_speed(game_config.tile_size());
         movement.direction = movement.direction + Direction::South;
     }
 
@@ -72,22 +73,22 @@ pub fn movement_input_system(
 
     if timer.0.tick(time.delta()).just_finished() {
         if keyboard_input.pressed(KeyCode::Left) {
-            movement.speed.current -= x_axis_speed();
+            movement.speed.current -= x_axis_speed(game_config.tile_size());
             movement.direction = movement.direction + Direction::West;
         }
 
         if keyboard_input.pressed(KeyCode::Right) {
-            movement.speed.current += x_axis_speed();
+            movement.speed.current += x_axis_speed(game_config.tile_size());
             movement.direction = movement.direction + Direction::East;
         }
 
         if keyboard_input.pressed(KeyCode::Up) {
-            movement.speed.current += y_axis_speed();
+            movement.speed.current += y_axis_speed(game_config.tile_size());
             movement.direction = movement.direction + Direction::North;
         }
 
         if keyboard_input.pressed(KeyCode::Down) {
-            movement.speed.current -= y_axis_speed();
+            movement.speed.current -= y_axis_speed(game_config.tile_size());
             movement.direction = movement.direction + Direction::South;
         }
     }
