@@ -4,7 +4,8 @@ use bevy::{
 };
 
 use crate::{
-    components::world::WorldTickTimer, configuration::world::generator, states::GameLoadState,
+    components::world::WorldTickTimer, configuration::game::GameConfiguration,
+    states::GameLoadState,
 };
 
 pub fn tick_game_world(time: Res<Time>, mut query: Query<&mut WorldTickTimer>) {
@@ -16,8 +17,12 @@ pub fn tick_game_world(time: Res<Time>, mut query: Query<&mut WorldTickTimer>) {
     timer.0.tick(time.delta());
 }
 
-pub fn generate_world_grid(mut commands: Commands, mut load_state: ResMut<GameLoadState>) {
-    let generator = generator();
+pub fn generate_world_grid(
+    mut commands: Commands,
+    mut load_state: ResMut<GameLoadState>,
+    game_config: Res<GameConfiguration>,
+) {
+    let generator = game_config.world_config.generator(game_config.seed.clone());
     let world = generator.generate_top_down_map().unwrap();
     println!("{}", world.room_count);
     commands.insert_resource(world.grid);
