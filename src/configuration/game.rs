@@ -53,22 +53,22 @@ impl From<&KdlNode> for SpriteConfig {
     fn from(node: &KdlNode) -> Self {
         let size = match node.properties.get("size") {
             Some(KdlValue::Float(it)) => *it as f32,
-            _ => 32.0,
+            _ => SpriteConfig::default().size,
         };
 
         let crop_scale = match node.properties.get("crop_scale") {
             Some(KdlValue::Float(it)) => *it as f32,
-            _ => 3.0,
+            _ => SpriteConfig::default().crop_scale,
         };
 
         let scale = match node.properties.get("scale") {
             Some(KdlValue::Float(it)) => *it as f32,
-            _ => 2.0,
+            _ => SpriteConfig::default().scale,
         };
 
         let player_scale = match node.properties.get("player_scale") {
             Some(KdlValue::Float(it)) => *it as f32,
-            _ => 2.0,
+            _ => SpriteConfig::default().player_scale,
         };
 
         Self {
