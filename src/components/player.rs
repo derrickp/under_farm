@@ -1,6 +1,7 @@
 use crate::{
     configuration::{
         crops::CropConfiguration, game::GameConfiguration, map::grid_coordinate_from_world,
+        tools::ToolConfiguration,
     },
     sprites::Sprites,
 };
@@ -22,6 +23,7 @@ pub struct PlayerInventory {
     pub current_crop_config: Option<CropConfiguration>,
     pub current_tool: Option<Tool>,
     pub held_seeds: Vec<CropConfiguration>,
+    pub held_tools: Vec<ToolConfiguration>,
 }
 
 pub struct Player;
@@ -62,6 +64,14 @@ impl PlayerBundle {
             .filter(|crop_config| crop_config.starter)
             .cloned()
             .collect();
+
+        let held_tools: Vec<ToolConfiguration> = config
+            .tool_configs
+            .configurations
+            .iter()
+            .filter(|tool_config| tool_config.starter)
+            .cloned()
+            .collect();
         Self {
             name: Name(config.player_config.info.name.clone()),
             coordinates: PlayerCoordinates {
@@ -91,6 +101,7 @@ impl PlayerBundle {
             action: CurrentAction::default(),
             inventory: PlayerInventory {
                 held_seeds,
+                held_tools,
                 current_crop_config: None,
                 current_tool: None,
             },

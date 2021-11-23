@@ -11,7 +11,6 @@ use crate::{
         inventory::{InventoryText, InventoryTextBundle, InventoryTextStatus},
         player::PlayerInventory,
     },
-    configuration::game::GameConfiguration,
     states::AppState,
 };
 
@@ -22,7 +21,6 @@ const FONT_SIZE: f32 = 20.0;
 pub fn add_inventory_text(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    game_config: Res<GameConfiguration>,
     query: Query<&PlayerInventory>,
 ) {
     let font: Handle<Font> = asset_server.load("fonts/FiraSans-Bold.ttf");
@@ -60,7 +58,7 @@ pub fn add_inventory_text(
         commands.spawn_bundle(text_bundle);
     }
 
-    for (index, tool_config) in game_config.tool_configs.configurations.iter().enumerate() {
+    for (index, tool_config) in player_inventory.held_tools.iter().enumerate() {
         let top = PADDING + (INVENTORY_ITEM_SIZE * ((index + seed_count) as f32 + 1.0));
         let text_bundle = InventoryTextBundle::build(
             &tool_config.key,
@@ -117,36 +115,25 @@ pub fn update_inventory_text_colour(
 }
 
 pub fn select_item(
-    event_reader: EventReader<KeyboardInput>,
+    mut event_reader: EventReader<KeyboardInput>,
     state: ResMut<State<AppState>>,
-    game_config: Res<GameConfiguration>,
     mut query: Query<&mut PlayerInventory>,
 ) {
     if state.current().ne(&AppState::InventoryScreen) {
         return;
     }
 
-    let inventory: Mut<PlayerInventory> = query.single_mut().unwrap();
-    set_item_selection(inventory, &game_config, event_reader);
-}
-
-fn set_item_selection(
-    mut inventory: Mut<PlayerInventory>,
-    game_config: &GameConfiguration,
-    mut event_reader: EventReader<KeyboardInput>,
-) {
+    let mut inventory: Mut<PlayerInventory> = query.single_mut().unwrap();
     for event in event_reader.iter() {
-        if let Some(crop_config) = game_config
-            .crops_config
-            .configurations
+        if let Some(crop_config) = inventory
+            .held_seeds
             .iter()
             .find(|config| config.inventory_selector.key_code == event.key_code.unwrap())
         {
             inventory.current_crop_config = Some(crop_config.clone());
             inventory.current_tool = None;
-        } else if let Some(tool_config) = game_config
-            .tool_configs
-            .configurations
+        } else if let Some(tool_config) = inventory
+            .held_tools
             .iter()
             .find(|config| config.inventory_selector.key_code == event.key_code.unwrap())
         {
