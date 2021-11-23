@@ -1,8 +1,8 @@
 use bevy::{
     input::keyboard::KeyboardInput,
     prelude::{
-        AssetServer, Color, Commands, Entity, EventReader, KeyCode, Mut, Query, Rect, Res, ResMut,
-        State, TextBundle,
+        AssetServer, Color, Commands, Entity, EventReader, Mut, Query, Rect, Res, ResMut, State,
+        TextBundle,
     },
     text::{Text, TextStyle},
     ui::{AlignSelf, PositionType, Style, Val},
@@ -17,6 +17,10 @@ use crate::{
     states::AppState,
 };
 
+const PADDING: f32 = 15.0;
+const INVENTORY_ITEM_SIZE: f32 = 50.0;
+const FONT_SIZE: f32 = 20.0;
+
 pub fn add_inventory_text(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -25,14 +29,16 @@ pub fn add_inventory_text(
 ) {
     commands.spawn_bundle(InventoryTextBundle {
         inventory_text: InventoryText,
-        status: InventoryTextStatus { index: 99 },
+        status: InventoryTextStatus {
+            key: "title".to_string(),
+        },
         text: TextBundle {
             style: Style {
                 align_self: AlignSelf::FlexEnd,
                 position_type: PositionType::Absolute,
                 position: Rect {
-                    top: Val::Px(15.0),
-                    left: Val::Px(15.0),
+                    top: Val::Px(PADDING),
+                    left: Val::Px(PADDING),
                     ..Default::default()
                 },
                 ..Default::default()
@@ -43,7 +49,7 @@ pub fn add_inventory_text(
                 "inventory",
                 TextStyle {
                     font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                    font_size: 20.0,
+                    font_size: FONT_SIZE,
                     color: Color::WHITE,
                 },
                 // Note: You can use `Default::default()` in place of the `TextAlignment`
@@ -58,17 +64,19 @@ pub fn add_inventory_text(
             continue;
         }
 
-        let top = 15.0 + (50.0 * (index as f32 + 1.0));
+        let top = PADDING + (INVENTORY_ITEM_SIZE * (index as f32 + 1.0));
         commands.spawn_bundle(InventoryTextBundle {
             inventory_text: InventoryText,
-            status: InventoryTextStatus { index },
+            status: InventoryTextStatus {
+                key: crop_config.key.clone(),
+            },
             text: TextBundle {
                 style: Style {
                     align_self: AlignSelf::FlexEnd,
                     position_type: PositionType::Absolute,
                     position: Rect {
                         top: Val::Px(top),
-                        left: Val::Px(15.0),
+                        left: Val::Px(PADDING),
                         ..Default::default()
                     },
                     ..Default::default()
@@ -76,10 +84,13 @@ pub fn add_inventory_text(
                 // Use the `Text::with_section` constructor
                 text: Text::with_section(
                     // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                    format!("{} {}", index + 1, crop_config.name),
+                    format!(
+                        "{}   {}",
+                        crop_config.inventory_selector.display_code, crop_config.name
+                    ),
                     TextStyle {
                         font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                        font_size: 20.0,
+                        font_size: FONT_SIZE,
                         color: Color::WHITE,
                     },
                     // Note: You can use `Default::default()` in place of the `TextAlignment`
@@ -93,12 +104,11 @@ pub fn add_inventory_text(
     let count_crop_configs = game_config.crops_config.configurations.len();
 
     for (index, tool_config) in tool_configurations.configurations.iter().enumerate() {
-        let text_entry_index = index + count_crop_configs;
-        let top = 15.0 + (50.0 * (text_entry_index as f32 + 1.0));
+        let top = PADDING + (INVENTORY_ITEM_SIZE * ((index + count_crop_configs) as f32 + 1.0));
         commands.spawn_bundle(InventoryTextBundle {
             inventory_text: InventoryText,
             status: InventoryTextStatus {
-                index: text_entry_index,
+                key: tool_config.key.clone(),
             },
             text: TextBundle {
                 style: Style {
@@ -106,7 +116,7 @@ pub fn add_inventory_text(
                     position_type: PositionType::Absolute,
                     position: Rect {
                         top: Val::Px(top),
-                        left: Val::Px(15.0),
+                        left: Val::Px(PADDING),
                         ..Default::default()
                     },
                     ..Default::default()
@@ -114,10 +124,13 @@ pub fn add_inventory_text(
                 // Use the `Text::with_section` constructor
                 text: Text::with_section(
                     // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                    format!("{} {}", text_entry_index + 1, tool_config.name),
+                    format!(
+                        "{}   {}",
+                        tool_config.inventory_selector.display_code, tool_config.name
+                    ),
                     TextStyle {
                         font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                        font_size: 20.0,
+                        font_size: FONT_SIZE,
                         color: Color::WHITE,
                     },
                     // Note: You can use `Default::default()` in place of the `TextAlignment`
@@ -152,18 +165,14 @@ pub fn update_inventory_text_colour(
             _ => return,
         };
 
-        if inventory.current_tool.is_some() {
-            let selected_tool_index = match inventory.current_tool_selection {
-                Some(it) => it,
-                _ => return,
-            };
-            if selected_tool_index == status.index {
+        if let Some(tool) = &inventory.current_tool {
+            if tool.key.eq(&status.key) {
                 section.style.color = Color::YELLOW;
             } else {
                 section.style.color = Color::WHITE;
             }
-        } else if let Some(selected_index) = inventory.current_crop_selection {
-            if selected_index == status.index {
+        } else if let Some(crop_config) = &inventory.current_crop_config {
+            if crop_config.key.eq(&status.key) {
                 section.style.color = Color::YELLOW;
             } else {
                 section.style.color = Color::WHITE;
@@ -172,7 +181,7 @@ pub fn update_inventory_text_colour(
     }
 }
 
-pub fn select_crop(
+pub fn select_item(
     event_reader: EventReader<KeyboardInput>,
     state: ResMut<State<AppState>>,
     game_config: Res<GameConfiguration>,
@@ -185,57 +194,35 @@ pub fn select_crop(
 
     let (_, inventory): (&Player, Mut<PlayerInventory>) = query.single_mut().unwrap();
 
-    let index_result = pressed_key_to_index(event_reader);
-
-    if let Some(index) = index_result {
-        set_item_selection(
-            inventory,
-            &game_config.crops_config,
-            tool_configurations,
-            index,
-        );
-    }
-}
-
-fn pressed_key_to_index(mut event_reader: EventReader<KeyboardInput>) -> Option<usize> {
-    for event in event_reader.iter() {
-        match event.key_code {
-            Some(KeyCode::Numpad1) | Some(KeyCode::Key1) => return Some(0),
-            Some(KeyCode::Numpad2) | Some(KeyCode::Key2) => return Some(1),
-            Some(KeyCode::Numpad3) | Some(KeyCode::Key3) => return Some(2),
-            Some(KeyCode::Numpad4) | Some(KeyCode::Key4) => return Some(3),
-            Some(KeyCode::Numpad5) | Some(KeyCode::Key5) => return Some(4),
-            Some(KeyCode::Numpad6) | Some(KeyCode::Key6) => return Some(5),
-            Some(KeyCode::Numpad7) | Some(KeyCode::Key7) => return Some(6),
-            Some(KeyCode::Numpad8) | Some(KeyCode::Key8) => return Some(7),
-            Some(KeyCode::Numpad9) | Some(KeyCode::Key9) => return Some(8),
-            Some(KeyCode::Numpad0) | Some(KeyCode::Key0) => return Some(9),
-            _ => {}
-        }
-    }
-
-    None
+    set_item_selection(
+        inventory,
+        &game_config.crops_config,
+        tool_configurations,
+        event_reader,
+    );
 }
 
 fn set_item_selection(
     mut inventory: Mut<PlayerInventory>,
     crop_configurations: &CropsConfig,
     tool_configurations: Res<ToolConfigurations>,
-    index: usize,
+    mut event_reader: EventReader<KeyboardInput>,
 ) {
-    if index >= crop_configurations.configurations.len() {
-        let tool_index = index - crop_configurations.configurations.len();
-        if let Some(tool_config) = tool_configurations.configurations.get(tool_index) {
-            inventory.current_tool = Some(tool_config.to_tool());
-            inventory.current_tool_selection = Some(index);
-            inventory.current_crop_selection = None;
-        }
-    } else {
-        let config = crop_configurations.configurations.get(index);
-        if config.is_some() {
+    for event in event_reader.iter() {
+        if let Some(crop_config) = crop_configurations
+            .configurations
+            .iter()
+            .find(|config| config.inventory_selector.key_code == event.key_code.unwrap())
+        {
+            inventory.current_crop_config = Some(crop_config.clone());
             inventory.current_tool = None;
-            inventory.current_crop_selection = None;
-            inventory.current_crop_selection = Some(index);
+        } else if let Some(tool_config) = tool_configurations
+            .configurations
+            .iter()
+            .find(|config| config.inventory_selector.key_code == event.key_code.unwrap())
+        {
+            inventory.current_tool = Some(tool_config.to_tool());
+            inventory.current_crop_config = None;
         }
     }
 }

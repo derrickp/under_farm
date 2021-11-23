@@ -12,7 +12,7 @@ use crate::{
         player::{Player, PlayerBundle},
         spawns::Spawns,
         structure::StructureBundle,
-        text::PlayerStatsTextBundle,
+        text::{PlayerStatsText, PlayerStatsTextBundle},
         world::WorldTickTimer,
     },
     configuration::{game::GameConfiguration, map::world_coordinate_from_grid},
@@ -23,7 +23,12 @@ pub fn spawn_player_text(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     windows: Res<Windows>,
+    query: Query<&PlayerStatsText>,
 ) {
+    if query.single().is_ok() {
+        return;
+    }
+
     let coordinate = Coordinate::splat(0);
     let player_text_bundle = PlayerStatsTextBundle::build(&coordinate, &asset_server, &windows);
     commands.spawn_bundle(player_text_bundle);

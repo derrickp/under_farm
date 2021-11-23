@@ -1,4 +1,10 @@
-use super::{kdl_utils::parse, load::Load, timers::WORLD_TICK_TIME};
+use crate::components::inventory::InventorySelector;
+
+use super::{
+    kdl_utils::{parse, parse_key_code},
+    load::Load,
+    timers::WORLD_TICK_TIME,
+};
 
 use kdl::{KdlNode, KdlValue};
 use rand::Rng;
@@ -46,11 +52,15 @@ impl From<&KdlNode> for CropStageFileConfig {
     }
 }
 
+#[derive(Clone)]
 pub struct CropConfiguration {
+    pub key: String,
     pub name: String,
     pub stages: Vec<CropStage>,
+    pub inventory_selector: InventorySelector,
 }
 
+#[derive(Clone)]
 pub struct CropStage {
     file_config: CropStageFileConfig,
     pub sprite_index: Option<u32>,
@@ -95,6 +105,14 @@ impl Load for CropsConfig {
                     Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
                     _ => "".to_string(),
                 };
+                let key = match crop_node.properties.get("key") {
+                    Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+                    _ => "".to_string(),
+                };
+                let key_code = match crop_node.properties.get("key_code") {
+                    Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+                    _ => "".to_string(),
+                };
                 let stages: Vec<CropStage> = crop_node
                     .children
                     .iter()
@@ -104,7 +122,15 @@ impl Load for CropsConfig {
                     })
                     .collect();
 
-                CropConfiguration { name, stages }
+                CropConfiguration {
+                    name,
+                    stages,
+                    key,
+                    inventory_selector: InventorySelector {
+                        key_code: parse_key_code(&key_code).unwrap(),
+                        display_code: key_code.clone(),
+                    },
+                }
             })
             .collect();
 

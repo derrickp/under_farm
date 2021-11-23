@@ -75,7 +75,7 @@ pub fn crop_actions(
         }
     }
 
-    let config_index = match inventory.current_crop_selection {
+    let config = match &inventory.current_crop_config {
         Some(it) => it,
         _ => return,
     };
@@ -86,7 +86,7 @@ pub fn crop_actions(
     };
 
     spawns.crops.push(CropSpawn {
-        configuration_index: config_index,
+        config: config.clone(),
         location: Vec2::new(transform.translation.x, transform.translation.y),
     });
 }

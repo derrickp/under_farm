@@ -11,6 +11,7 @@ pub enum ToolType {
 #[derive(Clone, Debug)]
 pub struct Tool {
     pub name: Name,
+    pub key: String,
     pub tool_type: ToolType,
     pub damage: Option<Damage>,
 }

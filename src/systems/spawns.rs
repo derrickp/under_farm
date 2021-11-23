@@ -22,19 +22,10 @@ pub fn spawn_crops(
     }
 
     for spawn in spawns.crops.iter() {
-        let config = match game_config
-            .crops_config
-            .configurations
-            .get(spawn.configuration_index)
-        {
-            Some(it) => it,
-            _ => continue,
-        };
-
         commands.spawn_bundle(CropBundle::build(
             spawn,
             &sprites,
-            config,
+            &spawn.config,
             game_config.sprite_config.crop_scale,
             game_config.sprite_config.scale,
         ));

@@ -3,7 +3,7 @@ use bevy::prelude::{Bundle, KeyCode, TextBundle};
 pub struct InventoryText;
 
 pub struct InventoryTextStatus {
-    pub index: usize,
+    pub key: String,
 }
 
 #[derive(Bundle)]

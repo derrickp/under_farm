@@ -10,7 +10,7 @@ use super::name::Name;
 
 pub struct Crop {
     pub current_stage_index: usize,
-    pub config_index: usize,
+    pub config: CropConfiguration,
 }
 
 pub struct CropStage {
@@ -25,8 +25,8 @@ pub struct CropStages {
 }
 
 pub struct CropSpawn {
-    pub configuration_index: usize,
     pub location: Vec2,
+    pub config: CropConfiguration,
 }
 
 #[derive(Bundle)]
@@ -71,7 +71,7 @@ impl CropBundle {
             name: Name(config.name.to_string()),
             stages: CropStages { stages },
             crop: Crop {
-                config_index: spawn.configuration_index,
+                config: config.clone(),
                 current_stage_index: 0,
             },
         }

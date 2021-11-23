@@ -69,7 +69,7 @@ pub fn grow_crops_system(
             _ => {
                 if let Ok(mut spawns) = spawns_query.single_mut() {
                     spawns.crops.push(CropSpawn {
-                        configuration_index: crop.config_index,
+                        config: crop.config.clone(),
                         location: Vec2::new(transform.translation.x, transform.translation.y),
                     });
                 }

@@ -1,5 +1,7 @@
 use crate::{
-    configuration::{map::grid_coordinate_from_world, player::PlayerConfig},
+    configuration::{
+        crops::CropConfiguration, map::grid_coordinate_from_world, player::PlayerConfig,
+    },
     sprites::Sprites,
 };
 
@@ -17,9 +19,8 @@ use bevy::{
 use tdlg::coordinate::Coordinate;
 
 pub struct PlayerInventory {
-    pub current_crop_selection: Option<usize>,
+    pub current_crop_config: Option<CropConfiguration>,
     pub current_tool: Option<Tool>,
-    pub current_tool_selection: Option<usize>,
 }
 
 pub struct Player;
@@ -78,9 +79,8 @@ impl PlayerBundle {
             player: Player,
             action: CurrentAction::default(),
             inventory: PlayerInventory {
-                current_crop_selection: None,
+                current_crop_config: None,
                 current_tool: None,
-                current_tool_selection: None,
             },
         }
     }
