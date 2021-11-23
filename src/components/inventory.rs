@@ -31,7 +31,9 @@ impl InventoryTextBundle {
     ) -> Self {
         Self {
             inventory_text: InventoryText,
-            status: InventoryTextStatus { key: key.to_string() },
+            status: InventoryTextStatus {
+                key: key.to_string(),
+            },
             text: TextBundle {
                 style: Style {
                     align_self: AlignSelf::FlexEnd,
