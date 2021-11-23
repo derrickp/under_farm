@@ -1,9 +1,9 @@
 use bevy::{
-    prelude::{AssetServer, Commands, Query, Res, ResMut},
+    prelude::{AssetServer, Commands, Query, Res},
     window::Windows,
 };
 
-use tdlg::{cells::layer::LayerType, coordinate::Coordinate, grid::Grid};
+use tdlg::{cells::layer::LayerType, coordinate::Coordinate, map::TopDownMap};
 
 use crate::{
     components::{
@@ -37,7 +37,7 @@ pub fn spawn_player_text(
 pub fn spawn_opening_bundles(
     mut commands: Commands,
     sprites: Res<Sprites>,
-    mut grid: ResMut<Grid>,
+    map: Res<TopDownMap>,
     query: Query<&Player>,
     game_config: Res<GameConfiguration>,
 ) {
@@ -45,7 +45,7 @@ pub fn spawn_opening_bundles(
         return;
     }
 
-    for cell in grid.cells.values() {
+    for cell in map.grid.cells.values() {
         for layer in cell.layers.iter() {
             let coordinate = world_coordinate_from_grid(
                 &cell.coordinate,
@@ -156,7 +156,7 @@ pub fn spawn_opening_bundles(
         }
     }
 
-    let player_spawn = grid.random_spawnable_coordinate().unwrap();
+    let player_spawn = map.entry_coordinate;
     let coordinate = world_coordinate_from_grid(
         &player_spawn,
         game_config.world_config.world_stats.map_size,

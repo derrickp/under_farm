@@ -24,8 +24,7 @@ pub fn generate_world_grid(
 ) {
     let generator = game_config.world_config.generator(game_config.seed.clone());
     let world = generator.generate_top_down_map().unwrap();
-    println!("{}", world.room_count);
-    commands.insert_resource(world.grid);
+    commands.insert_resource(world);
 
     load_state.game_world_generated = true;
 }
