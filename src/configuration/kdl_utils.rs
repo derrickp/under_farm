@@ -1,5 +1,6 @@
 use std::{fs, io::Error};
 
+use bevy::prelude::KeyCode;
 use kdl::{KdlError, KdlNode};
 
 pub fn trim(value: String) -> String {
@@ -23,5 +24,30 @@ pub fn parse(path: &str) -> Result<Vec<KdlNode>, LoadError> {
             Err(e) => Err(LoadError::KdlError(e)),
         },
         Err(e) => Err(LoadError::InvalidPathError(InvalidPathError(e))),
+    }
+}
+
+#[derive(Debug)]
+pub struct UnknownKeyCode;
+
+#[derive(Debug)]
+pub struct ReservedKeyCode;
+
+#[derive(Debug)]
+pub enum ParseKeyCodeError {
+    UnknownKeyCode(UnknownKeyCode),
+    ReservedKeyCode(ReservedKeyCode),
+}
+
+pub fn parse_key_code(code: &String) -> Result<KeyCode, ParseKeyCodeError> {
+    match code.as_str() {
+        "a" => Ok(KeyCode::A),
+        "h" => Ok(KeyCode::H),
+        "k" => Ok(KeyCode::K),
+        "m" => Ok(KeyCode::M),
+        "p" => Ok(KeyCode::P),
+        "t" => Ok(KeyCode::T),
+        "i" => Err(ParseKeyCodeError::ReservedKeyCode(ReservedKeyCode)),
+        _ => Err(ParseKeyCodeError::UnknownKeyCode(UnknownKeyCode)),
     }
 }
