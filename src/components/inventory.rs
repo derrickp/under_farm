@@ -22,7 +22,7 @@ pub struct InventoryTextBundle {
 
 impl InventoryTextBundle {
     pub fn build(
-        key: &String,
+        key: &str,
         top: f32,
         left: f32,
         text: String,
@@ -31,7 +31,7 @@ impl InventoryTextBundle {
     ) -> Self {
         Self {
             inventory_text: InventoryText,
-            status: InventoryTextStatus { key: key.clone() },
+            status: InventoryTextStatus { key: key.to_string() },
             text: TextBundle {
                 style: Style {
                     align_self: AlignSelf::FlexEnd,

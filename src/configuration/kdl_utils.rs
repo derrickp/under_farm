@@ -39,8 +39,8 @@ pub enum ParseKeyCodeError {
     ReservedKeyCode(ReservedKeyCode),
 }
 
-pub fn parse_key_code(code: &String) -> Result<KeyCode, ParseKeyCodeError> {
-    match code.as_str() {
+pub fn parse_key_code(code: &str) -> Result<KeyCode, ParseKeyCodeError> {
+    match code {
         "a" => Ok(KeyCode::A),
         "h" => Ok(KeyCode::H),
         "k" => Ok(KeyCode::K),
