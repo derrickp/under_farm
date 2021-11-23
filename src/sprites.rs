@@ -6,7 +6,6 @@ use bevy::{
 #[derive(Default)]
 pub struct Sprites {
     pub atlas_handle: Handle<TextureAtlas>,
-    pub player_sprite_index: usize,
 }
 
 #[derive(Default)]

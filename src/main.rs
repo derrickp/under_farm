@@ -5,7 +5,7 @@ mod states;
 mod systems;
 
 use bevy::{input::system::exit_on_esc_system, prelude::*};
-use configuration::{game::GameConfiguration, load::Load, tools::ToolConfigurations};
+use configuration::{game::GameConfiguration, load::Load};
 use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState};
 use systems::{
@@ -41,7 +41,6 @@ fn main() {
         .init_resource::<LoadedTextures>()
         .init_resource::<GameLoadState>()
         .insert_resource(game_config)
-        .init_resource::<ToolConfigurations>()
         .init_resource::<MovementInputTimer>()
         .add_state(AppState::Startup)
         .add_plugins(DefaultPlugins)

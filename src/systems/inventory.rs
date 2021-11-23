@@ -1,19 +1,17 @@
 use bevy::{
     input::keyboard::KeyboardInput,
     prelude::{
-        AssetServer, Color, Commands, Entity, EventReader, Mut, Query, Rect, Res, ResMut, State,
-        TextBundle,
+        AssetServer, Color, Commands, Entity, EventReader, Handle, Mut, Query, Res, ResMut, State,
     },
-    text::{Text, TextStyle},
-    ui::{AlignSelf, PositionType, Style, Val},
+    text::{Font, Text},
 };
 
 use crate::{
     components::{
         inventory::{InventoryText, InventoryTextBundle, InventoryTextStatus},
-        player::{Player, PlayerInventory},
+        player::PlayerInventory,
     },
-    configuration::{crops::CropsConfig, game::GameConfiguration, tools::ToolConfigurations},
+    configuration::game::GameConfiguration,
     states::AppState,
 };
 
@@ -25,120 +23,57 @@ pub fn add_inventory_text(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     game_config: Res<GameConfiguration>,
-    tool_configurations: Res<ToolConfigurations>,
+    query: Query<&PlayerInventory>,
 ) {
-    commands.spawn_bundle(InventoryTextBundle {
-        inventory_text: InventoryText,
-        status: InventoryTextStatus {
-            key: "title".to_string(),
-        },
-        text: TextBundle {
-            style: Style {
-                align_self: AlignSelf::FlexEnd,
-                position_type: PositionType::Absolute,
-                position: Rect {
-                    top: Val::Px(PADDING),
-                    left: Val::Px(PADDING),
-                    ..Default::default()
-                },
-                ..Default::default()
-            },
-            // Use the `Text::with_section` constructor
-            text: Text::with_section(
-                // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                "inventory",
-                TextStyle {
-                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                    font_size: FONT_SIZE,
-                    color: Color::WHITE,
-                },
-                // Note: You can use `Default::default()` in place of the `TextAlignment`
-                Default::default(),
-            ),
-            ..Default::default()
-        },
-    });
+    let font: Handle<Font> = asset_server.load("fonts/FiraSans-Bold.ttf");
 
-    for (index, crop_config) in game_config.crops_config.configurations.iter().enumerate() {
+    let title_bundle = InventoryTextBundle::build(
+        &"title".to_string(),
+        PADDING,
+        PADDING,
+        "inventory".to_string(),
+        &font,
+        FONT_SIZE,
+    );
+    commands.spawn_bundle(title_bundle);
+    let player_inventory: &PlayerInventory = query.single().unwrap();
+
+    let mut seed_count = 0;
+    for (index, crop_config) in player_inventory.held_seeds.iter().enumerate() {
         if crop_config.stages.is_empty() {
             continue;
         }
 
+        seed_count += 1;
         let top = PADDING + (INVENTORY_ITEM_SIZE * (index as f32 + 1.0));
-        commands.spawn_bundle(InventoryTextBundle {
-            inventory_text: InventoryText,
-            status: InventoryTextStatus {
-                key: crop_config.key.clone(),
-            },
-            text: TextBundle {
-                style: Style {
-                    align_self: AlignSelf::FlexEnd,
-                    position_type: PositionType::Absolute,
-                    position: Rect {
-                        top: Val::Px(top),
-                        left: Val::Px(PADDING),
-                        ..Default::default()
-                    },
-                    ..Default::default()
-                },
-                // Use the `Text::with_section` constructor
-                text: Text::with_section(
-                    // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                    format!(
-                        "{}   {}",
-                        crop_config.inventory_selector.display_code, crop_config.name
-                    ),
-                    TextStyle {
-                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                        font_size: FONT_SIZE,
-                        color: Color::WHITE,
-                    },
-                    // Note: You can use `Default::default()` in place of the `TextAlignment`
-                    Default::default(),
-                ),
-                ..Default::default()
-            },
-        });
+        let text_bundle = InventoryTextBundle::build(
+            &crop_config.key,
+            top,
+            PADDING,
+            format!(
+                "{}   {}",
+                crop_config.inventory_selector.display_code, crop_config.name
+            ),
+            &font,
+            FONT_SIZE,
+        );
+        commands.spawn_bundle(text_bundle);
     }
 
-    let count_crop_configs = game_config.crops_config.configurations.len();
-
-    for (index, tool_config) in tool_configurations.configurations.iter().enumerate() {
-        let top = PADDING + (INVENTORY_ITEM_SIZE * ((index + count_crop_configs) as f32 + 1.0));
-        commands.spawn_bundle(InventoryTextBundle {
-            inventory_text: InventoryText,
-            status: InventoryTextStatus {
-                key: tool_config.key.clone(),
-            },
-            text: TextBundle {
-                style: Style {
-                    align_self: AlignSelf::FlexEnd,
-                    position_type: PositionType::Absolute,
-                    position: Rect {
-                        top: Val::Px(top),
-                        left: Val::Px(PADDING),
-                        ..Default::default()
-                    },
-                    ..Default::default()
-                },
-                // Use the `Text::with_section` constructor
-                text: Text::with_section(
-                    // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                    format!(
-                        "{}   {}",
-                        tool_config.inventory_selector.display_code, tool_config.name
-                    ),
-                    TextStyle {
-                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                        font_size: FONT_SIZE,
-                        color: Color::WHITE,
-                    },
-                    // Note: You can use `Default::default()` in place of the `TextAlignment`
-                    Default::default(),
-                ),
-                ..Default::default()
-            },
-        });
+    for (index, tool_config) in game_config.tool_configs.configurations.iter().enumerate() {
+        let top = PADDING + (INVENTORY_ITEM_SIZE * ((index + seed_count) as f32 + 1.0));
+        let text_bundle = InventoryTextBundle::build(
+            &tool_config.key,
+            top,
+            PADDING,
+            format!(
+                "{}   {}",
+                tool_config.inventory_selector.display_code, tool_config.name
+            ),
+            &font,
+            FONT_SIZE,
+        );
+        commands.spawn_bundle(text_bundle);
     }
 }
 
@@ -150,10 +85,10 @@ pub fn remove_inventory_text(mut commands: Commands, query: Query<(&InventoryTex
 }
 
 pub fn update_inventory_text_colour(
-    inventory_query: Query<(&Player, &PlayerInventory)>,
+    inventory_query: Query<&PlayerInventory>,
     mut text_query: Query<(&InventoryText, &InventoryTextStatus, &mut Text)>,
 ) {
-    let (_, inventory): (&Player, &PlayerInventory) = match inventory_query.single() {
+    let inventory: &PlayerInventory = match inventory_query.single() {
         Ok(it) => it,
         _ => return,
     };
@@ -162,7 +97,7 @@ pub fn update_inventory_text_colour(
         let (_, status, mut text): (&InventoryText, &InventoryTextStatus, Mut<Text>) = text_data;
         let section = match text.sections.get_mut(0) {
             Some(it) => it,
-            _ => return,
+            _ => continue,
         };
 
         if let Some(tool) = &inventory.current_tool {
@@ -185,38 +120,32 @@ pub fn select_item(
     event_reader: EventReader<KeyboardInput>,
     state: ResMut<State<AppState>>,
     game_config: Res<GameConfiguration>,
-    tool_configurations: Res<ToolConfigurations>,
-    mut query: Query<(&Player, &mut PlayerInventory)>,
+    mut query: Query<&mut PlayerInventory>,
 ) {
     if state.current().ne(&AppState::InventoryScreen) {
         return;
     }
 
-    let (_, inventory): (&Player, Mut<PlayerInventory>) = query.single_mut().unwrap();
-
-    set_item_selection(
-        inventory,
-        &game_config.crops_config,
-        tool_configurations,
-        event_reader,
-    );
+    let inventory: Mut<PlayerInventory> = query.single_mut().unwrap();
+    set_item_selection(inventory, &game_config, event_reader);
 }
 
 fn set_item_selection(
     mut inventory: Mut<PlayerInventory>,
-    crop_configurations: &CropsConfig,
-    tool_configurations: Res<ToolConfigurations>,
+    game_config: &GameConfiguration,
     mut event_reader: EventReader<KeyboardInput>,
 ) {
     for event in event_reader.iter() {
-        if let Some(crop_config) = crop_configurations
+        if let Some(crop_config) = game_config
+            .crops_config
             .configurations
             .iter()
             .find(|config| config.inventory_selector.key_code == event.key_code.unwrap())
         {
             inventory.current_crop_config = Some(crop_config.clone());
             inventory.current_tool = None;
-        } else if let Some(tool_config) = tool_configurations
+        } else if let Some(tool_config) = game_config
+            .tool_configs
             .configurations
             .iter()
             .find(|config| config.inventory_selector.key_code == event.key_code.unwrap())

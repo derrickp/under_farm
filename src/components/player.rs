@@ -1,6 +1,6 @@
 use crate::{
     configuration::{
-        crops::CropConfiguration, map::grid_coordinate_from_world, player::PlayerConfig,
+        crops::CropConfiguration, game::GameConfiguration, map::grid_coordinate_from_world,
     },
     sprites::Sprites,
 };
@@ -21,6 +21,7 @@ use tdlg::coordinate::Coordinate;
 pub struct PlayerInventory {
     pub current_crop_config: Option<CropConfiguration>,
     pub current_tool: Option<Tool>,
+    pub held_seeds: Vec<CropConfiguration>,
 }
 
 pub struct Player;
@@ -52,22 +53,32 @@ impl PlayerBundle {
     pub fn build_main_player(
         coordinate: Vec2,
         sprites: &Sprites,
-        config: &PlayerConfig,
-        map_size: usize,
-        tile_size: f32,
-        player_sprite_scale: f32,
+        config: &GameConfiguration,
     ) -> Self {
+        let held_seeds: Vec<CropConfiguration> = config
+            .crops_config
+            .configurations
+            .iter()
+            .filter(|crop_config| crop_config.starter)
+            .cloned()
+            .collect();
         Self {
-            name: Name(config.info.name.clone()),
+            name: Name(config.player_config.info.name.clone()),
             coordinates: PlayerCoordinates {
-                current: Some(grid_coordinate_from_world(&coordinate, map_size, tile_size)),
+                current: Some(grid_coordinate_from_world(
+                    &coordinate,
+                    config.map_size(),
+                    config.tile_size(),
+                )),
             },
             sprite: SpriteSheetBundle {
-                sprite: TextureAtlasSprite::new(config.starting_sprite().sprite_index.unwrap()),
+                sprite: TextureAtlasSprite::new(
+                    config.player_config.starting_sprite().sprite_index.unwrap(),
+                ),
                 texture_atlas: sprites.atlas_handle.clone(),
                 transform: Transform {
                     translation: Vec3::new(coordinate.x, coordinate.y, 5.0),
-                    scale: Vec3::splat(player_sprite_scale),
+                    scale: Vec3::splat(config.sprite_config.player_scale),
                     ..Default::default()
                 },
                 ..Default::default()
@@ -79,6 +90,7 @@ impl PlayerBundle {
             player: Player,
             action: CurrentAction::default(),
             inventory: PlayerInventory {
+                held_seeds,
                 current_crop_config: None,
                 current_tool: None,
             },

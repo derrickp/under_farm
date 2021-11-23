@@ -4,7 +4,7 @@ use crate::configuration::{kdl_utils::parse, world::WorldGenerationConfig};
 
 use super::{
     crops::CropsConfig, floors::FloorsConfig, load::Load, player::PlayerConfig,
-    structures::StructuresConfig,
+    structures::StructuresConfig, tools::ToolConfigurations,
 };
 
 pub struct GameConfiguration {
@@ -14,6 +14,7 @@ pub struct GameConfiguration {
     pub player_config: PlayerConfig,
     pub world_config: WorldGenerationConfig,
     pub sprite_config: SpriteConfig,
+    pub tool_configs: ToolConfigurations,
     pub seed: String,
 }
 
@@ -125,6 +126,7 @@ impl Load for GameConfiguration {
             player_config,
             world_config,
             sprite_config,
+            tool_configs: ToolConfigurations::default(),
             seed: basic_config.seed,
         }
     }

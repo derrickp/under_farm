@@ -58,6 +58,7 @@ pub struct CropConfiguration {
     pub name: String,
     pub stages: Vec<CropStage>,
     pub inventory_selector: InventorySelector,
+    pub starter: bool,
 }
 
 #[derive(Clone)]
@@ -113,6 +114,10 @@ impl Load for CropsConfig {
                     Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
                     _ => "".to_string(),
                 };
+                let starter = match crop_node.properties.get("starter") {
+                    Some(KdlValue::Boolean(it)) => *it,
+                    _ => false,
+                };
                 let stages: Vec<CropStage> = crop_node
                     .children
                     .iter()
@@ -126,6 +131,7 @@ impl Load for CropsConfig {
                     name,
                     stages,
                     key,
+                    starter,
                     inventory_selector: InventorySelector {
                         key_code: parse_key_code(&key_code).unwrap(),
                         display_code: key_code.clone(),

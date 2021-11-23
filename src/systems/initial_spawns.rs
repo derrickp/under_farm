@@ -162,14 +162,7 @@ pub fn spawn_opening_bundles(
         game_config.world_config.world_stats.map_size,
         game_config.tile_size(),
     );
-    let player_bundle = PlayerBundle::build_main_player(
-        coordinate,
-        &sprites,
-        &game_config.player_config,
-        game_config.map_size(),
-        game_config.tile_size(),
-        game_config.sprite_config.player_scale,
-    );
+    let player_bundle = PlayerBundle::build_main_player(coordinate, &sprites, &game_config);
     commands.spawn_bundle(player_bundle);
 
     commands.spawn().insert(GameCameraState::default());
