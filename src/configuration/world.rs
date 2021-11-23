@@ -42,6 +42,9 @@ impl WorldGenerationConfig {
     }
 }
 
+const DEFAULT_NUM_ROOMS: usize = 100;
+const DEFAULT_MAP_SIZE: usize = 150;
+
 pub struct WorldStatsConfig {
     pub num_rooms: usize,
     pub map_size: usize,
@@ -50,8 +53,8 @@ pub struct WorldStatsConfig {
 impl Default for WorldStatsConfig {
     fn default() -> Self {
         Self {
-            num_rooms: 100,
-            map_size: 150,
+            num_rooms: DEFAULT_NUM_ROOMS,
+            map_size: DEFAULT_MAP_SIZE,
         }
     }
 }
@@ -60,12 +63,12 @@ impl From<&KdlNode> for WorldStatsConfig {
     fn from(node: &KdlNode) -> Self {
         let num_rooms = match node.properties.get("num_rooms") {
             Some(KdlValue::Int(it)) => *it as usize,
-            _ => 100,
+            _ => WorldStatsConfig::default().num_rooms,
         };
 
         let map_size = match node.properties.get("map_size") {
             Some(KdlValue::Int(it)) => *it as usize,
-            _ => 100,
+            _ => WorldStatsConfig::default().map_size,
         };
 
         Self {
