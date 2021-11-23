@@ -1,4 +1,4 @@
-use bevy::prelude::{Bundle, TextBundle};
+use bevy::prelude::{Bundle, KeyCode, TextBundle};
 
 pub struct InventoryText;
 
@@ -13,4 +13,10 @@ pub struct InventoryTextBundle {
 
     #[bundle]
     pub text: TextBundle,
+}
+
+#[derive(Clone)]
+pub struct InventorySelector {
+    pub key_code: KeyCode,
+    pub display_code: String,
 }
