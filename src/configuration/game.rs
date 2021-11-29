@@ -100,6 +100,7 @@ impl Load for GameConfiguration {
         let player_config_path = format!("{}/player.kdl", path);
         let game_config_path = format!("{}/game.kdl", path);
         let world_config_path = format!("{}/world.kdl", path);
+        let tool_config_path = format!("{}/tools.kdl", path);
         let game_config_nodes = parse(&game_config_path).unwrap();
 
         let basic_node = game_config_nodes
@@ -118,6 +119,7 @@ impl Load for GameConfiguration {
         let structures_config = StructuresConfig::load(&structures_config_path);
         let player_config = PlayerConfig::load(&player_config_path);
         let world_config = WorldGenerationConfig::load(&world_config_path);
+        let tool_configs = ToolConfigurations::load(&tool_config_path);
 
         Self {
             crops_config,
@@ -126,7 +128,7 @@ impl Load for GameConfiguration {
             player_config,
             world_config,
             sprite_config,
-            tool_configs: ToolConfigurations::default(),
+            tool_configs,
             seed: basic_config.seed,
         }
     }

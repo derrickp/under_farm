@@ -5,6 +5,7 @@ use super::bounding_box::BoundingBox;
 pub struct Body {
     pub tile_size: f32,
     pub cell_center: Vec3,
+    pub underground: bool,
 }
 
 impl Body {

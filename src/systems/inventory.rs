@@ -61,12 +61,13 @@ pub fn add_inventory_text(
     for (index, tool_config) in player_inventory.held_tools.iter().enumerate() {
         let top = PADDING + (INVENTORY_ITEM_SIZE * ((index + seed_count) as f32 + 1.0));
         let text_bundle = InventoryTextBundle::build(
-            &tool_config.key,
+            &tool_config.key(),
             top,
             PADDING,
             format!(
                 "{}   {}",
-                tool_config.inventory_selector.display_code, tool_config.name
+                tool_config.inventory_selector().display_code,
+                tool_config.name()
             ),
             &font,
             FONT_SIZE,
@@ -135,7 +136,7 @@ pub fn select_item(
         } else if let Some(tool_config) = inventory
             .held_tools
             .iter()
-            .find(|config| config.inventory_selector.key_code == event.key_code.unwrap())
+            .find(|config| config.inventory_selector().key_code == event.key_code.unwrap())
         {
             inventory.current_tool = Some(tool_config.to_tool());
             inventory.current_crop_config = None;

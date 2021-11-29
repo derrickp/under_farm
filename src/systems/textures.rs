@@ -82,6 +82,13 @@ pub fn load_sprites(
         }
     }
 
+    for config in game_config.tool_configs.configurations.as_mut_slice() {
+        let handle = asset_server.get_handle(config.sprite_location());
+        if let Some(index) = texture_atlas.get_texture_index(&handle) {
+            config.sprite_index = Some(index as u32);
+        }
+    }
+
     let atlas_handle = texture_atlases.add(texture_atlas);
     sprites.atlas_handle = atlas_handle;
 

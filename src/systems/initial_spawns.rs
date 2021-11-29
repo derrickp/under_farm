@@ -1,4 +1,5 @@
 use bevy::{
+    math::Vec3,
     prelude::{AssetServer, Commands, Query, Res},
     window::Windows,
 };
@@ -9,10 +10,12 @@ use crate::{
     components::{
         cameras::GameCameraState,
         ground::GroundTileBundle,
+        item::{ItemBundle, ItemType},
         player::{Player, PlayerBundle},
         spawns::Spawns,
         structure::StructureBundle,
         text::{PlayerStatsText, PlayerStatsTextBundle},
+        tool::ToolType,
         world::WorldTickTimer,
     },
     configuration::{game::GameConfiguration, map::world_coordinate_from_grid},
@@ -46,20 +49,21 @@ pub fn spawn_opening_bundles(
     }
 
     for cell in map.grid.cells.values() {
-        for layer in cell.layers.iter() {
+        for (index, layer) in cell.layers.iter().enumerate() {
             let coordinate = world_coordinate_from_grid(
                 &cell.coordinate,
                 game_config.map_size(),
                 game_config.tile_size(),
             );
-            let floor_config = game_config
-                .floors_config
-                .config_by_key("cave_floor")
-                .unwrap();
+            let position = Vec3::new(coordinate.x, coordinate.y, index as f32);
             match *layer {
                 LayerType::Floor => {
+                    let floor_config = game_config
+                        .floors_config
+                        .config_by_key("cave_floor")
+                        .unwrap();
                     commands.spawn_bundle(GroundTileBundle::build(
-                        &coordinate,
+                        position,
                         &sprites,
                         floor_config,
                         game_config.sprite_config.scale,
@@ -71,15 +75,8 @@ pub fn spawn_opening_bundles(
                         .structures_config
                         .config_by_key("room_wall")
                         .unwrap();
-                    commands.spawn_bundle(GroundTileBundle::build(
-                        &coordinate,
-                        &sprites,
-                        floor_config,
-                        game_config.sprite_config.scale,
-                        game_config.tile_size(),
-                    ));
                     commands.spawn_bundle(StructureBundle::build(
-                        &coordinate,
+                        position,
                         &sprites.atlas_handle,
                         structure_config,
                         &game_config.sprite_config,
@@ -92,7 +89,7 @@ pub fn spawn_opening_bundles(
                         .config_by_key("room_floor")
                         .unwrap();
                     commands.spawn_bundle(GroundTileBundle::build(
-                        &coordinate,
+                        position,
                         &sprites,
                         config,
                         game_config.sprite_config.scale,
@@ -105,7 +102,7 @@ pub fn spawn_opening_bundles(
                         .config_by_key("room_floor")
                         .unwrap();
                     commands.spawn_bundle(GroundTileBundle::build(
-                        &coordinate,
+                        position,
                         &sprites,
                         config,
                         game_config.sprite_config.scale,
@@ -118,7 +115,7 @@ pub fn spawn_opening_bundles(
                         .config_by_key("outer_wall")
                         .unwrap();
                     commands.spawn_bundle(StructureBundle::build(
-                        &coordinate,
+                        position,
                         &sprites.atlas_handle,
                         structure_config,
                         &game_config.sprite_config,
@@ -131,7 +128,7 @@ pub fn spawn_opening_bundles(
                         .config_by_key("rubble")
                         .unwrap();
                     commands.spawn_bundle(StructureBundle::build(
-                        &coordinate,
+                        position,
                         &sprites.atlas_handle,
                         structure_config,
                         &game_config.sprite_config,
@@ -144,12 +141,37 @@ pub fn spawn_opening_bundles(
                         .config_by_key("table")
                         .unwrap();
                     commands.spawn_bundle(StructureBundle::build(
-                        &coordinate,
+                        position,
                         &sprites.atlas_handle,
                         structure_config,
                         &game_config.sprite_config,
                         game_config.tile_size(),
                     ));
+                }
+                LayerType::Note => {
+                    println!(
+                        "Note {} {} {}",
+                        index, &cell.coordinate.x, &cell.coordinate.y
+                    );
+                }
+                LayerType::CommonItem => {
+                    println!(
+                        "common item {} {} {}",
+                        index, &cell.coordinate.x, &cell.coordinate.y
+                    );
+                    let underground = cell.is_layer_underground(&layer).unwrap_or(false);
+                    if let Some(tool) = game_config.tool_configs.tool_by_type(ToolType::Shovel) {
+                        let tool_bundle = ItemBundle::build(
+                            position,
+                            &sprites,
+                            tool.sprite_index.unwrap(),
+                            game_config.sprite_config.scale,
+                            game_config.tile_size(),
+                            underground,
+                            ItemType::Tool(tool),
+                        );
+                        commands.spawn_bundle(tool_bundle);
+                    }
                 }
                 _ => {}
             }

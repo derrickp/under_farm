@@ -1,5 +1,5 @@
 use bevy::{
-    math::{Vec2, Vec3},
+    math::Vec3,
     prelude::{Bundle, Handle, SpriteSheetBundle, Transform, Visible},
     sprite::{TextureAtlas, TextureAtlasSprite},
 };
@@ -98,13 +98,12 @@ pub struct StructureBundle {
 
 impl StructureBundle {
     pub fn build(
-        coordinate: &Vec2,
+        position: Vec3,
         atlas_handle: &Handle<TextureAtlas>,
         structure_config: &StructureConfig,
         sprite_config: &SpriteConfig,
         tile_size: f32,
     ) -> Self {
-        let cell_center = Vec3::new(coordinate.x, coordinate.y, 1.0);
         let health_configs: Vec<StructureHealth> = structure_config
             .health_configs
             .iter()
@@ -121,12 +120,13 @@ impl StructureBundle {
         Self {
             structure,
             body: Body {
-                cell_center,
                 tile_size,
+                underground: false,
+                cell_center: position.clone(),
             },
             sprite: Self::sprite(
                 atlas_handle,
-                cell_center,
+                position,
                 starting_sprite,
                 structure_config.initial_visible,
                 sprite_config.scale,
@@ -136,14 +136,14 @@ impl StructureBundle {
 
     fn sprite(
         atlas: &Handle<TextureAtlas>,
-        center: Vec3,
+        position: Vec3,
         sprite: u32,
         visible: bool,
         sprite_scale: f32,
     ) -> SpriteSheetBundle {
         SpriteSheetBundle {
             transform: Transform {
-                translation: center,
+                translation: position,
                 scale: Vec3::splat(sprite_scale),
                 ..Default::default()
             },

@@ -69,7 +69,7 @@ impl PlayerBundle {
             .tool_configs
             .configurations
             .iter()
-            .filter(|tool_config| tool_config.starter)
+            .filter(|tool_config| tool_config.starter())
             .cloned()
             .collect();
         Self {
@@ -87,7 +87,7 @@ impl PlayerBundle {
                 ),
                 texture_atlas: sprites.atlas_handle.clone(),
                 transform: Transform {
-                    translation: Vec3::new(coordinate.x, coordinate.y, 5.0),
+                    translation: Vec3::new(coordinate.x, coordinate.y, 10.0),
                     scale: Vec3::splat(config.sprite_config.player_scale),
                     ..Default::default()
                 },

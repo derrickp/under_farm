@@ -8,6 +8,18 @@ pub enum ToolType {
     Shovel,
 }
 
+impl From<&str> for ToolType {
+    fn from(tool_type: &str) -> Self {
+        match tool_type {
+            "pickaxe" => ToolType::PickAxe,
+            "hammer" => ToolType::Hammer,
+            "hoe" => ToolType::Hoe,
+            "shovel" => ToolType::Shovel,
+            _ => ToolType::PickAxe,
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct Tool {
     pub name: Name,

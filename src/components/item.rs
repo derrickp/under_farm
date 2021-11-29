@@ -4,46 +4,42 @@ use bevy::{
     sprite::TextureAtlasSprite,
 };
 
-use crate::{configuration::floors::FloorConfig, sprites::Sprites};
+use crate::{configuration::tools::ToolConfiguration, sprites::Sprites};
 
 use super::body::Body;
 
-use rand::Rng;
+pub enum ItemType {
+    Tool(ToolConfiguration),
+}
 
-pub struct GroundTile;
+pub struct Item {
+    pub item_type: ItemType,
+}
 
 #[derive(Bundle)]
-pub struct GroundTileBundle {
-    pub tile_type: GroundTile,
-    pub collide: Body,
+pub struct ItemBundle {
+    pub item: Item,
+    pub body: Body,
 
     #[bundle]
     pub sprite: SpriteSheetBundle,
 }
 
-impl GroundTileBundle {
+impl ItemBundle {
     pub fn build(
         position: Vec3,
         sprites: &Sprites,
-        floor_config: &FloorConfig,
+        item_index: u32,
         sprite_scale: f32,
         tile_size: f32,
+        underground: bool,
+        item_type: ItemType,
     ) -> Self {
-        let mut rng = rand::thread_rng();
-        let num_options = floor_config.sprite_options.len();
-        let random_index: usize = rng.gen_range(0..num_options);
-        let floor_index = floor_config
-            .sprite_options
-            .get(random_index)
-            .unwrap()
-            .sprite_index
-            .unwrap();
         Self {
-            tile_type: GroundTile,
-            collide: Body {
+            body: Body {
                 tile_size,
+                underground,
                 cell_center: position.clone(),
-                underground: false,
             },
             sprite: SpriteSheetBundle {
                 transform: Transform {
@@ -51,14 +47,15 @@ impl GroundTileBundle {
                     scale: Vec3::splat(sprite_scale),
                     ..Default::default()
                 },
-                sprite: TextureAtlasSprite::new(floor_index),
+                sprite: TextureAtlasSprite::new(item_index),
                 texture_atlas: sprites.atlas_handle.clone(),
                 visible: Visible {
                     is_visible: false,
-                    is_transparent: false,
+                    is_transparent: true,
                 },
                 ..Default::default()
             },
+            item: Item { item_type },
         }
     }
 }
