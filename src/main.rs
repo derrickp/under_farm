@@ -9,7 +9,7 @@ use configuration::{game::GameConfiguration, load::Load};
 use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState};
 use systems::{
-    actions::{crop_actions, hit_actions, reset_hit_actions},
+    actions::{crop_actions, hit_actions, pickup_actions, reset_hit_actions, reset_pickup_actions},
     cameras::{add_gameplay_camera, add_ui_camera, remove_gameplay_camera},
     crops::grow_crops_system,
     initial_spawns::{spawn_opening_bundles, spawn_player_text},
@@ -23,8 +23,8 @@ use systems::{
     },
     loading::{check_load_state, start_game},
     movement::{
-        camera_movement, check_floor_collision, player_movement, update_player_grid_coordinate,
-        update_player_text,
+        camera_movement, check_floor_collision, check_item_pickup, player_movement,
+        update_player_grid_coordinate, update_player_text,
     },
     spawns::{reset_crop_spawns, spawn_crops},
     textures::{check_textures, load_sprites, load_textures},
@@ -77,6 +77,12 @@ fn main() {
                         .after("movement_input"),
                 )
                 .with_system(
+                    check_item_pickup
+                        .system()
+                        .label("check_item_pickup")
+                        .after("player_movement"),
+                )
+                .with_system(
                     update_player_grid_coordinate
                         .system()
                         .label("update_player_grid_coordinate")
@@ -105,7 +111,14 @@ fn main() {
                         .label("hit_actions")
                         .after("player_movement"),
                 )
+                .with_system(
+                    pickup_actions
+                        .system()
+                        .label("pickup_actions")
+                        .after("check_item_pickup"),
+                )
                 .with_system(reset_hit_actions.system().after("hit_actions"))
+                .with_system(reset_pickup_actions.system().after("pickup_actions"))
                 .with_system(
                     crop_actions
                         .system()
