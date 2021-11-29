@@ -4,6 +4,7 @@ use bevy::prelude::Entity;
 pub struct CurrentAction {
     pub interact_pressed: bool,
     pub hit: Option<HitAction>,
+    pub pickup: Option<PickupAction>,
 }
 
 impl CurrentAction {
@@ -15,5 +16,10 @@ impl CurrentAction {
 #[derive(Clone, Copy)]
 pub struct HitAction {
     pub damage: i32,
+    pub target: Entity,
+}
+
+#[derive(Clone, Copy)]
+pub struct PickupAction {
     pub target: Entity,
 }

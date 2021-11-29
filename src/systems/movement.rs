@@ -7,10 +7,11 @@ use bevy::{
 
 use crate::{
     components::{
-        action::CurrentAction,
+        action::{CurrentAction, PickupAction},
         body::Body,
         bounding_box::BoundingBox,
         cameras::GameCamera,
+        item::Item,
         movement::Direction,
         player::{Player, PlayerCoordinates, PlayerInventory, PlayerMovement},
         structure::Structure,
@@ -26,6 +27,28 @@ type PlayerMovementQuery = (
     &'static mut Transform,
     &'static mut CurrentAction,
 );
+
+pub fn check_item_pickup(
+    mut query: Query<(&Player, &Transform, &mut CurrentAction)>,
+    item_query: Query<(&Item, &Body, &Visible, Entity)>,
+) {
+    let (_, transform, mut current_action): (&Player, &Transform, Mut<CurrentAction>) =
+        query.single_mut().unwrap();
+
+    let x = transform.translation.x;
+    let y = transform.translation.y;
+
+    let bounding_box = BoundingBox::square(x, y, 60.0);
+
+    for item_data in item_query.iter() {
+        let (_, body, visible, entity): (&Item, &Body, &Visible, Entity) = item_data;
+
+        if body.intersects_box(&bounding_box) && visible.is_visible && !body.underground {
+            println!("picking up item");
+            current_action.pickup = Some(PickupAction { target: entity })
+        }
+    }
+}
 
 pub fn player_movement(
     mut query: Query<PlayerMovementQuery>,
@@ -165,6 +188,7 @@ pub fn check_floor_collision(
             .iter()
             .any(|bounds| grid_cell.intersects_box(bounds))
             && !visible.is_visible
+            && !grid_cell.underground
         {
             visible.is_visible = true;
         }

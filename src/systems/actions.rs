@@ -1,6 +1,6 @@
 use bevy::{
     math::Vec2,
-    prelude::{Mut, Query, Transform},
+    prelude::{Commands, Mut, Query, Transform},
     sprite::TextureAtlasSprite,
 };
 
@@ -8,6 +8,7 @@ use crate::components::{
     action::CurrentAction,
     bounding_box::BoundingBox,
     crop::{Crop, CropSpawn},
+    item::{Item, ItemType},
     player::{Player, PlayerInventory},
     spawns::Spawns,
     structure::Structure,
@@ -38,6 +39,43 @@ pub fn hit_actions(
     if let Some(sprite_index) = structure.current_texture_index() {
         sprite.index = sprite_index as u32;
     }
+}
+
+pub fn pickup_actions(
+    mut commands: Commands,
+    mut player_query: Query<(&Player, &CurrentAction, &mut PlayerInventory)>,
+    item_query: Query<&Item>,
+) {
+    let (_, current_action, mut player_inventory): (&Player, &CurrentAction, Mut<PlayerInventory>) =
+        player_query.single_mut().unwrap();
+
+    let pickup = match current_action.pickup {
+        Some(it) => it,
+        _ => return,
+    };
+
+    let item: &Item = match item_query.get(pickup.target) {
+        Ok(it) => it,
+        _ => return,
+    };
+
+    match &item.item_type {
+        ItemType::Tool(tool) => {
+            if !player_inventory
+                .held_tools
+                .iter()
+                .any(|config| config.key() == tool.key())
+            {
+                commands.entity(pickup.target).despawn();
+                player_inventory.held_tools.push(tool.clone())
+            }
+        }
+    }
+}
+
+pub fn reset_pickup_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
+    let (_, mut current_action): (&Player, Mut<CurrentAction>) = query.single_mut().unwrap();
+    current_action.pickup = None;
 }
 
 pub fn reset_hit_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
