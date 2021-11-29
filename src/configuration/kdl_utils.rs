@@ -47,6 +47,7 @@ pub fn parse_key_code(code: &str) -> Result<KeyCode, ParseKeyCodeError> {
         "m" => Ok(KeyCode::M),
         "p" => Ok(KeyCode::P),
         "t" => Ok(KeyCode::T),
+        "s" => Ok(KeyCode::S),
         "i" => Err(ParseKeyCodeError::ReservedKeyCode(ReservedKeyCode)),
         _ => Err(ParseKeyCodeError::UnknownKeyCode(UnknownKeyCode)),
     }
