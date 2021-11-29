@@ -3198,7 +3198,7 @@ dependencies = [
 [[package]]
 name = "tdlg"
 version = "0.1.0"
-source = "git+https://github.com/derrickp/tdlg#178f08960f67dd3748e30b5c484f8344eba7e16c"
+source = "git+https://github.com/derrickp/tdlg#cb04a06584a08b6a430700b225ed732d44da1ce4"
 dependencies = [
  "rand 0.8.4",
  "rand_pcg 0.3.1",
