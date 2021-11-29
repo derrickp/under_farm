@@ -1,5 +1,9 @@
 use kdl::{KdlNode, KdlValue};
-use tdlg::{generator::Generator, loading::RoomPaths};
+use tdlg::{
+    cells::layer::LayerType,
+    generator::{Generator, ItemChance, ItemGeneration},
+    loading::RoomPaths,
+};
 
 use super::{kdl_utils::parse, load::Load};
 
@@ -38,6 +42,20 @@ impl WorldGenerationConfig {
             grid_size: self.world_stats.map_size,
             target_number_rooms: self.world_stats.num_rooms,
             all_room_paths: self.room_paths.to_vec(),
+            target_hidden_items: Some(ItemGeneration {
+                target_num_items: 15,
+                item_ranges: vec![ItemChance {
+                    layer_type: LayerType::Note,
+                    chance: 1..100,
+                }],
+            }),
+            target_items: Some(ItemGeneration {
+                target_num_items: 10,
+                item_ranges: vec![ItemChance {
+                    layer_type: LayerType::CommonItem,
+                    chance: 1..100,
+                }],
+            }),
         }
     }
 }
