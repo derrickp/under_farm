@@ -1,12 +1,14 @@
 use bevy::{
     math::Rect,
-    prelude::{Bundle, Color, Handle, KeyCode, TextBundle},
+    prelude::{Bundle, Color, Component, Handle, KeyCode, TextBundle},
     text::{Font, Text, TextStyle},
     ui::{AlignSelf, PositionType, Style, Val},
 };
 
+#[derive(Component)]
 pub struct InventoryText;
 
+#[derive(Component)]
 pub struct InventoryTextStatus {
     pub key: String,
 }

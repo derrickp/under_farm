@@ -34,7 +34,7 @@ pub fn add_inventory_text(
         FONT_SIZE,
     );
     commands.spawn_bundle(title_bundle);
-    let player_inventory: &PlayerInventory = query.single().unwrap();
+    let player_inventory: &PlayerInventory = query.single();
 
     let mut seed_count = 0;
     for (index, crop_config) in player_inventory.held_seeds.iter().enumerate() {
@@ -61,7 +61,7 @@ pub fn add_inventory_text(
     for (index, tool_config) in player_inventory.held_tools.iter().enumerate() {
         let top = PADDING + (INVENTORY_ITEM_SIZE * ((index + seed_count) as f32 + 1.0));
         let text_bundle = InventoryTextBundle::build(
-            &tool_config.key(),
+            tool_config.key(),
             top,
             PADDING,
             format!(
@@ -87,10 +87,11 @@ pub fn update_inventory_text_colour(
     inventory_query: Query<&PlayerInventory>,
     mut text_query: Query<(&InventoryText, &InventoryTextStatus, &mut Text)>,
 ) {
-    let inventory: &PlayerInventory = match inventory_query.single() {
-        Ok(it) => it,
-        _ => return,
-    };
+    if inventory_query.is_empty() {
+        return;
+    }
+
+    let inventory: &PlayerInventory = inventory_query.single();
 
     for text_data in text_query.iter_mut() {
         let (_, status, mut text): (&InventoryText, &InventoryTextStatus, Mut<Text>) = text_data;
@@ -124,7 +125,7 @@ pub fn select_item(
         return;
     }
 
-    let mut inventory: Mut<PlayerInventory> = query.single_mut().unwrap();
+    let mut inventory: Mut<PlayerInventory> = query.single_mut();
     for event in event_reader.iter() {
         if let Some(crop_config) = inventory
             .held_seeds

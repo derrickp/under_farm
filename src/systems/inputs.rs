@@ -41,7 +41,7 @@ pub fn movement_input_system(
     mut query: Query<(&Player, &mut PlayerMovement)>,
     game_config: Res<GameConfiguration>,
 ) {
-    let (_, mut movement): (&Player, Mut<PlayerMovement>) = query.single_mut().unwrap();
+    let (_, mut movement): (&Player, Mut<PlayerMovement>) = query.single_mut();
 
     movement.speed.current = Vec2::ZERO;
     movement.direction = Direction::None;
@@ -98,7 +98,7 @@ pub fn action_input_system(
     keyboard_input: Res<Input<KeyCode>>,
     mut query: Query<(&Player, &mut CurrentAction)>,
 ) {
-    let (_, mut action): (&Player, Mut<CurrentAction>) = query.single_mut().unwrap();
+    let (_, mut action): (&Player, Mut<CurrentAction>) = query.single_mut();
 
     if keyboard_input.just_pressed(KeyCode::E) {
         action.interact_pressed = true;
@@ -106,7 +106,7 @@ pub fn action_input_system(
 }
 
 pub fn reset_action_input_system(mut query: Query<(&Player, &mut CurrentAction)>) {
-    let (_, mut action): (&Player, Mut<CurrentAction>) = query.single_mut().unwrap();
+    let (_, mut action): (&Player, Mut<CurrentAction>) = query.single_mut();
 
     action.interact_pressed = false;
 }
@@ -136,10 +136,11 @@ pub fn toggle_coordinates_system(
         return;
     }
 
-    let (_, mut visible): (&PlayerStatsText, Mut<Visible>) = match query.single_mut() {
-        Ok(it) => it,
-        _ => return,
-    };
+    if query.is_empty() {
+        return;
+    }
+
+    let (_, mut visible): (&PlayerStatsText, Mut<Visible>) = query.single_mut();
 
     visible.is_visible = !visible.is_visible;
 }
@@ -153,15 +154,17 @@ pub fn zoom_camera_system(
         return;
     }
 
-    let (_, _, mut transform): (&GameCamera, &Camera, Mut<Transform>) = match query.single_mut() {
-        Ok(it) => it,
-        _ => return,
-    };
+    if query.is_empty() {
+        return;
+    }
 
-    let mut camera_state: Mut<GameCameraState> = match camera_state_query.single_mut() {
-        Ok(it) => it,
-        _ => return,
-    };
+    let (_, _, mut transform): (&GameCamera, &Camera, Mut<Transform>) = query.single_mut();
+
+    if camera_state_query.is_empty() {
+        return;
+    }
+
+    let mut camera_state: Mut<GameCameraState> = camera_state_query.single_mut();
 
     let new_scale = next_camera_scale(transform.scale);
     camera_state.scale = new_scale;

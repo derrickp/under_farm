@@ -35,7 +35,7 @@ fn main() {
     // TODO Should probably move this at some point...
     let game_config = GameConfiguration::load("./assets/config");
 
-    App::build()
+    App::new()
         .insert_resource(ClearColor(Color::rgb(0.05, 0.05, 0.05)))
         .init_resource::<Sprites>()
         .init_resource::<LoadedTextures>()

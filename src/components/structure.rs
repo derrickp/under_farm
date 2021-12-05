@@ -1,6 +1,6 @@
 use bevy::{
     math::Vec3,
-    prelude::{Bundle, Handle, SpriteSheetBundle, Transform, Visible},
+    prelude::{Bundle, Component, Handle, SpriteSheetBundle, Transform, Visible},
     sprite::{TextureAtlas, TextureAtlasSprite},
 };
 
@@ -14,7 +14,7 @@ use super::{
     health::{Health, HealthTextureMap},
 };
 
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct Structure {
     pub health: Health,
     pub health_configs: Vec<StructureHealth>,
@@ -22,6 +22,7 @@ pub struct Structure {
     default_can_be_broken: bool,
 }
 
+#[derive(Component)]
 pub struct StructureHealth {
     health_texture: HealthTextureMap,
     pub can_be_walked_on: bool,
@@ -122,7 +123,7 @@ impl StructureBundle {
             body: Body {
                 tile_size,
                 underground: false,
-                cell_center: position.clone(),
+                cell_center: position,
             },
             sprite: Self::sprite(
                 atlas_handle,

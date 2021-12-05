@@ -1,12 +1,12 @@
 [package]
 name = "under_farm"
 version = "0.1.0"
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = "0.5.0"
+bevy = { git = "https://github.com/bevyengine/bevy", rev = "4423a2fa2dc82fad71525ed3f44e16b8481a4902" }
 kdl = "3.0.0"
 rand = "0.8.4"
 walkdir = "2.3.2"

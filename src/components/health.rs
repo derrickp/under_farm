@@ -1,4 +1,6 @@
-#[derive(Clone, Copy, Debug, Default)]
+use bevy::prelude::Component;
+
+#[derive(Clone, Copy, Debug, Default, Component)]
 pub struct Health {
     pub current_health: i32,
     pub max_health: i32,

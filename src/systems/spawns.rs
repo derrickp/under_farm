@@ -12,10 +12,11 @@ pub fn spawn_crops(
     game_config: Res<GameConfiguration>,
     query: Query<&Spawns>,
 ) {
-    let spawns: &Spawns = match query.single() {
-        Ok(it) => it,
-        _ => return,
-    };
+    if query.is_empty() {
+        return;
+    }
+
+    let spawns: &Spawns = query.single();
 
     if spawns.crops.is_empty() {
         return;
@@ -33,10 +34,11 @@ pub fn spawn_crops(
 }
 
 pub fn reset_crop_spawns(mut query: Query<&mut Spawns>) {
-    let mut spawns: Mut<Spawns> = match query.single_mut() {
-        Ok(it) => it,
-        _ => return,
-    };
+    if query.is_empty() {
+        return;
+    }
+
+    let mut spawns: Mut<Spawns> = query.single_mut();
 
     spawns.crops.clear();
 }

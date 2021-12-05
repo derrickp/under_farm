@@ -28,7 +28,7 @@ pub fn spawn_player_text(
     windows: Res<Windows>,
     query: Query<&PlayerStatsText>,
 ) {
-    if query.single().is_ok() {
+    if !query.is_empty() {
         return;
     }
 
@@ -44,7 +44,7 @@ pub fn spawn_opening_bundles(
     query: Query<&Player>,
     game_config: Res<GameConfiguration>,
 ) {
-    if query.single().is_ok() {
+    if !query.is_empty() {
         return;
     }
 
@@ -159,7 +159,7 @@ pub fn spawn_opening_bundles(
                         "common item {} {} {}",
                         index, &cell.coordinate.x, &cell.coordinate.y
                     );
-                    let underground = cell.is_layer_underground(&layer).unwrap_or(false);
+                    let underground = cell.is_layer_underground(layer).unwrap_or(false);
                     if let Some(tool) = game_config.tool_configs.tool_by_type(ToolType::Shovel) {
                         let tool_bundle = ItemBundle::build(
                             position,

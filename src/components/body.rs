@@ -1,7 +1,8 @@
-use bevy::math::Vec3;
+use bevy::{math::Vec3, prelude::Component};
 
 use super::bounding_box::BoundingBox;
 
+#[derive(Component)]
 pub struct Body {
     pub tile_size: f32,
     pub cell_center: Vec3,

@@ -14,11 +14,12 @@ use super::{
 };
 use bevy::{
     math::{Vec2, Vec3},
-    prelude::{Bundle, SpriteSheetBundle, Transform},
+    prelude::{Bundle, Component, SpriteSheetBundle, Transform},
     sprite::TextureAtlasSprite,
 };
 use tdlg::coordinate::Coordinate;
 
+#[derive(Component)]
 pub struct PlayerInventory {
     pub current_crop_config: Option<CropConfiguration>,
     pub current_tool: Option<Tool>,
@@ -26,14 +27,16 @@ pub struct PlayerInventory {
     pub held_tools: Vec<ToolConfiguration>,
 }
 
+#[derive(Component)]
 pub struct Player;
 
+#[derive(Component)]
 pub struct PlayerMovement {
     pub speed: Speed,
     pub direction: Direction,
 }
 
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct PlayerCoordinates {
     pub current: Option<Coordinate>,
 }

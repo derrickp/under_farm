@@ -1,6 +1,6 @@
-use bevy::prelude::Entity;
+use bevy::prelude::{Component, Entity};
 
-#[derive(Default)]
+#[derive(Default, Component)]
 pub struct CurrentAction {
     pub interact_pressed: bool,
     pub hit: Option<HitAction>,

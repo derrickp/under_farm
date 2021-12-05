@@ -1,6 +1,6 @@
 use bevy::{
     math::Vec3,
-    prelude::{Bundle, SpriteSheetBundle, Transform, Visible},
+    prelude::{Bundle, Component, SpriteSheetBundle, Transform, Visible},
     sprite::TextureAtlasSprite,
 };
 
@@ -12,6 +12,7 @@ pub enum ItemType {
     Tool(ToolConfiguration),
 }
 
+#[derive(Component)]
 pub struct Item {
     pub item_type: ItemType,
 }
@@ -39,7 +40,7 @@ impl ItemBundle {
             body: Body {
                 tile_size,
                 underground,
-                cell_center: position.clone(),
+                cell_center: position,
             },
             sprite: SpriteSheetBundle {
                 transform: Transform {

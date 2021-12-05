@@ -1,6 +1,6 @@
 use bevy::{
     math::Vec3,
-    prelude::{Bundle, SpriteSheetBundle, Transform, Visible},
+    prelude::{Bundle, Component, SpriteSheetBundle, Transform, Visible},
     sprite::TextureAtlasSprite,
 };
 
@@ -10,6 +10,7 @@ use super::body::Body;
 
 use rand::Rng;
 
+#[derive(Component)]
 pub struct GroundTile;
 
 #[derive(Bundle)]
@@ -42,7 +43,7 @@ impl GroundTileBundle {
             tile_type: GroundTile,
             collide: Body {
                 tile_size,
-                cell_center: position.clone(),
+                cell_center: position,
                 underground: false,
             },
             sprite: SpriteSheetBundle {

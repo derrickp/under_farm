@@ -23,10 +23,11 @@ pub fn grow_crops_system(
     mut spawns_query: Query<&mut Spawns>,
     timer_query: Query<&WorldTickTimer>,
 ) {
-    let timer = match timer_query.single() {
-        Ok(it) => it,
-        _ => return,
-    };
+    if timer_query.is_empty() {
+        return;
+    }
+
+    let timer = timer_query.single();
 
     if !timer.0.just_finished() {
         return;
@@ -67,7 +68,8 @@ pub fn grow_crops_system(
                 crop.current_stage_index += 1;
             }
             _ => {
-                if let Ok(mut spawns) = spawns_query.single_mut() {
+                if !spawns_query.is_empty() {
+                    let mut spawns = spawns_query.single_mut();
                     spawns.crops.push(CropSpawn {
                         config: crop.config.clone(),
                         location: Vec2::new(transform.translation.x, transform.translation.y),

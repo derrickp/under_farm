@@ -1,6 +1,6 @@
 use bevy::{
     math::{Vec2, Vec3},
-    prelude::{Bundle, SpriteSheetBundle, Transform},
+    prelude::{Bundle, Component, SpriteSheetBundle, Transform},
     sprite::TextureAtlasSprite,
 };
 
@@ -8,6 +8,7 @@ use crate::{configuration::crops::CropConfiguration, sprites::Sprites};
 
 use super::name::Name;
 
+#[derive(Component)]
 pub struct Crop {
     pub current_stage_index: usize,
     pub config: CropConfiguration,
@@ -20,6 +21,7 @@ pub struct CropStage {
     pub sprite_index: u32,
 }
 
+#[derive(Component)]
 pub struct CropStages {
     pub stages: Vec<CropStage>,
 }

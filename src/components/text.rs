@@ -1,12 +1,13 @@
 use bevy::{
     math::Rect,
-    prelude::{AssetServer, Bundle, Color, Res, TextBundle},
+    prelude::{AssetServer, Bundle, Color, Component, Res, TextBundle},
     text::{Text, TextStyle},
     ui::{AlignSelf, PositionType, Style, Val},
     window::Windows,
 };
 use tdlg::coordinate::Coordinate;
 
+#[derive(Component)]
 pub struct PlayerStatsText;
 
 #[derive(Bundle)]

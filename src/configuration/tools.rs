@@ -156,7 +156,7 @@ impl Load for ToolConfigurations {
         let tool_nodes = parse(path).unwrap();
         let configurations = tool_nodes
             .iter()
-            .map(|tool_node| ToolConfiguration::from(tool_node))
+            .map(ToolConfiguration::from)
             .collect();
 
         Self { configurations }
@@ -165,13 +165,9 @@ impl Load for ToolConfigurations {
 
 impl ToolConfigurations {
     pub fn tool_by_type(&self, tool_type: ToolType) -> Option<ToolConfiguration> {
-        match self
+        self
             .configurations
             .iter()
-            .find(|config| config.tool_type() == tool_type)
-        {
-            Some(tool_config) => Some(tool_config.clone()),
-            _ => None,
-        }
+            .find(|config| config.tool_type() == tool_type).cloned()
     }
 }

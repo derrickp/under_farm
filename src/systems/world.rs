@@ -9,10 +9,11 @@ use crate::{
 };
 
 pub fn tick_game_world(time: Res<Time>, mut query: Query<&mut WorldTickTimer>) {
-    let mut timer = match query.single_mut() {
-        Ok(it) => it,
-        _ => return,
-    };
+    if query.is_empty() {
+        return;
+    }
+
+    let mut timer = query.single_mut();
 
     timer.0.tick(time.delta());
 }

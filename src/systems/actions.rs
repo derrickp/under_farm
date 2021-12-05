@@ -18,10 +18,11 @@ pub fn hit_actions(
     player_query: Query<(&Player, &CurrentAction)>,
     mut structure_query: Query<(&mut Structure, &mut TextureAtlasSprite)>,
 ) {
-    let (_, current_action): (&Player, &CurrentAction) = match player_query.single() {
-        Ok(it) => it,
-        _ => return,
-    };
+    if player_query.is_empty() {
+        return;
+    }
+
+    let (_, current_action): (&Player, &CurrentAction) = player_query.single();
 
     let hit = match current_action.hit {
         Some(it) => it,
@@ -47,7 +48,7 @@ pub fn pickup_actions(
     item_query: Query<&Item>,
 ) {
     let (_, current_action, mut player_inventory): (&Player, &CurrentAction, Mut<PlayerInventory>) =
-        player_query.single_mut().unwrap();
+        player_query.single_mut();
 
     let pickup = match current_action.pickup {
         Some(it) => it,
@@ -74,12 +75,12 @@ pub fn pickup_actions(
 }
 
 pub fn reset_pickup_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
-    let (_, mut current_action): (&Player, Mut<CurrentAction>) = query.single_mut().unwrap();
+    let (_, mut current_action): (&Player, Mut<CurrentAction>) = query.single_mut();
     current_action.pickup = None;
 }
 
 pub fn reset_hit_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
-    let (_, mut current_action): (&Player, Mut<CurrentAction>) = query.single_mut().unwrap();
+    let (_, mut current_action): (&Player, Mut<CurrentAction>) = query.single_mut();
     current_action.hit = None;
 }
 
@@ -89,7 +90,7 @@ pub fn crop_actions(
     mut spawns_query: Query<&mut Spawns>,
 ) {
     let (_, action, transform, inventory): (&Player, &CurrentAction, &Transform, &PlayerInventory) =
-        query.single().unwrap();
+        query.single();
     let player_bounds = BoundingBox::square(
         transform.translation.x.floor(),
         transform.translation.y.floor(),
@@ -118,10 +119,11 @@ pub fn crop_actions(
         _ => return,
     };
 
-    let mut spawns = match spawns_query.single_mut() {
-        Ok(it) => it,
-        _ => return,
-    };
+    if spawns_query.is_empty() {
+        return;
+    }
+
+    let mut spawns = spawns_query.single_mut();
 
     spawns.crops.push(CropSpawn {
         config: config.clone(),

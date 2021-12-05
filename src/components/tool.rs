@@ -1,3 +1,5 @@
+use bevy::prelude::Component;
+
 use super::{damage::Damage, name::Name};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -20,7 +22,7 @@ impl From<&str> for ToolType {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Component)]
 pub struct Tool {
     pub name: Name,
     pub key: String,

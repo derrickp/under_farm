@@ -3,12 +3,11 @@ use bevy::prelude::{Commands, Entity, OrthographicCameraBundle, Query, UiCameraB
 use crate::components::cameras::{GameCamera, GameCameraState, UiCamera};
 
 pub fn remove_gameplay_camera(mut commands: Commands, query: Query<(&GameCamera, Entity)>) {
-    let data = match query.single() {
-        Ok(it) => it,
-        _ => return,
-    };
+    if query.is_empty() {
+        return;
+    }
 
-    let (_, entity): (&GameCamera, Entity) = data;
+    let (_, entity): (&GameCamera, Entity) = query.single();
     commands.entity(entity).despawn();
 }
 
@@ -17,13 +16,14 @@ pub fn add_gameplay_camera(
     query: Query<&GameCamera>,
     camera_state_query: Query<&GameCameraState>,
 ) {
-    if query.single().is_ok() {
+    if !query.is_empty() {
         return;
     }
 
     let mut ortho_camera = OrthographicCameraBundle::new_2d();
 
-    if let Ok(camera_state) = camera_state_query.single() {
+    if !camera_state_query.is_empty() {
+        let camera_state = camera_state_query.single();
         ortho_camera.transform.scale = camera_state.scale;
     }
 
@@ -31,7 +31,7 @@ pub fn add_gameplay_camera(
 }
 
 pub fn add_ui_camera(mut commands: Commands, query: Query<&UiCamera>) {
-    if query.single().is_ok() {
+    if !query.is_empty() {
         return;
     }
 

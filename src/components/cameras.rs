@@ -1,9 +1,12 @@
-use bevy::math::Vec3;
+use bevy::{math::Vec3, prelude::Component};
 
+#[derive(Component)]
 pub struct GameCamera;
 
+#[derive(Component)]
 pub struct UiCamera;
 
+#[derive(Component)]
 pub struct GameCameraState {
     pub scale: Vec3,
 }

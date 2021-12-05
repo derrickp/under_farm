@@ -1,6 +1,6 @@
 use bevy::{
     math::Vec2,
-    prelude::{Entity, Mut, Query, QuerySet, Res, Transform, Visible},
+    prelude::{Entity, Mut, Query, Res, Transform, Visible, Without},
     render::camera::Camera,
     text::Text,
 };
@@ -33,7 +33,7 @@ pub fn check_item_pickup(
     item_query: Query<(&Item, &Body, &Visible, Entity)>,
 ) {
     let (_, transform, mut current_action): (&Player, &Transform, Mut<CurrentAction>) =
-        query.single_mut().unwrap();
+        query.single_mut();
 
     let x = transform.translation.x;
     let y = transform.translation.y;
@@ -60,7 +60,7 @@ pub fn player_movement(
         &PlayerInventory,
         Mut<Transform>,
         Mut<CurrentAction>,
-    ) = query.single_mut().unwrap();
+    ) = query.single_mut();
 
     let x = movement.speed.current.x + transform.translation.x;
     let y = movement.speed.current.y + transform.translation.y;
@@ -110,11 +110,12 @@ pub fn update_player_grid_coordinate(
     mut query: Query<(&Player, &Transform, &mut PlayerCoordinates)>,
     game_config: Res<GameConfiguration>,
 ) {
+    if query.is_empty() {
+        return;
+    }
+
     let (_, transform, mut player_coordinates): (&Player, &Transform, Mut<PlayerCoordinates>) =
-        match query.single_mut() {
-            Ok(it) => it,
-            _ => return,
-        };
+        query.single_mut();
 
     let world_coordinate = Vec2::new(transform.translation.x, transform.translation.y);
     let current = grid_coordinate_from_world(
@@ -129,41 +130,37 @@ pub fn update_player_text(
     mut query: Query<(&PlayerStatsText, &mut Text)>,
     player_query: Query<&PlayerCoordinates>,
 ) {
-    let (_, mut text): (&PlayerStatsText, Mut<Text>) = match query.single_mut() {
-        Ok(it) => it,
-        _ => return,
-    };
-    let player_coordinates: &PlayerCoordinates = match player_query.single() {
-        Ok(it) => it,
-        _ => return,
-    };
+    if query.is_empty() || player_query.is_empty() {
+        return;
+    }
+
+    let (_, mut text): (&PlayerStatsText, Mut<Text>) = query.single_mut();
+    let player_coordinates: &PlayerCoordinates = player_query.single();
 
     let section = text.sections.get_mut(0).unwrap();
     let current = player_coordinates.current.unwrap();
     section.value = format!("Coordinate {}  {}", current.x, current.y);
 }
 
-type PlayerTransform = (&'static Player, &'static Transform);
 type GameCameraTransform = (&'static GameCamera, &'static Camera, &'static mut Transform);
 
 pub fn camera_movement(
-    mut query_set: QuerySet<(Query<PlayerTransform>, Query<GameCameraTransform>)>,
+    player_query: Query<(&Player, &Transform, Without<Camera>)>,
+    mut camera_query: Query<GameCameraTransform>,
 ) {
-    let mut player_x = 0.0;
-    let mut player_y = 0.0;
-
-    for e in query_set.q0_mut().iter_mut() {
-        let (_, transform): (&Player, &Transform) = e;
-        player_x = transform.translation.x;
-        player_y = transform.translation.y;
+    if player_query.is_empty() || camera_query.is_empty() {
+        return;
     }
 
-    for camera_data in query_set.q1_mut().iter_mut() {
-        let (_, _, mut camera_transform): (&GameCamera, &Camera, Mut<Transform>) = camera_data;
+    let (_, transform, _): (&Player, &Transform, bool) = player_query.single();
+    let player_x = transform.translation.x;
+    let player_y = transform.translation.y;
 
-        camera_transform.translation.x = player_x;
-        camera_transform.translation.y = player_y;
-    }
+    let (_, _, mut camera_transform): (&GameCamera, &Camera, Mut<Transform>) =
+        camera_query.single_mut();
+
+    camera_transform.translation.x = player_x;
+    camera_transform.translation.y = player_y;
 }
 
 pub fn check_floor_collision(
@@ -171,8 +168,7 @@ pub fn check_floor_collision(
     mut ground_cell_query: Query<(&Body, &mut Visible)>,
     game_config: Res<GameConfiguration>,
 ) {
-    let (_, transform, movement): (&Player, &Transform, &PlayerMovement) =
-        player_query.single().unwrap();
+    let (_, transform, movement): (&Player, &Transform, &PlayerMovement) = player_query.single();
 
     let bounding_boxes = build_visibility_box(
         transform.translation.x,
