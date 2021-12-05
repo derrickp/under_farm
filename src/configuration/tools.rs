@@ -154,10 +154,7 @@ pub struct ToolConfigurations {
 impl Load for ToolConfigurations {
     fn load(path: &str) -> Self {
         let tool_nodes = parse(path).unwrap();
-        let configurations = tool_nodes
-            .iter()
-            .map(ToolConfiguration::from)
-            .collect();
+        let configurations = tool_nodes.iter().map(ToolConfiguration::from).collect();
 
         Self { configurations }
     }
@@ -165,9 +162,9 @@ impl Load for ToolConfigurations {
 
 impl ToolConfigurations {
     pub fn tool_by_type(&self, tool_type: ToolType) -> Option<ToolConfiguration> {
-        self
-            .configurations
+        self.configurations
             .iter()
-            .find(|config| config.tool_type() == tool_type).cloned()
+            .find(|config| config.tool_type() == tool_type)
+            .cloned()
     }
 }
