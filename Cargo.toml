@@ -10,4 +10,4 @@ bevy = "0.5.0"
 kdl = "3.0.0"
 rand = "0.8.4"
 walkdir = "2.3.2"
-tdlg = { git = "https://github.com/derrickp/tdlg" }
+tdlg = "0.1.1"
