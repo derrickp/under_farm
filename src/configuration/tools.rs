@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use kdl::{KdlNode, KdlValue};
 
 use crate::components::{
@@ -75,7 +73,7 @@ impl From<&KdlNode> for ToolFileConfig {
             name,
             sprite,
             starter,
-            tool_type: ToolType::from_str(&tool_type).unwrap(),
+            tool_type: tool_type.parse().unwrap(),
             inventory_selector: InventorySelector {
                 key_code: parse_key_code(&key_code).unwrap(),
                 display_code: key_code.clone(),
