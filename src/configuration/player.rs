@@ -31,7 +31,7 @@ impl From<&KdlNode> for PlayerSpriteConfig {
 
 impl PlayerSpriteConfig {
     pub fn sprite_location(&self) -> &str {
-        self.file_config.sprite.as_str()
+        &self.file_config.sprite
     }
 }
 

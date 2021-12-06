@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use bevy::prelude::Component;
 
 use super::{damage::Damage, name::Name};
@@ -10,14 +12,19 @@ pub enum ToolType {
     Shovel,
 }
 
-impl From<&str> for ToolType {
-    fn from(tool_type: &str) -> Self {
-        match tool_type {
-            "pickaxe" => ToolType::PickAxe,
-            "hammer" => ToolType::Hammer,
-            "hoe" => ToolType::Hoe,
-            "shovel" => ToolType::Shovel,
-            _ => ToolType::PickAxe,
+#[derive(Debug)]
+pub struct ParseToolTypeError;
+
+impl FromStr for ToolType {
+    type Err = ParseToolTypeError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "pickaxe" => Ok(ToolType::PickAxe),
+            "hammer" => Ok(ToolType::Hammer),
+            "hoe" => Ok(ToolType::Hoe),
+            "shovel" => Ok(ToolType::Shovel),
+            _ => Ok(ToolType::PickAxe),
         }
     }
 }

@@ -20,7 +20,7 @@ pub struct StructureHealthConfig {
 
 impl StructureHealthConfig {
     pub fn sprite_location(&self) -> &str {
-        self.file_config.sprite_location.as_str()
+        &self.file_config.sprite_location
     }
 
     pub fn min_health(&self) -> i32 {

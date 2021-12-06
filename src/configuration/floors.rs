@@ -56,7 +56,7 @@ pub struct FloorSpriteConfig {
 
 impl FloorSpriteConfig {
     pub fn sprite_location(&self) -> &str {
-        self.file_option.sprite.as_str()
+        &self.file_option.sprite
     }
 }
 
