@@ -19,7 +19,8 @@ use systems::{
         MovementInputTimer,
     },
     inventory::{
-        add_inventory_text, remove_inventory_text, select_item, update_inventory_text_colour,
+        add_inventory_text, inventory_input, remove_inventory_text, reset_inventory_selection,
+        select_item, update_inventory_text_colour,
     },
     loading::{check_load_state, start_game},
     movement::{
@@ -154,8 +155,24 @@ fn main() {
         )
         .add_system_set(
             SystemSet::on_update(AppState::InventoryScreen)
-                .with_system(select_item.system())
-                .with_system(update_inventory_text_colour.system()),
+                .with_system(inventory_input.system().label("inventory_input"))
+                .with_system(
+                    select_item
+                        .system()
+                        .after("inventory_input")
+                        .label("select_item"),
+                )
+                .with_system(
+                    update_inventory_text_colour
+                        .system()
+                        .after("inventory_input"),
+                )
+                .with_system(
+                    reset_inventory_selection
+                        .system()
+                        .label("reset_inventory_selection")
+                        .after("select_item"),
+                ),
         )
         .add_system(open_close_inventory_input_system.system())
         .add_system(exit_on_esc_system.system())

@@ -6,17 +6,18 @@ use bevy::{
 };
 
 #[derive(Component)]
-pub struct InventoryText;
+pub struct InventoryText {
+    pub selection_helper: Option<InventorySelectionHelper>,
+}
 
-#[derive(Component)]
-pub struct InventoryTextStatus {
+pub struct InventorySelectionHelper {
     pub key: String,
+    pub index: usize,
 }
 
 #[derive(Bundle)]
 pub struct InventoryTextBundle {
     pub inventory_text: InventoryText,
-    pub status: InventoryTextStatus,
 
     #[bundle]
     pub text: TextBundle,
@@ -24,7 +25,7 @@ pub struct InventoryTextBundle {
 
 impl InventoryTextBundle {
     pub fn build(
-        key: &str,
+        helper: Option<InventorySelectionHelper>,
         top: f32,
         left: f32,
         text: String,
@@ -32,9 +33,8 @@ impl InventoryTextBundle {
         font_size: f32,
     ) -> Self {
         Self {
-            inventory_text: InventoryText,
-            status: InventoryTextStatus {
-                key: key.to_string(),
+            inventory_text: InventoryText {
+                selection_helper: helper,
             },
             text: TextBundle {
                 style: Style {
@@ -69,4 +69,11 @@ impl InventoryTextBundle {
 pub struct InventorySelector {
     pub key_code: KeyCode,
     pub display_code: String,
+}
+
+#[derive(Default, Component)]
+pub struct CurrentInventorySelection {
+    pub key_code: Option<KeyCode>,
+    pub index: Option<usize>,
+    pub max_index: usize,
 }

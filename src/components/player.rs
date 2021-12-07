@@ -23,6 +23,7 @@ use tdlg::coordinate::Coordinate;
 pub struct PlayerInventory {
     pub current_crop_config: Option<CropConfiguration>,
     pub current_tool: Option<Tool>,
+    pub current_selected_index: Option<usize>,
     pub held_seeds: Vec<CropConfiguration>,
     pub held_tools: Vec<ToolConfiguration>,
 }
@@ -105,6 +106,7 @@ impl PlayerBundle {
             inventory: PlayerInventory {
                 held_seeds,
                 held_tools,
+                current_selected_index: None,
                 current_crop_config: None,
                 current_tool: None,
             },
