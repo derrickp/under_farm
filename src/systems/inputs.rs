@@ -2,7 +2,7 @@ use bevy::{
     core::{Time, Timer},
     input::Input,
     math::{Vec2, Vec3},
-    prelude::{KeyCode, Mut, Query, Res, ResMut, State, Transform, Visible},
+    prelude::{KeyCode, Mut, Query, Res, ResMut, Transform, Visible},
     render::camera::Camera,
 };
 
@@ -15,7 +15,6 @@ use crate::{
         text::PlayerStatsText,
     },
     configuration::{game::GameConfiguration, timers::movement_timer},
-    states::AppState,
 };
 
 pub struct MovementInputTimer(pub Timer);
@@ -109,23 +108,6 @@ pub fn reset_action_input_system(mut query: Query<(&Player, &mut CurrentAction)>
     let (_, mut action): (&Player, Mut<CurrentAction>) = query.single_mut();
 
     action.interact_pressed = false;
-}
-
-pub fn open_close_inventory_input_system(
-    keyboard_input: Res<Input<KeyCode>>,
-    mut state: ResMut<State<AppState>>,
-) {
-    if state.current().ne(&AppState::InGame) && state.current().ne(&AppState::InventoryScreen) {
-        return;
-    }
-
-    if keyboard_input.just_pressed(KeyCode::I) {
-        if state.current().eq(&AppState::InGame) {
-            state.set(AppState::InventoryScreen).unwrap();
-        } else {
-            state.set(AppState::InGame).unwrap();
-        }
-    }
 }
 
 pub fn toggle_coordinates_system(

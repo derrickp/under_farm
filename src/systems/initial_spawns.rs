@@ -10,7 +10,6 @@ use crate::{
     components::{
         cameras::GameCameraState,
         ground::GroundTileBundle,
-        inventory::CurrentInventorySelection,
         item::{ItemBundle, ItemType},
         player::{Player, PlayerBundle},
         spawns::Spawns,
@@ -191,7 +190,4 @@ pub fn spawn_opening_bundles(
     commands.spawn().insert(GameCameraState::default());
     commands.spawn().insert(Spawns::default());
     commands.spawn().insert(WorldTickTimer::default());
-    commands
-        .spawn()
-        .insert(CurrentInventorySelection::default());
 }

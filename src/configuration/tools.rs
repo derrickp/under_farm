@@ -2,13 +2,13 @@ use kdl::{KdlNode, KdlValue};
 
 use crate::components::{
     damage::Damage,
-    inventory::InventorySelector,
     name::Name,
     tool::{Tool, ToolType},
 };
 
 use super::{
     kdl_utils::{parse, parse_key_code},
+    key_selector::KeySelector,
     load::Load,
 };
 
@@ -21,7 +21,7 @@ pub struct ToolFileConfig {
     max_damage: i32,
     starter: bool,
     sprite: String,
-    inventory_selector: InventorySelector,
+    inventory_selector: KeySelector,
 }
 
 impl From<&KdlNode> for ToolFileConfig {
@@ -74,7 +74,7 @@ impl From<&KdlNode> for ToolFileConfig {
             sprite,
             starter,
             tool_type: tool_type.parse().unwrap(),
-            inventory_selector: InventorySelector {
+            inventory_selector: KeySelector {
                 key_code: parse_key_code(&key_code).unwrap(),
                 display_code: key_code.clone(),
             },
@@ -109,7 +109,7 @@ impl ToolConfiguration {
         self.file_config.tool_type
     }
 
-    pub fn inventory_selector(&self) -> &InventorySelector {
+    pub fn inventory_selector(&self) -> &KeySelector {
         &self.file_config.inventory_selector
     }
 

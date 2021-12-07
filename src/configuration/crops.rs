@@ -1,7 +1,6 @@
-use crate::components::inventory::InventorySelector;
-
 use super::{
     kdl_utils::{parse, parse_key_code},
+    key_selector::KeySelector,
     load::Load,
     timers::WORLD_TICK_TIME,
 };
@@ -57,7 +56,7 @@ pub struct CropConfiguration {
     pub key: String,
     pub name: String,
     pub stages: Vec<CropStage>,
-    pub inventory_selector: InventorySelector,
+    pub inventory_selector: KeySelector,
     pub starter: bool,
 }
 
@@ -132,7 +131,7 @@ impl Load for CropsConfig {
                     stages,
                     key,
                     starter,
-                    inventory_selector: InventorySelector {
+                    inventory_selector: KeySelector {
                         key_code: parse_key_code(&key_code).unwrap(),
                         display_code: key_code.clone(),
                     },

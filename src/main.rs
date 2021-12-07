@@ -1,26 +1,23 @@
 mod components;
 mod configuration;
+mod plugins;
 mod sprites;
 mod states;
 mod systems;
 
 use bevy::{input::system::exit_on_esc_system, prelude::*};
 use configuration::{game::GameConfiguration, load::Load};
+use plugins::inventory::InventoryPlugin;
 use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState};
 use systems::{
     actions::{crop_actions, hit_actions, pickup_actions, reset_hit_actions, reset_pickup_actions},
-    cameras::{add_gameplay_camera, add_ui_camera, remove_gameplay_camera},
+    cameras::{add_gameplay_camera, add_ui_camera},
     crops::grow_crops_system,
     initial_spawns::{spawn_opening_bundles, spawn_player_text},
     inputs::{
-        action_input_system, movement_input_system, open_close_inventory_input_system,
-        reset_action_input_system, toggle_coordinates_system, zoom_camera_system,
-        MovementInputTimer,
-    },
-    inventory::{
-        add_inventory_text, inventory_input, remove_inventory_text, reset_inventory_selection,
-        select_item, update_inventory_text_colour,
+        action_input_system, movement_input_system, reset_action_input_system,
+        toggle_coordinates_system, zoom_camera_system, MovementInputTimer,
     },
     loading::{check_load_state, start_game},
     movement::{
@@ -45,6 +42,7 @@ fn main() {
         .init_resource::<MovementInputTimer>()
         .add_state(AppState::Startup)
         .add_plugins(DefaultPlugins)
+        .add_plugin(InventoryPlugin)
         .add_system_set(SystemSet::on_enter(AppState::Startup).with_system(load_textures.system()))
         .add_system_set(
             SystemSet::on_update(AppState::Startup)
@@ -144,37 +142,6 @@ fn main() {
                 )
                 .with_system(reset_crop_spawns.system().after("spawn_crops")),
         )
-        .add_system_set(
-            SystemSet::on_enter(AppState::InventoryScreen)
-                .with_system(remove_gameplay_camera.system())
-                .with_system(add_inventory_text.system()),
-        )
-        .add_system_set(
-            SystemSet::on_exit(AppState::InventoryScreen)
-                .with_system(remove_inventory_text.system()),
-        )
-        .add_system_set(
-            SystemSet::on_update(AppState::InventoryScreen)
-                .with_system(inventory_input.system().label("inventory_input"))
-                .with_system(
-                    select_item
-                        .system()
-                        .after("inventory_input")
-                        .label("select_item"),
-                )
-                .with_system(
-                    update_inventory_text_colour
-                        .system()
-                        .after("inventory_input"),
-                )
-                .with_system(
-                    reset_inventory_selection
-                        .system()
-                        .label("reset_inventory_selection")
-                        .after("select_item"),
-                ),
-        )
-        .add_system(open_close_inventory_input_system.system())
         .add_system(exit_on_esc_system.system())
         .run();
 }

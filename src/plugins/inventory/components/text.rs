@@ -1,18 +1,15 @@
 use bevy::{
     math::Rect,
-    prelude::{Bundle, Color, Component, Handle, KeyCode, TextBundle},
+    prelude::{Bundle, Color, Component, Handle, TextBundle},
     text::{Font, Text, TextStyle},
     ui::{AlignSelf, PositionType, Style, Val},
 };
 
+use super::selection::InventorySelectionHelper;
+
 #[derive(Component)]
 pub struct InventoryText {
     pub selection_helper: Option<InventorySelectionHelper>,
-}
-
-pub struct InventorySelectionHelper {
-    pub key: String,
-    pub index: usize,
 }
 
 #[derive(Bundle)]
@@ -63,17 +60,4 @@ impl InventoryTextBundle {
             },
         }
     }
-}
-
-#[derive(Clone)]
-pub struct InventorySelector {
-    pub key_code: KeyCode,
-    pub display_code: String,
-}
-
-#[derive(Default, Component)]
-pub struct CurrentInventorySelection {
-    pub key_code: Option<KeyCode>,
-    pub index: Option<usize>,
-    pub max_index: usize,
 }
