@@ -5,15 +5,15 @@ use tdlg::{
     loading::RoomPaths,
 };
 
-use super::{kdl_utils::parse, load::Load};
+use super::kdl_utils::parse;
 
 pub struct WorldGenerationConfig {
     pub room_paths: Vec<RoomPaths>,
     pub world_stats: WorldStatsConfig,
 }
 
-impl Load for WorldGenerationConfig {
-    fn load(path: &str) -> Self {
+impl WorldGenerationConfig {
+    pub fn load(path: &str) -> Self {
         let nodes = parse(path).unwrap();
 
         let world_stats = nodes

@@ -6,8 +6,8 @@ mod states;
 mod systems;
 
 use bevy::{input::system::exit_on_esc_system, prelude::*};
-use configuration::{game::GameConfiguration, load::Load};
-use plugins::inventory::InventoryPlugin;
+use configuration::game::GameConfiguration;
+use plugins::{inventory::InventoryPlugin, world::WorldPlugin};
 use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState};
 use systems::{
@@ -26,7 +26,7 @@ use systems::{
     },
     spawns::{reset_crop_spawns, spawn_crops},
     textures::{check_textures, load_sprites, load_textures},
-    world::{generate_world_grid, tick_game_world},
+    world::generate_world_grid,
 };
 
 fn main() {
@@ -43,6 +43,7 @@ fn main() {
         .add_state(AppState::Startup)
         .add_plugins(DefaultPlugins)
         .add_plugin(InventoryPlugin)
+        .add_plugin(WorldPlugin)
         .add_system_set(SystemSet::on_enter(AppState::Startup).with_system(load_textures.system()))
         .add_system_set(
             SystemSet::on_update(AppState::Startup)
@@ -126,7 +127,6 @@ fn main() {
                 )
                 .with_system(zoom_camera_system.system())
                 .with_system(toggle_coordinates_system.system())
-                .with_system(tick_game_world.system().label("tick_game_world"))
                 .with_system(
                     grow_crops_system
                         .system()

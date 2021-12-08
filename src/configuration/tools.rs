@@ -9,7 +9,6 @@ use crate::components::{
 use super::{
     kdl_utils::{parse, parse_key_code},
     key_selector::KeySelector,
-    load::Load,
 };
 
 #[derive(Clone)]
@@ -151,8 +150,8 @@ pub struct ToolConfigurations {
     pub configurations: Vec<ToolConfiguration>,
 }
 
-impl Load for ToolConfigurations {
-    fn load(path: &str) -> Self {
+impl ToolConfigurations {
+    pub fn load(path: &str) -> Self {
         let tool_nodes = parse(path).unwrap();
         let configurations = tool_nodes.iter().map(ToolConfiguration::from).collect();
 

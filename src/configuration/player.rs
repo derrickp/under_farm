@@ -1,6 +1,6 @@
 use kdl::{KdlNode, KdlValue};
 
-use super::{kdl_utils::parse, load::Load};
+use super::kdl_utils::parse;
 
 pub struct PlayerSpriteConfigs {
     pub options: Vec<PlayerSpriteConfig>,
@@ -70,8 +70,8 @@ pub struct PlayerConfig {
     pub sprite_configs: PlayerSpriteConfigs,
 }
 
-impl Load for PlayerConfig {
-    fn load(path: &str) -> Self {
+impl PlayerConfig {
+    pub fn load(path: &str) -> Self {
         let player_nodes = parse(path).unwrap();
 
         let info_node = player_nodes

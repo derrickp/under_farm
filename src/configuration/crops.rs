@@ -1,8 +1,6 @@
 use super::{
     kdl_utils::{parse, parse_key_code},
     key_selector::KeySelector,
-    load::Load,
-    timers::WORLD_TICK_TIME,
 };
 
 use kdl::{KdlNode, KdlValue};
@@ -64,6 +62,7 @@ pub struct CropConfiguration {
 pub struct CropStage {
     file_config: CropStageFileConfig,
     pub sprite_index: Option<u32>,
+    pub ticks_per_second: u32,
 }
 
 impl CropStage {
@@ -77,7 +76,7 @@ impl CropStage {
             );
         }
 
-        TICKS_PER_SECOND * ticks
+        self.ticks_per_second * ticks
     }
 
     pub fn sprite_location(&self) -> &str {
@@ -93,10 +92,8 @@ pub struct CropsConfig {
     pub configurations: Vec<CropConfiguration>,
 }
 
-const TICKS_PER_SECOND: u32 = (1.0 / WORLD_TICK_TIME) as u32;
-
-impl Load for CropsConfig {
-    fn load(path: &str) -> Self {
+impl CropsConfig {
+    pub fn load(path: &str, world_tick_time: f32) -> Self {
         let crop_nodes = parse(path).unwrap();
         let configurations: Vec<CropConfiguration> = crop_nodes
             .iter()
@@ -121,6 +118,7 @@ impl Load for CropsConfig {
                     .children
                     .iter()
                     .map(|stage_node| CropStage {
+                        ticks_per_second: (1.0 / world_tick_time) as u32,
                         sprite_index: None,
                         file_config: CropStageFileConfig::from(stage_node),
                     })

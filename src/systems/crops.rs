@@ -6,9 +6,9 @@ use bevy::{
 use rand::Rng;
 
 use crate::components::{
+    action::WorldActions,
     crop::{Crop, CropSpawn, CropStages},
     spawns::Spawns,
-    world::WorldTickTimer,
 };
 
 pub fn grow_crops_system(
@@ -21,15 +21,15 @@ pub fn grow_crops_system(
         &mut TextureAtlasSprite,
     )>,
     mut spawns_query: Query<&mut Spawns>,
-    timer_query: Query<&WorldTickTimer>,
+    world_actions_query: Query<&WorldActions>,
 ) {
-    if timer_query.is_empty() {
+    if world_actions_query.is_empty() {
         return;
     }
 
-    let timer = timer_query.single();
+    let world_actions: &WorldActions = world_actions_query.single();
 
-    if !timer.0.just_finished() {
+    if !world_actions.grow_crops {
         return;
     }
 

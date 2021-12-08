@@ -1,22 +1,6 @@
-use bevy::{
-    core::Time,
-    prelude::{Commands, Query, Res, ResMut},
-};
+use bevy::prelude::{Commands, Res, ResMut};
 
-use crate::{
-    components::world::WorldTickTimer, configuration::game::GameConfiguration,
-    states::GameLoadState,
-};
-
-pub fn tick_game_world(time: Res<Time>, mut query: Query<&mut WorldTickTimer>) {
-    if query.is_empty() {
-        return;
-    }
-
-    let mut timer = query.single_mut();
-
-    timer.0.tick(time.delta());
-}
+use crate::{configuration::game::GameConfiguration, states::GameLoadState};
 
 pub fn generate_world_grid(
     mut commands: Commands,

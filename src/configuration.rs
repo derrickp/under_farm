@@ -3,7 +3,6 @@ pub mod floors;
 pub mod game;
 pub mod kdl_utils;
 pub mod key_selector;
-pub mod load;
 pub mod map;
 pub mod player;
 pub mod structures;

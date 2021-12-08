@@ -1,6 +1,6 @@
 use kdl::{KdlNode, KdlValue};
 
-use super::{kdl_utils::parse, load::Load};
+use super::kdl_utils::parse;
 
 pub struct FloorsConfig {
     pub configurations: Vec<FloorConfig>,
@@ -12,8 +12,8 @@ impl FloorsConfig {
     }
 }
 
-impl Load for FloorsConfig {
-    fn load(path: &str) -> Self {
+impl FloorsConfig {
+    pub fn load(path: &str) -> Self {
         let floor_nodes = parse(path).unwrap();
 
         let configurations = floor_nodes.iter().map(FloorConfig::from).collect();

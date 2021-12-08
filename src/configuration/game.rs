@@ -1,10 +1,11 @@
+use bevy::core::Timer;
 use kdl::{KdlNode, KdlValue};
 
 use crate::configuration::{kdl_utils::parse, world::WorldGenerationConfig};
 
 use super::{
-    crops::CropsConfig, floors::FloorsConfig, load::Load, player::PlayerConfig,
-    structures::StructuresConfig, tools::ToolConfigurations,
+    crops::CropsConfig, floors::FloorsConfig, player::PlayerConfig, structures::StructuresConfig,
+    tools::ToolConfigurations,
 };
 
 pub struct GameConfiguration {
@@ -16,6 +17,7 @@ pub struct GameConfiguration {
     pub sprite_config: SpriteConfig,
     pub tool_configs: ToolConfigurations,
     pub seed: String,
+    pub world_tick_time: f32,
 }
 
 impl GameConfiguration {
@@ -25,6 +27,10 @@ impl GameConfiguration {
 
     pub fn tile_size(&self) -> f32 {
         self.sprite_config.size * self.sprite_config.scale
+    }
+
+    pub fn world_tick_timer(&self) -> Timer {
+        Timer::from_seconds(self.world_tick_time, true)
     }
 }
 
@@ -92,8 +98,10 @@ impl From<&KdlNode> for BasicConfig {
     }
 }
 
-impl Load for GameConfiguration {
-    fn load(path: &str) -> Self {
+pub const WORLD_TICK_TIME: f32 = 0.2;
+
+impl GameConfiguration {
+    pub fn load(path: &str) -> Self {
         let crops_config_path = format!("{}/crops.kdl", path);
         let floors_config_path = format!("{}/floors.kdl", path);
         let structures_config_path = format!("{}/structures.kdl", path);
@@ -114,7 +122,7 @@ impl Load for GameConfiguration {
             .find(|node| node.name.eq_ignore_ascii_case("sprite_stats"))
             .map_or_else(SpriteConfig::default, SpriteConfig::from);
 
-        let crops_config = CropsConfig::load(&crops_config_path);
+        let crops_config = CropsConfig::load(&crops_config_path, WORLD_TICK_TIME);
         let floors_config = FloorsConfig::load(&floors_config_path);
         let structures_config = StructuresConfig::load(&structures_config_path);
         let player_config = PlayerConfig::load(&player_config_path);
@@ -130,6 +138,7 @@ impl Load for GameConfiguration {
             sprite_config,
             tool_configs,
             seed: basic_config.seed,
+            world_tick_time: WORLD_TICK_TIME,
         }
     }
 }

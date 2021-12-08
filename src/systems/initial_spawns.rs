@@ -8,6 +8,7 @@ use tdlg::{cells::layer::LayerType, coordinate::Coordinate, map::TopDownMap};
 
 use crate::{
     components::{
+        action::WorldActions,
         cameras::GameCameraState,
         ground::GroundTileBundle,
         item::{ItemBundle, ItemType},
@@ -16,7 +17,6 @@ use crate::{
         structure::StructureBundle,
         text::{PlayerStatsText, PlayerStatsTextBundle},
         tool::ToolType,
-        world::WorldTickTimer,
     },
     configuration::{game::GameConfiguration, map::world_coordinate_from_grid},
     sprites::Sprites,
@@ -189,5 +189,5 @@ pub fn spawn_opening_bundles(
 
     commands.spawn().insert(GameCameraState::default());
     commands.spawn().insert(Spawns::default());
-    commands.spawn().insert(WorldTickTimer::default());
+    commands.spawn().insert(WorldActions::default());
 }
