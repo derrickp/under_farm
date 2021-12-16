@@ -187,6 +187,24 @@ pub fn spawn_opening_bundles(
     let player_bundle = PlayerBundle::build_main_player(coordinate, &sprites, &game_config);
     commands.spawn_bundle(player_bundle);
 
+    let exit_coordinate = world_coordinate_from_grid(
+        &map.exit_coordinate,
+        game_config.world_config.world_stats.map_size,
+        game_config.tile_size(),
+    );
+
+    println!("{} {}", &map.exit_coordinate.x, &map.exit_coordinate.y);
+
+    let structure_config = game_config.structures_config.config_by_key("exit").unwrap();
+    let position = Vec3::new(exit_coordinate.x, exit_coordinate.y, 2.0);
+    commands.spawn_bundle(StructureBundle::build(
+        position,
+        &sprites.atlas_handle,
+        structure_config,
+        &game_config.sprite_config,
+        game_config.tile_size(),
+    ));
+
     commands.spawn().insert(GameCameraState::default());
     commands.spawn().insert(Spawns::default());
     commands.spawn().insert(WorldActions::default());

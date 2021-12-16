@@ -8,10 +8,13 @@ use bevy::{
 
 use crate::{
     components::{
-        action::CurrentAction,
+        action::{CurrentAction, InteractAction, PlantCropAction},
+        body::Body,
+        bounding_box::BoundingBox,
         cameras::{GameCamera, GameCameraState},
         movement::Direction,
         player::{Player, PlayerMovement},
+        structure::Structure,
         text::PlayerStatsText,
     },
     configuration::{game::GameConfiguration, timers::movement_timer},
@@ -95,19 +98,35 @@ pub fn movement_input_system(
 
 pub fn action_input_system(
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&Player, &mut CurrentAction)>,
+    mut query: Query<(&Player, &mut CurrentAction, &Transform)>,
+    structure_query: Query<(&Structure, &Body)>,
 ) {
-    let (_, mut action): (&Player, Mut<CurrentAction>) = query.single_mut();
+    let (_, mut action, transform): (&Player, Mut<CurrentAction>, &Transform) = query.single_mut();
 
     if keyboard_input.just_pressed(KeyCode::E) {
-        action.interact_pressed = true;
+        let x = transform.translation.x;
+        let y = transform.translation.y;
+        let bounding_box = BoundingBox::square(x, y, 60.0);
+
+        for structure_data in structure_query.iter() {
+            let (structure, body): (&Structure, &Body) = structure_data;
+            if structure.is_exit() && body.intersects_box(&bounding_box) {
+                println!("Should drop");
+                action.interact = Some(InteractAction::DropFloors);
+                return;
+            }
+        }
+
+        action.interact = Some(InteractAction::PlantCrop(PlantCropAction {
+            position: Vec2::new(x, y),
+        }));
     }
 }
 
 pub fn reset_action_input_system(mut query: Query<(&Player, &mut CurrentAction)>) {
     let (_, mut action): (&Player, Mut<CurrentAction>) = query.single_mut();
 
-    action.interact_pressed = false;
+    action.interact = None;
 }
 
 pub fn toggle_coordinates_system(

@@ -5,7 +5,7 @@ use bevy::{
 };
 
 use crate::components::{
-    action::CurrentAction,
+    action::{CurrentAction, InteractAction},
     bounding_box::BoundingBox,
     crop::{Crop, CropSpawn},
     item::{Item, ItemType},
@@ -85,21 +85,19 @@ pub fn reset_hit_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
 }
 
 pub fn crop_actions(
-    query: Query<(&Player, &CurrentAction, &Transform, &PlayerInventory)>,
+    query: Query<(&Player, &CurrentAction, &PlayerInventory)>,
     crop_query: Query<(&Crop, &Transform)>,
     mut spawns_query: Query<&mut Spawns>,
 ) {
-    let (_, action, transform, inventory): (&Player, &CurrentAction, &Transform, &PlayerInventory) =
-        query.single();
-    let player_bounds = BoundingBox::square(
-        transform.translation.x.floor(),
-        transform.translation.y.floor(),
-        60.0,
-    );
+    let (_, action, inventory): (&Player, &CurrentAction, &PlayerInventory) = query.single();
 
-    if !action.interact_pressed {
-        return;
-    }
+    let plant_action = match &action.interact {
+        Some(InteractAction::PlantCrop(it)) => it,
+        _ => return,
+    };
+
+    let planting_bounds =
+        BoundingBox::square(plant_action.position.x, plant_action.position.y, 60.0);
 
     for crop_data in crop_query.iter() {
         let (_, crop_transform): (&Crop, &Transform) = crop_data;
@@ -109,7 +107,7 @@ pub fn crop_actions(
             60.0,
         );
 
-        if crop_bounds.intersects(&player_bounds) {
+        if crop_bounds.intersects(&planting_bounds) {
             return;
         }
     }
@@ -127,6 +125,6 @@ pub fn crop_actions(
 
     spawns.crops.push(CropSpawn {
         config: config.clone(),
-        location: Vec2::new(transform.translation.x, transform.translation.y),
+        location: Vec2::new(plant_action.position.x, plant_action.position.y),
     });
 }

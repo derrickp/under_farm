@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use bevy::{
     math::Vec3,
     prelude::{Bundle, Component, Handle, SpriteSheetBundle, Transform, Visible},
@@ -14,10 +16,41 @@ use super::{
     health::{Health, HealthTextureMap},
 };
 
+#[derive(Clone, PartialEq)]
+pub enum StructureType {
+    Wall,
+    Table,
+    Hole,
+    Unknown,
+}
+
+#[derive(Debug)]
+pub struct ParseStructureTypeError;
+
+impl FromStr for StructureType {
+    type Err = ParseStructureTypeError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "wall" => Ok(Self::Wall),
+            "table" => Ok(Self::Table),
+            "hole" => Ok(Self::Hole),
+            _ => Err(ParseStructureTypeError),
+        }
+    }
+}
+
+impl Default for StructureType {
+    fn default() -> Self {
+        Self::Unknown
+    }
+}
+
 #[derive(Default, Component)]
 pub struct Structure {
     pub health: Health,
     pub health_configs: Vec<StructureHealth>,
+    structure_type: StructureType,
     default_can_be_walked_on: bool,
     default_can_be_broken: bool,
 }
@@ -86,6 +119,10 @@ impl Structure {
             .iter()
             .find(|config| config.matches_health(current))
     }
+
+    pub fn is_exit(&self) -> bool {
+        self.structure_type == StructureType::Hole
+    }
 }
 
 #[derive(Bundle)]
@@ -112,8 +149,9 @@ impl StructureBundle {
             .collect();
 
         let structure = Structure {
-            health: Health::same_health(structure_config.starting_health),
             health_configs,
+            health: Health::same_health(structure_config.starting_health),
+            structure_type: structure_config.structure_type.clone(),
             ..Default::default()
         };
         let starting_sprite = structure.current_texture_index().unwrap() as u32;

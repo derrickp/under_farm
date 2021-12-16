@@ -1,8 +1,11 @@
-use bevy::prelude::{Component, Entity};
+use bevy::{
+    math::Vec2,
+    prelude::{Component, Entity},
+};
 
 #[derive(Default, Component)]
 pub struct CurrentAction {
-    pub interact_pressed: bool,
+    pub interact: Option<InteractAction>,
     pub hit: Option<HitAction>,
     pub pickup: Option<PickupAction>,
 }
@@ -27,4 +30,15 @@ pub struct HitAction {
 #[derive(Clone, Copy)]
 pub struct PickupAction {
     pub target: Entity,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum InteractAction {
+    PlantCrop(PlantCropAction),
+    DropFloors,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct PlantCropAction {
+    pub position: Vec2,
 }

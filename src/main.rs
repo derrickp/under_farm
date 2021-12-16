@@ -24,7 +24,7 @@ use systems::{
         camera_movement, check_floor_collision, check_item_pickup, player_movement,
         update_player_grid_coordinate, update_player_text,
     },
-    spawns::{reset_crop_spawns, spawn_crops},
+    spawns::{drop_floor, reset_crop_spawns, spawn_crops},
     textures::{check_textures, load_sprites, load_textures},
     world::generate_world_grid,
 };
@@ -68,13 +68,23 @@ fn main() {
         .add_system_set(
             SystemSet::on_update(AppState::InGame)
                 .with_system(movement_input_system.system().label("movement_input"))
-                .with_system(action_input_system.system().label("action_input"))
-                .with_system(reset_action_input_system.system().after("crop_actions"))
                 .with_system(
                     player_movement
                         .system()
                         .label("player_movement")
                         .after("movement_input"),
+                )
+                .with_system(
+                    action_input_system
+                        .system()
+                        .label("action_input")
+                        .after("player_movement"),
+                )
+                .with_system(
+                    reset_action_input_system
+                        .system()
+                        .after("crop_actions")
+                        .after("drop_floor"),
                 )
                 .with_system(
                     check_item_pickup
@@ -123,7 +133,7 @@ fn main() {
                     crop_actions
                         .system()
                         .label("crop_actions")
-                        .after("player_movement"),
+                        .after("action_input"),
                 )
                 .with_system(zoom_camera_system.system())
                 .with_system(toggle_coordinates_system.system())
@@ -139,6 +149,12 @@ fn main() {
                         .label("spawn_crops")
                         .after("crop_actions")
                         .after("grow_crops_system"),
+                )
+                .with_system(
+                    drop_floor
+                        .system()
+                        .after("action_input")
+                        .label("drop_floor"),
                 )
                 .with_system(reset_crop_spawns.system().after("spawn_crops")),
         )

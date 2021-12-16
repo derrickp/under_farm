@@ -1,5 +1,6 @@
 use bevy::core::Timer;
 use kdl::{KdlNode, KdlValue};
+use tdlg::generator::Generator;
 
 use crate::configuration::{kdl_utils::parse, world::WorldGenerationConfig};
 
@@ -18,6 +19,7 @@ pub struct GameConfiguration {
     pub tool_configs: ToolConfigurations,
     pub seed: String,
     pub world_tick_time: f32,
+    level: usize,
 }
 
 impl GameConfiguration {
@@ -31,6 +33,17 @@ impl GameConfiguration {
 
     pub fn world_tick_timer(&self) -> Timer {
         Timer::from_seconds(self.world_tick_time, true)
+    }
+
+    pub fn generator(&mut self, increment: bool) -> Generator {
+        let seed = if increment {
+            self.level += 1;
+            format!("{}|{}", self.seed, self.level)
+        } else {
+            self.seed.clone()
+        };
+
+        self.world_config.generator(seed.clone())
     }
 }
 
@@ -139,6 +152,7 @@ impl GameConfiguration {
             tool_configs,
             seed: basic_config.seed,
             world_tick_time: WORLD_TICK_TIME,
+            level: 0,
         }
     }
 }

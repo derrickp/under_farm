@@ -1,12 +1,14 @@
 use kdl::{KdlNode, KdlValue};
 
+use crate::components::structure::StructureType;
+
 use super::kdl_utils::parse;
 
 #[derive(Clone)]
 pub struct StructureConfig {
     pub name: String,
     pub key: String,
-    pub structure_type: String,
+    pub structure_type: StructureType,
     pub starting_health: i32,
     pub initial_visible: bool,
     pub health_configs: Vec<StructureHealthConfig>,
@@ -92,7 +94,7 @@ impl From<&KdlNode> for StructureConfig {
             key,
             name,
             starting_health,
-            structure_type,
+            structure_type: structure_type.parse().unwrap(),
         }
     }
 }
