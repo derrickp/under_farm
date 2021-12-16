@@ -3057,9 +3057,9 @@ dependencies = [
 
 [[package]]
 name = "tdlg"
-version = "0.1.1"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d07f4c8a9f028bf1a085a8734b811bf032ba4120cc3b1dd70c8a587768f2712"
+checksum = "ede7d64ca996430f68cc1afcc6046a28045f5f1cd3e344983701423e02df95ae"
 dependencies = [
  "rand 0.8.4",
  "rand_pcg 0.3.1",
