@@ -36,3 +36,9 @@ pub struct Tool {
     pub tool_type: ToolType,
     pub damage: Option<Damage>,
 }
+
+impl Tool {
+    pub fn can_dig(&self) -> bool {
+        self.tool_type == ToolType::Shovel
+    }
+}
