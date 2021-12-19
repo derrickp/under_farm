@@ -28,6 +28,19 @@ pub struct PlayerInventory {
     pub held_tools: Vec<ToolConfiguration>,
 }
 
+impl PlayerInventory {
+    pub fn shovel_equipped(&self) -> bool {
+        match &self.current_tool {
+            Some(tool) => tool.can_dig(),
+            _ => false,
+        }
+    }
+
+    pub fn seed_equipped(&self) -> bool {
+        self.current_crop_config.is_some()
+    }
+}
+
 #[derive(Component)]
 pub struct Player;
 
