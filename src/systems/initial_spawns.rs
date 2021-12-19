@@ -46,7 +46,9 @@ pub fn spawn_opening_bundles(
     let generator = game_config.generator(false);
     let map = generator.generate_top_down_map().unwrap();
 
-    let mut spawns = Spawns::default();
-    spawns.map_spawn = Some(MapSpawn { map });
+    let spawns = Spawns {
+        map_spawn: Some(MapSpawn { map }),
+        ..Default::default()
+    };
     commands.spawn().insert(spawns);
 }
