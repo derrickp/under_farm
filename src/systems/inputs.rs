@@ -8,12 +8,12 @@ use bevy::{
 
 use crate::{
     components::{
-        action::{CurrentAction, InteractAction, PlantCropAction},
+        action::{CurrentAction, DigAction, InteractAction, PlantCropAction},
         body::Body,
         bounding_box::BoundingBox,
         cameras::{GameCamera, GameCameraState},
         movement::Direction,
-        player::{Player, PlayerMovement},
+        player::{Player, PlayerInventory, PlayerMovement},
         structure::Structure,
         text::PlayerStatsText,
     },
@@ -98,10 +98,15 @@ pub fn movement_input_system(
 
 pub fn action_input_system(
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&Player, &mut CurrentAction, &Transform)>,
+    mut query: Query<(&Player, &mut CurrentAction, &Transform, &PlayerInventory)>,
     structure_query: Query<(&Structure, &Body)>,
 ) {
-    let (_, mut action, transform): (&Player, Mut<CurrentAction>, &Transform) = query.single_mut();
+    let (_, mut action, transform, inventory): (
+        &Player,
+        Mut<CurrentAction>,
+        &Transform,
+        &PlayerInventory,
+    ) = query.single_mut();
 
     if keyboard_input.just_pressed(KeyCode::E) {
         let x = transform.translation.x;
@@ -117,9 +122,17 @@ pub fn action_input_system(
             }
         }
 
-        action.interact = Some(InteractAction::PlantCrop(PlantCropAction {
-            position: Vec2::new(x, y),
-        }));
+        if inventory.seed_equipped() {
+            action.interact = Some(InteractAction::PlantCrop(PlantCropAction {
+                position: Vec2::new(x, y),
+            }));
+        }
+
+        if inventory.shovel_equipped() {
+            action.interact = Some(InteractAction::DigAction(DigAction {
+                position: Vec2::new(x, y),
+            }));
+        }
     }
 }
 
