@@ -36,6 +36,13 @@ impl PlayerInventory {
         }
     }
 
+    pub fn clearing_item_equipped(&self) -> bool {
+        match &self.current_tool {
+            Some(tool) => tool.can_clear(),
+            _ => false,
+        }
+    }
+
     pub fn seed_equipped(&self) -> bool {
         self.current_crop_config.is_some()
     }
