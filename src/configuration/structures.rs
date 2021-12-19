@@ -40,6 +40,10 @@ impl StructureHealthConfig {
     pub fn can_be_walked_on(&self) -> bool {
         self.file_config.can_be_walked_on
     }
+
+    pub fn can_be_cleared(&self) -> bool {
+        self.file_config.can_be_cleared
+    }
 }
 
 impl From<&KdlNode> for StructureHealthConfig {
@@ -106,6 +110,7 @@ pub struct StructureHealthFileConfig {
     pub sprite_location: String,
     pub can_be_walked_on: bool,
     pub can_be_broken: bool,
+    pub can_be_cleared: bool,
 }
 
 impl From<&KdlNode> for StructureHealthFileConfig {
@@ -135,9 +140,15 @@ impl From<&KdlNode> for StructureHealthFileConfig {
             _ => false,
         };
 
+        let can_be_cleared = match node.properties.get("can_be_cleared") {
+            Some(KdlValue::Boolean(it)) => *it,
+            _ => false,
+        };
+
         Self {
             can_be_broken,
             can_be_walked_on,
+            can_be_cleared,
             max_health,
             min_health,
             sprite_location: sprite,

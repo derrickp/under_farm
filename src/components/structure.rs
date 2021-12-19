@@ -62,6 +62,7 @@ pub struct StructureHealth {
     health_texture: HealthTextureMap,
     pub can_be_walked_on: bool,
     pub can_be_broken: bool,
+    pub can_be_cleared: bool,
 }
 
 impl StructureHealth {
@@ -86,6 +87,7 @@ impl From<&StructureHealthConfig> for StructureHealth {
             health_texture,
             can_be_broken: value.can_be_broken(),
             can_be_walked_on: value.can_be_walked_on(),
+            can_be_cleared: value.can_be_cleared(),
         }
     }
 }
@@ -112,6 +114,14 @@ impl Structure {
         match config {
             Some(structure_health) => structure_health.can_be_walked_on,
             _ => self.default_can_be_walked_on,
+        }
+    }
+
+    pub fn can_be_cleared(&self) -> bool {
+        let config = self.current_config();
+        match config {
+            Some(structure_health) => structure_health.can_be_cleared,
+            _ => false,
         }
     }
 
