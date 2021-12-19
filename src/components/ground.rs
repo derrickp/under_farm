@@ -1,6 +1,6 @@
 use bevy::{
     math::Vec3,
-    prelude::{Bundle, Component, SpriteSheetBundle, Transform, Visible},
+    prelude::{Bundle, Component, SpriteSheetBundle, Transform, Visibility},
     sprite::TextureAtlasSprite,
 };
 
@@ -54,10 +54,7 @@ impl GroundTileBundle {
                 },
                 sprite: TextureAtlasSprite::new(floor_index),
                 texture_atlas: sprites.atlas_handle.clone(),
-                visible: Visible {
-                    is_visible: false,
-                    is_transparent: false,
-                },
+                visibility: Visibility { is_visible: false },
                 ..Default::default()
             },
         }

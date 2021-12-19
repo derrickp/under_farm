@@ -84,7 +84,7 @@ impl From<&KdlNode> for ToolFileConfig {
 #[derive(Clone)]
 pub struct ToolConfiguration {
     file_config: ToolFileConfig,
-    pub sprite_index: Option<u32>,
+    pub sprite_index: Option<usize>,
 }
 
 impl ToolConfiguration {

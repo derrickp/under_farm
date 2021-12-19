@@ -1,6 +1,6 @@
 use bevy::{
     math::Vec3,
-    prelude::{Bundle, Component, SpriteSheetBundle, Transform, Visible},
+    prelude::{Bundle, Component, SpriteSheetBundle, Transform, Visibility},
     sprite::TextureAtlasSprite,
 };
 
@@ -30,7 +30,7 @@ impl ItemBundle {
     pub fn build(
         position: Vec3,
         sprites: &Sprites,
-        item_index: u32,
+        item_index: usize,
         sprite_scale: f32,
         tile_size: f32,
         underground: bool,
@@ -50,10 +50,7 @@ impl ItemBundle {
                 },
                 sprite: TextureAtlasSprite::new(item_index),
                 texture_atlas: sprites.atlas_handle.clone(),
-                visible: Visible {
-                    is_visible: false,
-                    is_transparent: true,
-                },
+                visibility: Visibility { is_visible: false },
                 ..Default::default()
             },
             item: Item { item_type },

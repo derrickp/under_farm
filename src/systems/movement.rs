@@ -1,6 +1,6 @@
 use bevy::{
     math::Vec2,
-    prelude::{Entity, Mut, Query, Res, Transform, Visible, Without},
+    prelude::{Entity, Mut, Query, Res, Transform, Visibility, Without},
     render::camera::Camera,
     text::Text,
 };
@@ -30,7 +30,7 @@ type PlayerMovementQuery = (
 
 pub fn check_item_pickup(
     mut query: Query<(&Player, &Transform, &mut CurrentAction)>,
-    item_query: Query<(&Item, &Body, &Visible, Entity)>,
+    item_query: Query<(&Item, &Body, &Visibility, Entity)>,
 ) {
     if query.is_empty() {
         return;
@@ -45,7 +45,7 @@ pub fn check_item_pickup(
     let bounding_box = BoundingBox::square(x, y, 60.0);
 
     for item_data in item_query.iter() {
-        let (_, body, visible, entity): (&Item, &Body, &Visible, Entity) = item_data;
+        let (_, body, visible, entity): (&Item, &Body, &Visibility, Entity) = item_data;
 
         if body.intersects_box(&bounding_box) && visible.is_visible && !body.underground {
             println!("picking up item");
@@ -173,7 +173,7 @@ pub fn camera_movement(
 
 pub fn check_floor_collision(
     player_query: Query<(&Player, &Transform, &PlayerMovement)>,
-    mut ground_cell_query: Query<(&Body, &mut Visible)>,
+    mut ground_cell_query: Query<(&Body, &mut Visibility)>,
     game_config: Res<GameConfiguration>,
 ) {
     if player_query.is_empty() {
@@ -190,7 +190,7 @@ pub fn check_floor_collision(
     );
 
     for cell_data in ground_cell_query.iter_mut() {
-        let (grid_cell, mut visible): (&Body, Mut<Visible>) = cell_data;
+        let (grid_cell, mut visible): (&Body, Mut<Visibility>) = cell_data;
 
         if bounding_boxes
             .iter()

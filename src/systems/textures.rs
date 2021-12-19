@@ -1,6 +1,6 @@
 use bevy::{
     asset::LoadState,
-    prelude::{AssetServer, Assets, Res, ResMut, Texture},
+    prelude::{AssetServer, Assets, Image, Res, ResMut},
     sprite::{TextureAtlas, TextureAtlasBuilder},
 };
 
@@ -30,7 +30,7 @@ pub fn load_sprites(
     mut sprites: ResMut<Sprites>,
     loaded_textures: Res<LoadedTextures>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    mut textures: ResMut<Assets<Texture>>,
+    mut textures: ResMut<Assets<Image>>,
     mut load_state: ResMut<GameLoadState>,
     asset_server: Res<AssetServer>,
     mut game_config: ResMut<GameConfiguration>,
@@ -38,7 +38,7 @@ pub fn load_sprites(
     let mut texture_atlas_builder = TextureAtlasBuilder::default();
     for handle in loaded_textures.handles.iter() {
         let texture = textures.get(handle).unwrap();
-        texture_atlas_builder.add_texture(handle.clone_weak().typed::<Texture>(), texture);
+        texture_atlas_builder.add_texture(handle.clone_weak().typed::<Image>(), texture);
     }
 
     let texture_atlas = texture_atlas_builder.finish(&mut textures).unwrap();
@@ -47,7 +47,7 @@ pub fn load_sprites(
         for mut stage in config.stages.as_mut_slice() {
             let handle = asset_server.get_handle(stage.sprite_location());
             if let Some(index) = texture_atlas.get_texture_index(&handle) {
-                stage.sprite_index = Some(index as u32);
+                stage.sprite_index = Some(index);
             }
         }
     }
@@ -56,7 +56,7 @@ pub fn load_sprites(
         for mut structure_health in config.health_configs.as_mut_slice() {
             let handle = asset_server.get_handle(structure_health.sprite_location());
             if let Some(index) = texture_atlas.get_texture_index(&handle) {
-                structure_health.sprite_index = Some(index as u32);
+                structure_health.sprite_index = Some(index);
             }
         }
     }
@@ -65,7 +65,7 @@ pub fn load_sprites(
         for mut sprite_options in config.sprite_options.as_mut_slice() {
             let handle = asset_server.get_handle(sprite_options.sprite_location());
             if let Some(index) = texture_atlas.get_texture_index(&handle) {
-                sprite_options.sprite_index = Some(index as u32);
+                sprite_options.sprite_index = Some(index);
             }
         }
     }
@@ -78,14 +78,14 @@ pub fn load_sprites(
     {
         let handle = asset_server.get_handle(config.sprite_location());
         if let Some(index) = texture_atlas.get_texture_index(&handle) {
-            config.sprite_index = Some(index as u32);
+            config.sprite_index = Some(index);
         }
     }
 
     for config in game_config.tool_configs.configurations.as_mut_slice() {
         let handle = asset_server.get_handle(config.sprite_location());
         if let Some(index) = texture_atlas.get_texture_index(&handle) {
-            config.sprite_index = Some(index as u32);
+            config.sprite_index = Some(index);
         }
     }
 

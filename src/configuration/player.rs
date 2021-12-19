@@ -15,7 +15,7 @@ impl From<&KdlNode> for PlayerSpriteConfigs {
 
 pub struct PlayerSpriteConfig {
     pub file_config: SpriteFileConfig,
-    pub sprite_index: Option<u32>,
+    pub sprite_index: Option<usize>,
 }
 
 impl From<&KdlNode> for PlayerSpriteConfig {

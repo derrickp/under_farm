@@ -39,7 +39,7 @@ pub fn hit_actions(
     structure.damage(hit.damage);
 
     if let Some(sprite_index) = structure.current_texture_index() {
-        sprite.index = sprite_index as u32;
+        sprite.index = sprite_index;
     }
 }
 

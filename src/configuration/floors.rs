@@ -51,7 +51,7 @@ impl From<&KdlNode> for FloorConfig {
 
 pub struct FloorSpriteConfig {
     file_option: FloorFileOption,
-    pub sprite_index: Option<u32>,
+    pub sprite_index: Option<usize>,
 }
 
 impl FloorSpriteConfig {

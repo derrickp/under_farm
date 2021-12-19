@@ -17,7 +17,7 @@ pub struct StructureConfig {
 #[derive(Clone)]
 pub struct StructureHealthConfig {
     file_config: StructureHealthFileConfig,
-    pub sprite_index: Option<u32>,
+    pub sprite_index: Option<usize>,
 }
 
 impl StructureHealthConfig {

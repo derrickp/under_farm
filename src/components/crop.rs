@@ -18,7 +18,7 @@ pub struct CropStage {
     pub ticks_in_stage: u32,
     pub min_ticks_in_stage: u32,
     pub chance_to_advance: u32,
-    pub sprite_index: u32,
+    pub sprite_index: usize,
 }
 
 #[derive(Component)]

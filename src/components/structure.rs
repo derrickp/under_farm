@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use bevy::{
     math::Vec3,
-    prelude::{Bundle, Component, Handle, SpriteSheetBundle, Transform, Visible},
+    prelude::{Bundle, Component, Handle, SpriteSheetBundle, Transform, Visibility},
     sprite::{TextureAtlas, TextureAtlasSprite},
 };
 
@@ -171,7 +171,7 @@ impl StructureBundle {
             structure_type: structure_config.structure_type.clone(),
             ..Default::default()
         };
-        let starting_sprite = structure.current_texture_index().unwrap() as u32;
+        let starting_sprite = structure.current_texture_index().unwrap();
 
         Self {
             structure,
@@ -193,7 +193,7 @@ impl StructureBundle {
     fn sprite(
         atlas: &Handle<TextureAtlas>,
         position: Vec3,
-        sprite: u32,
+        sprite: usize,
         visible: bool,
         sprite_scale: f32,
     ) -> SpriteSheetBundle {
@@ -205,9 +205,8 @@ impl StructureBundle {
             },
             sprite: TextureAtlasSprite::new(sprite),
             texture_atlas: atlas.clone(),
-            visible: Visible {
+            visibility: Visibility {
                 is_visible: visible,
-                is_transparent: true,
             },
             ..Default::default()
         }

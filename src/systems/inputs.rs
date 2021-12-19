@@ -2,7 +2,7 @@ use bevy::{
     core::{Time, Timer},
     input::Input,
     math::{Vec2, Vec3},
-    prelude::{Entity, KeyCode, Mut, Query, Res, ResMut, Transform, Visible},
+    prelude::{Entity, KeyCode, Mut, Query, Res, ResMut, Transform, Visibility},
     render::camera::Camera,
 };
 
@@ -165,7 +165,7 @@ pub fn reset_action_input_system(mut query: Query<(&Player, &mut CurrentAction)>
 
 pub fn toggle_coordinates_system(
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&PlayerStatsText, &mut Visible)>,
+    mut query: Query<(&PlayerStatsText, &mut Visibility)>,
 ) {
     if !keyboard_input.just_pressed(KeyCode::Slash) {
         return;
@@ -175,7 +175,7 @@ pub fn toggle_coordinates_system(
         return;
     }
 
-    let (_, mut visible): (&PlayerStatsText, Mut<Visible>) = query.single_mut();
+    let (_, mut visible): (&PlayerStatsText, Mut<Visibility>) = query.single_mut();
 
     visible.is_visible = !visible.is_visible;
 }

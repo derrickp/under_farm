@@ -61,7 +61,7 @@ pub struct CropConfiguration {
 #[derive(Clone)]
 pub struct CropStage {
     file_config: CropStageFileConfig,
-    pub sprite_index: Option<u32>,
+    pub sprite_index: Option<usize>,
     pub ticks_per_second: u32,
 }
 
