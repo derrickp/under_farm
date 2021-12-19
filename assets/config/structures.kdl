@@ -22,3 +22,7 @@ structure "Outer Wall" key="outer_wall" type="wall" health=1000 {
 structure "Exit Hole" key="exit" type="hole" health=1000 {
     health_config sprite="sprites/hole.png" min_health=0 max_health=1000 can_be_broken=false can_be_walked_on=true
 }
+
+structure "Dug Spot" key="dug_spot" type="dirt_chunks" health=1000 {
+    health_config sprite="sprites/dug_spot.png" min_health=0 max_health=1000 can_be_broken=false can_be_walked_on=true
+}
