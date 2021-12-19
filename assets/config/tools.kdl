@@ -1,2 +1,3 @@
 tool "Rusty Pickaxe" key="rusty_pickaxe" type="pickaxe" min_damage=1 max_damage=1 starter=true key_code="a" sprite="sprites/rusty_pickaxe.png" rarity="common"
 tool "Bone Shovel" key="bone_shovel" type="shovel" starter=false sprite="sprites/bone_shovel.png" key_code="s" rarity="common"
+tool "Stone Hoe" key="stone_hoe" type="hoe" starter=false sprite="sprites/stone_hoe.png" key_code="h" rarity="common"
