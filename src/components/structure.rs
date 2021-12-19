@@ -21,6 +21,7 @@ pub enum StructureType {
     Wall,
     Table,
     Hole,
+    DirtChunks,
     Unknown,
 }
 
@@ -35,6 +36,7 @@ impl FromStr for StructureType {
             "wall" => Ok(Self::Wall),
             "table" => Ok(Self::Table),
             "hole" => Ok(Self::Hole),
+            "dirt_chunks" => Ok(Self::DirtChunks),
             _ => Err(ParseStructureTypeError),
         }
     }
