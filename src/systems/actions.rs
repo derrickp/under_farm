@@ -6,6 +6,7 @@ use bevy::{
 
 use crate::components::{
     action::{CurrentAction, InteractAction},
+    body::Body,
     bounding_box::BoundingBox,
     crop::{Crop, CropSpawn},
     item::{Item, ItemType},
@@ -111,6 +112,7 @@ pub fn dig_action(query: Query<(&Player, &CurrentAction)>, mut spawns_query: Que
 pub fn crop_actions(
     query: Query<(&Player, &CurrentAction, &PlayerInventory)>,
     crop_query: Query<(&Crop, &Transform)>,
+    structure_query: Query<(&Structure, &Body)>,
     mut spawns_query: Query<&mut Spawns>,
 ) {
     let (_, action, inventory): (&Player, &CurrentAction, &PlayerInventory) = query.single();
@@ -132,6 +134,14 @@ pub fn crop_actions(
         );
 
         if crop_bounds.intersects(&planting_bounds) {
+            return;
+        }
+    }
+
+    for structure_data in structure_query.iter() {
+        let (_, body): (&Structure, &Body) = structure_data;
+
+        if body.intersects_box(&planting_bounds) {
             return;
         }
     }
