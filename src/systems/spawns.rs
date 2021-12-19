@@ -11,8 +11,8 @@ use crate::{
         crop::CropBundle,
         ground::GroundTileBundle,
         item::{ItemBundle, ItemType},
-        player::Player,
-        spawns::Spawns,
+        player::{Player, PlayerBundle},
+        spawns::{MapSpawn, Spawns},
         structure::StructureBundle,
         tool::ToolType,
     },
@@ -104,17 +104,20 @@ pub fn reset_structure_spawns(mut query: Query<&mut Spawns>) {
 
 pub fn drop_floor(
     mut commands: Commands,
-    mut player_query: Query<(&Player, &CurrentAction, &mut Transform)>,
+    mut player_query: Query<(&Player, &CurrentAction)>,
     structure_query: Query<(&Body, Entity)>,
-    sprites: Res<Sprites>,
     mut game_config: ResMut<GameConfiguration>,
+    mut spawns_query: Query<&mut Spawns>,
 ) {
     if player_query.is_empty() {
         return;
     }
 
-    let (_, action, mut transform): (&Player, &CurrentAction, Mut<'_, Transform>) =
-        player_query.single_mut();
+    if spawns_query.is_empty() {
+        return;
+    }
+
+    let (_, action): (&Player, &CurrentAction) = player_query.single_mut();
 
     if let Some(InteractAction::DropFloors) = action.interact {
         let world = game_config.generator(true).generate_top_down_map().unwrap();
@@ -125,120 +128,187 @@ pub fn drop_floor(
             commands.entity(entity).despawn();
         }
 
-        for cell in world.grid.cells.values() {
-            for (index, layer) in cell.layers.iter().enumerate() {
-                let coordinate = world_coordinate_from_grid(
-                    &cell.coordinate,
-                    game_config.map_size(),
-                    game_config.tile_size(),
-                );
-                let position = Vec3::new(coordinate.x, coordinate.y, index as f32);
-                match *layer {
-                    LayerType::Floor => {
-                        let floor_config = game_config
-                            .floors_config
-                            .config_by_key("cave_floor")
-                            .unwrap();
-                        commands.spawn_bundle(GroundTileBundle::build(
-                            position,
-                            &sprites,
-                            floor_config,
-                            game_config.sprite_config.scale,
-                            game_config.tile_size(),
-                        ));
-                    }
-                    LayerType::RoomWall => {
-                        let structure_config = game_config
-                            .structures_config
-                            .config_by_key("room_wall")
-                            .unwrap();
-                        commands.spawn_bundle(StructureBundle::build(
-                            position,
-                            &sprites.atlas_handle,
-                            structure_config,
-                            &game_config.sprite_config,
-                            game_config.tile_size(),
-                        ));
-                    }
-                    LayerType::RoomFloor => {
-                        let config = game_config
-                            .floors_config
-                            .config_by_key("room_floor")
-                            .unwrap();
-                        commands.spawn_bundle(GroundTileBundle::build(
-                            position,
-                            &sprites,
-                            config,
-                            game_config.sprite_config.scale,
-                            game_config.tile_size(),
-                        ));
-                    }
-                    LayerType::Door => {
-                        let config = game_config
-                            .floors_config
-                            .config_by_key("room_floor")
-                            .unwrap();
-                        commands.spawn_bundle(GroundTileBundle::build(
-                            position,
-                            &sprites,
-                            config,
-                            game_config.sprite_config.scale,
-                            game_config.tile_size(),
-                        ));
-                    }
-                    LayerType::OuterWall => {
-                        let structure_config = game_config
-                            .structures_config
-                            .config_by_key("outer_wall")
-                            .unwrap();
-                        commands.spawn_bundle(StructureBundle::build(
-                            position,
-                            &sprites.atlas_handle,
-                            structure_config,
-                            &game_config.sprite_config,
-                            game_config.tile_size(),
-                        ));
-                    }
-                    LayerType::Rubble => {
-                        let structure_config = game_config
-                            .structures_config
-                            .config_by_key("rubble")
-                            .unwrap();
-                        commands.spawn_bundle(StructureBundle::build(
-                            position,
-                            &sprites.atlas_handle,
-                            structure_config,
-                            &game_config.sprite_config,
-                            game_config.tile_size(),
-                        ));
-                    }
-                    LayerType::Table => {
-                        let structure_config = game_config
-                            .structures_config
-                            .config_by_key("table")
-                            .unwrap();
-                        commands.spawn_bundle(StructureBundle::build(
-                            position,
-                            &sprites.atlas_handle,
-                            structure_config,
-                            &game_config.sprite_config,
-                            game_config.tile_size(),
-                        ));
-                    }
-                    LayerType::Note => {
-                        println!(
-                            "Note {} {} {}",
-                            index, &cell.coordinate.x, &cell.coordinate.y
-                        );
-                    }
-                    LayerType::CommonItem => {
-                        println!(
-                            "common item {} {} {}",
-                            index, &cell.coordinate.x, &cell.coordinate.y
-                        );
-                        let underground = cell.is_layer_underground(layer).unwrap_or(false);
-                        if let Some(tool) = game_config.tool_configs.tool_by_type(ToolType::Shovel)
+        let mut spawns: Mut<Spawns> = spawns_query.single_mut();
+        spawns.map_spawn = Some(MapSpawn { map: world });
+    }
+}
+
+pub fn reset_spawn_map(mut query: Query<&mut Spawns>) {
+    if query.is_empty() {
+        return;
+    }
+
+    let mut spawns: Mut<Spawns> = query.single_mut();
+    spawns.map_spawn = None;
+}
+
+pub fn spawn_map(
+    mut commands: Commands,
+    query: Query<&Spawns>,
+    mut player_query: Query<(&Player, &mut Transform)>,
+    sprites: Res<Sprites>,
+    game_config: Res<GameConfiguration>,
+) {
+    if query.is_empty() {
+        return;
+    }
+
+    let spawns: &Spawns = query.single();
+
+    let map_spawn = match &spawns.map_spawn {
+        Some(it) => it,
+        _ => return,
+    };
+
+    let player_spawn = map_spawn.map.entry_coordinate;
+    let coordinate = world_coordinate_from_grid(
+        &player_spawn,
+        game_config.world_config.world_stats.map_size,
+        game_config.tile_size(),
+    );
+    if player_query.is_empty() {
+        let player_bundle = PlayerBundle::build_main_player(coordinate, &sprites, &game_config);
+        commands.spawn_bundle(player_bundle);
+    } else {
+        let (_, mut transform): (&Player, Mut<Transform>) = player_query.single_mut();
+        transform.translation.x = coordinate.x;
+        transform.translation.y = coordinate.y;
+    }
+
+    let mut spawned_shovel = false;
+    for cell in map_spawn.map.grid.cells.values() {
+        for (index, layer) in cell.layers.iter().enumerate() {
+            let coordinate = world_coordinate_from_grid(
+                &cell.coordinate,
+                game_config.map_size(),
+                game_config.tile_size(),
+            );
+            let position = Vec3::new(coordinate.x, coordinate.y, index as f32);
+            match *layer {
+                LayerType::Floor => {
+                    let floor_config = game_config
+                        .floors_config
+                        .config_by_key("cave_floor")
+                        .unwrap();
+                    commands.spawn_bundle(GroundTileBundle::build(
+                        position,
+                        &sprites,
+                        floor_config,
+                        game_config.sprite_config.scale,
+                        game_config.tile_size(),
+                    ));
+                }
+                LayerType::RoomWall => {
+                    let structure_config = game_config
+                        .structures_config
+                        .config_by_key("room_wall")
+                        .unwrap();
+                    commands.spawn_bundle(StructureBundle::build(
+                        position,
+                        &sprites.atlas_handle,
+                        structure_config,
+                        &game_config.sprite_config,
+                        game_config.tile_size(),
+                    ));
+                }
+                LayerType::RoomFloor => {
+                    let config = game_config
+                        .floors_config
+                        .config_by_key("room_floor")
+                        .unwrap();
+                    commands.spawn_bundle(GroundTileBundle::build(
+                        position,
+                        &sprites,
+                        config,
+                        game_config.sprite_config.scale,
+                        game_config.tile_size(),
+                    ));
+                }
+                LayerType::Door => {
+                    let config = game_config
+                        .floors_config
+                        .config_by_key("room_floor")
+                        .unwrap();
+                    commands.spawn_bundle(GroundTileBundle::build(
+                        position,
+                        &sprites,
+                        config,
+                        game_config.sprite_config.scale,
+                        game_config.tile_size(),
+                    ));
+                }
+                LayerType::OuterWall => {
+                    let structure_config = game_config
+                        .structures_config
+                        .config_by_key("outer_wall")
+                        .unwrap();
+                    commands.spawn_bundle(StructureBundle::build(
+                        position,
+                        &sprites.atlas_handle,
+                        structure_config,
+                        &game_config.sprite_config,
+                        game_config.tile_size(),
+                    ));
+                }
+                LayerType::Rubble => {
+                    let structure_config = game_config
+                        .structures_config
+                        .config_by_key("rubble")
+                        .unwrap();
+                    commands.spawn_bundle(StructureBundle::build(
+                        position,
+                        &sprites.atlas_handle,
+                        structure_config,
+                        &game_config.sprite_config,
+                        game_config.tile_size(),
+                    ));
+                }
+                LayerType::Table => {
+                    let structure_config = game_config
+                        .structures_config
+                        .config_by_key("table")
+                        .unwrap();
+                    commands.spawn_bundle(StructureBundle::build(
+                        position,
+                        &sprites.atlas_handle,
+                        structure_config,
+                        &game_config.sprite_config,
+                        game_config.tile_size(),
+                    ));
+                }
+                LayerType::Note => {
+                    println!(
+                        "Note {} {} {}",
+                        index, &cell.coordinate.x, &cell.coordinate.y
+                    );
+                }
+                LayerType::CommonItem => {
+                    println!(
+                        "common item {} {} {}",
+                        index, &cell.coordinate.x, &cell.coordinate.y
+                    );
+
+                    let underground = cell.is_layer_underground(layer).unwrap_or(false);
+                    if !underground {
+                        if spawned_shovel {
+                            println!("spawned hoe {:?}", &cell.coordinate);
+                            if let Some(tool) = game_config.tool_configs.tool_by_type(ToolType::Hoe)
+                            {
+                                let tool_bundle = ItemBundle::build(
+                                    position,
+                                    &sprites,
+                                    tool.sprite_index.unwrap(),
+                                    game_config.sprite_config.scale,
+                                    game_config.tile_size(),
+                                    underground,
+                                    ItemType::Tool(tool),
+                                );
+                                commands.spawn_bundle(tool_bundle);
+                            }
+                        } else if let Some(tool) =
+                            game_config.tool_configs.tool_by_type(ToolType::Shovel)
                         {
+                            println!("spawned shovel {:?}", &cell.coordinate);
                             let tool_bundle = ItemBundle::build(
                                 position,
                                 &sprites,
@@ -249,38 +319,33 @@ pub fn drop_floor(
                                 ItemType::Tool(tool),
                             );
                             commands.spawn_bundle(tool_bundle);
+                            spawned_shovel = true;
                         }
                     }
-                    _ => {}
                 }
+                _ => {}
             }
         }
-
-        let player_spawn = &world.entry_coordinate.clone();
-        let coordinate = world_coordinate_from_grid(
-            player_spawn,
-            game_config.world_config.world_stats.map_size,
-            game_config.tile_size(),
-        );
-        transform.translation.x = coordinate.x;
-        transform.translation.y = coordinate.y;
-
-        let exit_coordinate = world_coordinate_from_grid(
-            &world.exit_coordinate,
-            game_config.world_config.world_stats.map_size,
-            game_config.tile_size(),
-        );
-
-        println!("{} {}", &world.exit_coordinate.x, &world.exit_coordinate.y);
-
-        let structure_config = game_config.structures_config.config_by_key("exit").unwrap();
-        let position = Vec3::new(exit_coordinate.x, exit_coordinate.y, 2.0);
-        commands.spawn_bundle(StructureBundle::build(
-            position,
-            &sprites.atlas_handle,
-            structure_config,
-            &game_config.sprite_config,
-            game_config.tile_size(),
-        ));
     }
+
+    let exit_coordinate = world_coordinate_from_grid(
+        &map_spawn.map.exit_coordinate,
+        game_config.world_config.world_stats.map_size,
+        game_config.tile_size(),
+    );
+
+    println!(
+        "{} {}",
+        &map_spawn.map.exit_coordinate.x, &map_spawn.map.exit_coordinate.y
+    );
+
+    let structure_config = game_config.structures_config.config_by_key("exit").unwrap();
+    let position = Vec3::new(exit_coordinate.x, exit_coordinate.y, 2.0);
+    commands.spawn_bundle(StructureBundle::build(
+        position,
+        &sprites.atlas_handle,
+        structure_config,
+        &game_config.sprite_config,
+        game_config.tile_size(),
+    ));
 }

@@ -43,6 +43,10 @@ pub fn movement_input_system(
     mut query: Query<(&Player, &mut PlayerMovement)>,
     game_config: Res<GameConfiguration>,
 ) {
+    if query.is_empty() {
+        return;
+    }
+
     let (_, mut movement): (&Player, Mut<PlayerMovement>) = query.single_mut();
 
     movement.speed.current = Vec2::ZERO;
@@ -101,6 +105,10 @@ pub fn action_input_system(
     mut query: Query<(&Player, &mut CurrentAction, &Transform, &PlayerInventory)>,
     structure_query: Query<(&Structure, &Body, Entity)>,
 ) {
+    if query.is_empty() {
+        return;
+    }
+
     let (_, mut action, transform, inventory): (
         &Player,
         Mut<CurrentAction>,
@@ -146,6 +154,10 @@ pub fn action_input_system(
 }
 
 pub fn reset_action_input_system(mut query: Query<(&Player, &mut CurrentAction)>) {
+    if query.is_empty() {
+        return;
+    }
+
     let (_, mut action): (&Player, Mut<CurrentAction>) = query.single_mut();
 
     action.interact = None;

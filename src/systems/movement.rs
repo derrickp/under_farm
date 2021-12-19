@@ -32,6 +32,10 @@ pub fn check_item_pickup(
     mut query: Query<(&Player, &Transform, &mut CurrentAction)>,
     item_query: Query<(&Item, &Body, &Visible, Entity)>,
 ) {
+    if query.is_empty() {
+        return;
+    }
+
     let (_, transform, mut current_action): (&Player, &Transform, Mut<CurrentAction>) =
         query.single_mut();
 
@@ -54,6 +58,10 @@ pub fn player_movement(
     mut query: Query<PlayerMovementQuery>,
     cell_query: Query<(&Structure, &Body, Entity)>,
 ) {
+    if query.is_empty() {
+        return;
+    }
+
     let (_, movement, inventory, mut transform, mut action): (
         &Player,
         &PlayerMovement,
@@ -168,6 +176,10 @@ pub fn check_floor_collision(
     mut ground_cell_query: Query<(&Body, &mut Visible)>,
     game_config: Res<GameConfiguration>,
 ) {
+    if player_query.is_empty() {
+        return;
+    }
+
     let (_, transform, movement): (&Player, &Transform, &PlayerMovement) = player_query.single();
 
     let bounding_boxes = build_visibility_box(

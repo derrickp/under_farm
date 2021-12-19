@@ -48,6 +48,10 @@ pub fn pickup_actions(
     mut player_query: Query<(&Player, &CurrentAction, &mut PlayerInventory)>,
     item_query: Query<&Item>,
 ) {
+    if player_query.is_empty() {
+        return;
+    }
+
     let (_, current_action, mut player_inventory): (&Player, &CurrentAction, Mut<PlayerInventory>) =
         player_query.single_mut();
 
@@ -88,11 +92,19 @@ pub fn clear_structure_action(mut commands: Commands, query: Query<(&Player, &Cu
 }
 
 pub fn reset_pickup_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
+    if query.is_empty() {
+        return;
+    }
+
     let (_, mut current_action): (&Player, Mut<CurrentAction>) = query.single_mut();
     current_action.pickup = None;
 }
 
 pub fn reset_hit_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
+    if query.is_empty() {
+        return;
+    }
+
     let (_, mut current_action): (&Player, Mut<CurrentAction>) = query.single_mut();
     current_action.hit = None;
 }
@@ -127,6 +139,10 @@ pub fn crop_actions(
     structure_query: Query<(&Structure, &Body)>,
     mut spawns_query: Query<&mut Spawns>,
 ) {
+    if query.is_empty() {
+        return;
+    }
+
     let (_, action, inventory): (&Player, &CurrentAction, &PlayerInventory) = query.single();
 
     let plant_action = match &action.interact {

@@ -9,7 +9,7 @@ pub fn check_load_state(mut state: ResMut<State<AppState>>, load_state: Res<Game
 }
 
 pub fn start_game(mut state: ResMut<State<AppState>>, load_state: Res<GameLoadState>) {
-    if load_state.textures_set && load_state.game_world_generated {
+    if load_state.textures_set {
         state.set(AppState::InGame).unwrap();
     }
 }

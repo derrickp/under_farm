@@ -28,10 +28,10 @@ use systems::{
         update_player_grid_coordinate, update_player_text,
     },
     spawns::{
-        drop_floor, reset_crop_spawns, reset_structure_spawns, spawn_crops, spawn_structures,
+        drop_floor, reset_crop_spawns, reset_spawn_map, reset_structure_spawns, spawn_crops,
+        spawn_map, spawn_structures,
     },
     textures::{check_textures, load_sprites, load_textures},
-    world::generate_world_grid,
 };
 
 fn main() {
@@ -56,9 +56,7 @@ fn main() {
                 .with_system(check_load_state.system().after("check_textures")),
         )
         .add_system_set(
-            SystemSet::on_enter(AppState::FinishedLoading)
-                .with_system(load_sprites.system())
-                .with_system(generate_world_grid.system()),
+            SystemSet::on_enter(AppState::FinishedLoading).with_system(load_sprites.system()),
         )
         .add_system_set(
             SystemSet::on_update(AppState::FinishedLoading).with_system(start_game.system()),
@@ -182,7 +180,14 @@ fn main() {
                         .after("action_input")
                         .label("drop_floor"),
                 )
-                .with_system(reset_crop_spawns.system().after("spawn_crops")),
+                .with_system(reset_crop_spawns.system().after("spawn_crops"))
+                .with_system(spawn_map.system().label("spawn_map"))
+                .with_system(
+                    reset_spawn_map
+                        .system()
+                        .label("reset_spawn_map")
+                        .after("spawn_map"),
+                ),
         )
         .add_system(exit_on_esc_system.system())
         .run();
