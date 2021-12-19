@@ -1,5 +1,5 @@
 use bevy::{
-    math::Vec2,
+    math::{Vec2, Vec3},
     prelude::{Commands, Mut, Query, Transform},
     sprite::TextureAtlasSprite,
 };
@@ -11,7 +11,7 @@ use crate::components::{
     item::{Item, ItemType},
     player::{Player, PlayerInventory},
     spawns::Spawns,
-    structure::Structure,
+    structure::{Structure, StructureSpawn},
 };
 
 pub fn hit_actions(
@@ -82,6 +82,30 @@ pub fn reset_pickup_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
 pub fn reset_hit_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
     let (_, mut current_action): (&Player, Mut<CurrentAction>) = query.single_mut();
     current_action.hit = None;
+}
+
+pub fn dig_action(query: Query<(&Player, &CurrentAction)>, mut spawns_query: Query<&mut Spawns>) {
+    if query.is_empty() {
+        return;
+    }
+
+    let (_, action): (&Player, &CurrentAction) = query.single();
+
+    let dig_action = match &action.interact {
+        Some(InteractAction::DigAction(it)) => it,
+        _ => return,
+    };
+
+    if spawns_query.is_empty() {
+        return;
+    }
+
+    let mut spawns: Mut<Spawns> = spawns_query.single_mut();
+
+    spawns.structures.push(StructureSpawn {
+        position: Vec3::new(dig_action.position.x, dig_action.position.y, 1.),
+        structure_key: "dug_spot",
+    });
 }
 
 pub fn crop_actions(
