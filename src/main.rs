@@ -11,7 +11,10 @@ use plugins::{inventory::InventoryPlugin, world::WorldPlugin};
 use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState};
 use systems::{
-    actions::{crop_actions, hit_actions, pickup_actions, reset_hit_actions, reset_pickup_actions},
+    actions::{
+        crop_actions, dig_action, hit_actions, pickup_actions, reset_hit_actions,
+        reset_pickup_actions,
+    },
     cameras::{add_gameplay_camera, add_ui_camera},
     crops::grow_crops_system,
     initial_spawns::{spawn_opening_bundles, spawn_player_text},
@@ -24,7 +27,9 @@ use systems::{
         camera_movement, check_floor_collision, check_item_pickup, player_movement,
         update_player_grid_coordinate, update_player_text,
     },
-    spawns::{drop_floor, reset_crop_spawns, spawn_crops},
+    spawns::{
+        drop_floor, reset_crop_spawns, reset_structure_spawns, spawn_crops, spawn_structures,
+    },
     textures::{check_textures, load_sprites, load_textures},
     world::generate_world_grid,
 };
@@ -81,9 +86,16 @@ fn main() {
                         .after("player_movement"),
                 )
                 .with_system(
+                    dig_action
+                        .system()
+                        .label("dig_action")
+                        .after("action_input"),
+                )
+                .with_system(
                     reset_action_input_system
                         .system()
                         .after("crop_actions")
+                        .after("dig_action")
                         .after("drop_floor"),
                 )
                 .with_system(
@@ -150,6 +162,13 @@ fn main() {
                         .after("crop_actions")
                         .after("grow_crops_system"),
                 )
+                .with_system(
+                    spawn_structures
+                        .system()
+                        .label("spawn_structures")
+                        .after("dig_action"),
+                )
+                .with_system(reset_structure_spawns.system().after("spawn_structures"))
                 .with_system(
                     drop_floor
                         .system()
