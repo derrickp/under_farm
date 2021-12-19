@@ -48,6 +48,8 @@ pub fn spawn_opening_bundles(
         return;
     }
 
+    let mut spawned_shovel = false;
+
     for cell in map.grid.cells.values() {
         for (index, layer) in cell.layers.iter().enumerate() {
             let coordinate = world_coordinate_from_grid(
@@ -160,17 +162,38 @@ pub fn spawn_opening_bundles(
                         index, &cell.coordinate.x, &cell.coordinate.y
                     );
                     let underground = cell.is_layer_underground(layer).unwrap_or(false);
-                    if let Some(tool) = game_config.tool_configs.tool_by_type(ToolType::Shovel) {
-                        let tool_bundle = ItemBundle::build(
-                            position,
-                            &sprites,
-                            tool.sprite_index.unwrap(),
-                            game_config.sprite_config.scale,
-                            game_config.tile_size(),
-                            underground,
-                            ItemType::Tool(tool),
-                        );
-                        commands.spawn_bundle(tool_bundle);
+                    if !underground {
+                        if spawned_shovel {
+                            println!("spawned hoe {:?}", &cell.coordinate);
+                            if let Some(tool) = game_config.tool_configs.tool_by_type(ToolType::Hoe)
+                            {
+                                let tool_bundle = ItemBundle::build(
+                                    position,
+                                    &sprites,
+                                    tool.sprite_index.unwrap(),
+                                    game_config.sprite_config.scale,
+                                    game_config.tile_size(),
+                                    underground,
+                                    ItemType::Tool(tool),
+                                );
+                                commands.spawn_bundle(tool_bundle);
+                            }
+                        } else if let Some(tool) =
+                            game_config.tool_configs.tool_by_type(ToolType::Shovel)
+                        {
+                            println!("spawned shovel {:?}", &cell.coordinate);
+                            let tool_bundle = ItemBundle::build(
+                                position,
+                                &sprites,
+                                tool.sprite_index.unwrap(),
+                                game_config.sprite_config.scale,
+                                game_config.tile_size(),
+                                underground,
+                                ItemType::Tool(tool),
+                            );
+                            commands.spawn_bundle(tool_bundle);
+                            spawned_shovel = true;
+                        }
                     }
                 }
                 _ => {}
