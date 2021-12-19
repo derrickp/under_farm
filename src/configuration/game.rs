@@ -43,7 +43,7 @@ impl GameConfiguration {
             self.seed.clone()
         };
 
-        self.world_config.generator(seed.clone())
+        self.world_config.generator(seed)
     }
 }
 

@@ -75,7 +75,7 @@ pub fn spawn_structures(
         commands.spawn_bundle(StructureBundle::build(
             spawn.position,
             &sprites.atlas_handle,
-            &structure_config,
+            structure_config,
             &game_config.sprite_config,
             game_config.tile_size(),
         ));
@@ -258,7 +258,7 @@ pub fn drop_floor(
 
         let player_spawn = &world.entry_coordinate.clone();
         let coordinate = world_coordinate_from_grid(
-            &player_spawn,
+            player_spawn,
             game_config.world_config.world_stats.map_size,
             game_config.tile_size(),
         );
