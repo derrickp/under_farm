@@ -36,9 +36,15 @@ pub struct PickupAction {
 pub enum InteractAction {
     PlantCrop(PlantCropAction),
     DropFloors,
+    DigAction(DigAction),
 }
 
 #[derive(Debug, PartialEq)]
 pub struct PlantCropAction {
+    pub position: Vec2,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct DigAction {
     pub position: Vec2,
 }
