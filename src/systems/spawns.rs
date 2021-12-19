@@ -1,13 +1,20 @@
-use bevy::{prelude::{Commands, Entity, Mut, Query, Res, Transform, ResMut}, math::Vec3};
+use bevy::{
+    math::Vec3,
+    prelude::{Commands, Entity, Mut, Query, Res, ResMut, Transform},
+};
 use tdlg::cells::layer::LayerType;
 
 use crate::{
     components::{
         action::{CurrentAction, InteractAction},
+        body::Body,
         crop::CropBundle,
+        ground::GroundTileBundle,
+        item::{ItemBundle, ItemType},
         player::Player,
         spawns::Spawns,
-        body::Body, ground::GroundTileBundle, structure::StructureBundle, item::{ItemBundle, ItemType}, tool::ToolType,
+        structure::StructureBundle,
+        tool::ToolType,
     },
     configuration::{game::GameConfiguration, map::world_coordinate_from_grid},
     sprites::Sprites,
@@ -40,6 +47,41 @@ pub fn spawn_crops(
     }
 }
 
+pub fn spawn_structures(
+    mut commands: Commands,
+    sprites: Res<Sprites>,
+    game_config: Res<GameConfiguration>,
+    query: Query<&Spawns>,
+) {
+    if query.is_empty() {
+        return;
+    }
+
+    let spawns: &Spawns = query.single();
+
+    if spawns.structures.is_empty() {
+        return;
+    }
+
+    for spawn in spawns.structures.iter() {
+        let structure_config = match game_config
+            .structures_config
+            .config_by_key(spawn.structure_key)
+        {
+            Some(it) => it,
+            _ => continue,
+        };
+
+        commands.spawn_bundle(StructureBundle::build(
+            spawn.position,
+            &sprites.atlas_handle,
+            &structure_config,
+            &game_config.sprite_config,
+            game_config.tile_size(),
+        ));
+    }
+}
+
 pub fn reset_crop_spawns(mut query: Query<&mut Spawns>) {
     if query.is_empty() {
         return;
@@ -48,6 +90,16 @@ pub fn reset_crop_spawns(mut query: Query<&mut Spawns>) {
     let mut spawns: Mut<Spawns> = query.single_mut();
 
     spawns.crops.clear();
+}
+
+pub fn reset_structure_spawns(mut query: Query<&mut Spawns>) {
+    if query.is_empty() {
+        return;
+    }
+
+    let mut spawns: Mut<Spawns> = query.single_mut();
+
+    spawns.structures.clear();
 }
 
 pub fn drop_floor(
@@ -61,7 +113,8 @@ pub fn drop_floor(
         return;
     }
 
-    let (_, action, mut transform): (&Player, &CurrentAction, Mut<'_, Transform>) = player_query.single_mut();
+    let (_, action, mut transform): (&Player, &CurrentAction, Mut<'_, Transform>) =
+        player_query.single_mut();
 
     if let Some(InteractAction::DropFloors) = action.interact {
         let world = game_config.generator(true).generate_top_down_map().unwrap();
@@ -184,7 +237,8 @@ pub fn drop_floor(
                             index, &cell.coordinate.x, &cell.coordinate.y
                         );
                         let underground = cell.is_layer_underground(layer).unwrap_or(false);
-                        if let Some(tool) = game_config.tool_configs.tool_by_type(ToolType::Shovel) {
+                        if let Some(tool) = game_config.tool_configs.tool_by_type(ToolType::Shovel)
+                        {
                             let tool_bundle = ItemBundle::build(
                                 position,
                                 &sprites,
