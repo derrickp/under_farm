@@ -125,6 +125,11 @@ impl Structure {
     }
 }
 
+pub struct StructureSpawn {
+    pub position: Vec3,
+    pub structure_key: &'static str,
+}
+
 #[derive(Bundle)]
 pub struct StructureBundle {
     pub structure: Structure,
