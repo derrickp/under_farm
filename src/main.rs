@@ -12,8 +12,8 @@ use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState};
 use systems::{
     actions::{
-        crop_actions, dig_action, hit_actions, pickup_actions, reset_hit_actions,
-        reset_pickup_actions,
+        clear_structure_action, crop_actions, dig_action, hit_actions, pickup_actions,
+        reset_hit_actions, reset_pickup_actions,
     },
     cameras::{add_gameplay_camera, add_ui_camera},
     crops::grow_crops_system,
@@ -96,6 +96,7 @@ fn main() {
                         .system()
                         .after("crop_actions")
                         .after("dig_action")
+                        .after("clear_structure_action")
                         .after("drop_floor"),
                 )
                 .with_system(
@@ -138,6 +139,12 @@ fn main() {
                         .system()
                         .label("pickup_actions")
                         .after("check_item_pickup"),
+                )
+                .with_system(
+                    clear_structure_action
+                        .system()
+                        .label("clear_structure_action")
+                        .after("action_input"),
                 )
                 .with_system(reset_hit_actions.system().after("hit_actions"))
                 .with_system(reset_pickup_actions.system().after("pickup_actions"))

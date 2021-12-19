@@ -37,6 +37,7 @@ pub enum InteractAction {
     PlantCrop(PlantCropAction),
     DropFloors,
     DigAction(DigAction),
+    ClearAction(ClearAction),
 }
 
 #[derive(Debug, PartialEq)]
@@ -47,4 +48,9 @@ pub struct PlantCropAction {
 #[derive(Debug, PartialEq)]
 pub struct DigAction {
     pub position: Vec2,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct ClearAction {
+    pub entity: Entity,
 }

@@ -75,6 +75,18 @@ pub fn pickup_actions(
     }
 }
 
+pub fn clear_structure_action(mut commands: Commands, query: Query<(&Player, &CurrentAction)>) {
+    if query.is_empty() {
+        return;
+    }
+
+    let (_, action): (&Player, &CurrentAction) = query.single();
+
+    if let Some(InteractAction::ClearAction(clear)) = &action.interact {
+        commands.entity(clear.entity).despawn()
+    }
+}
+
 pub fn reset_pickup_actions(mut query: Query<(&Player, &mut CurrentAction)>) {
     let (_, mut current_action): (&Player, Mut<CurrentAction>) = query.single_mut();
     current_action.pickup = None;

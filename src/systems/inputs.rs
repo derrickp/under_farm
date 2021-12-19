@@ -2,13 +2,13 @@ use bevy::{
     core::{Time, Timer},
     input::Input,
     math::{Vec2, Vec3},
-    prelude::{KeyCode, Mut, Query, Res, ResMut, Transform, Visible},
+    prelude::{Entity, KeyCode, Mut, Query, Res, ResMut, Transform, Visible},
     render::camera::Camera,
 };
 
 use crate::{
     components::{
-        action::{CurrentAction, DigAction, InteractAction, PlantCropAction},
+        action::{ClearAction, CurrentAction, DigAction, InteractAction, PlantCropAction},
         body::Body,
         bounding_box::BoundingBox,
         cameras::{GameCamera, GameCameraState},
@@ -99,7 +99,7 @@ pub fn movement_input_system(
 pub fn action_input_system(
     keyboard_input: Res<Input<KeyCode>>,
     mut query: Query<(&Player, &mut CurrentAction, &Transform, &PlayerInventory)>,
-    structure_query: Query<(&Structure, &Body)>,
+    structure_query: Query<(&Structure, &Body, Entity)>,
 ) {
     let (_, mut action, transform, inventory): (
         &Player,
@@ -114,10 +114,19 @@ pub fn action_input_system(
         let bounding_box = BoundingBox::square(x, y, 60.0);
 
         for structure_data in structure_query.iter() {
-            let (structure, body): (&Structure, &Body) = structure_data;
-            if structure.is_exit() && body.intersects_box(&bounding_box) {
+            let (structure, body, entity): (&Structure, &Body, Entity) = structure_data;
+            if !body.intersects_box(&bounding_box) {
+                continue;
+            }
+
+            if structure.is_exit() {
                 println!("Should drop");
                 action.interact = Some(InteractAction::DropFloors);
+                return;
+            }
+
+            if structure.can_be_cleared() && inventory.clearing_item_equipped() {
+                action.interact = Some(InteractAction::ClearAction(ClearAction { entity }));
                 return;
             }
         }
