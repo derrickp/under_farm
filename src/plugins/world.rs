@@ -7,7 +7,7 @@ use self::systems::{
     tick::{check_world_actions, tick_game_world},
 };
 
-mod components;
+pub mod components;
 mod systems;
 
 pub struct WorldPlugin;

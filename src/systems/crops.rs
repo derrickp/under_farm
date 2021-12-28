@@ -5,10 +5,12 @@ use bevy::{
 };
 use rand::Rng;
 
-use crate::components::{
-    action::WorldActions,
-    crop::{Crop, CropSpawn, CropStages},
-    spawns::Spawns,
+use crate::{
+    components::{
+        crop::{Crop, CropSpawn, CropStages},
+        spawns::Spawns,
+    },
+    plugins::world::components::world::World,
 };
 
 pub fn grow_crops_system(
@@ -21,15 +23,15 @@ pub fn grow_crops_system(
         &mut TextureAtlasSprite,
     )>,
     mut spawns_query: Query<&mut Spawns>,
-    world_actions_query: Query<&WorldActions>,
+    world_query: Query<&World>,
 ) {
-    if world_actions_query.is_empty() {
+    if world_query.is_empty() {
         return;
     }
 
-    let world_actions: &WorldActions = world_actions_query.single();
+    let world: &World = world_query.single();
 
-    if !world_actions.grow_crops {
+    if !world.tick_just_finished {
         return;
     }
 

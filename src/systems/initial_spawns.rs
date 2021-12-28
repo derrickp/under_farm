@@ -7,8 +7,6 @@ use tdlg::coordinate::Coordinate;
 
 use crate::{
     components::{
-        action::WorldActions,
-        cameras::GameCameraState,
         player::Player,
         spawns::{MapSpawn, Spawns},
         text::{PlayerStatsText, PlayerStatsTextBundle},
@@ -39,9 +37,6 @@ pub fn spawn_opening_bundles(
     if !query.is_empty() {
         return;
     }
-
-    commands.spawn().insert(GameCameraState::default());
-    commands.spawn().insert(WorldActions::default());
 
     let generator = game_config.generator(false);
     let map = generator.generate_top_down_map().unwrap();

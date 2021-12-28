@@ -10,11 +10,6 @@ pub struct CurrentAction {
     pub pickup: Option<PickupAction>,
 }
 
-#[derive(Component, Default)]
-pub struct WorldActions {
-    pub grow_crops: bool,
-}
-
 impl CurrentAction {
     pub fn hit_entity(&mut self, damage: i32, target: Entity) {
         self.hit = Some(HitAction { damage, target })
