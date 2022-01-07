@@ -127,6 +127,11 @@ pub fn action_input_system(
                 continue;
             }
 
+            // Can't dig while in a structure
+            if inventory.shovel_equipped() {
+                return;
+            }
+
             if structure.is_exit() {
                 println!("Should drop");
                 action.interact = Some(InteractAction::DropFloors);
