@@ -1,9 +1,9 @@
 use bevy::{
-    core::{Time, Timer},
     input::Input,
     math::{Vec2, Vec3},
     prelude::{Entity, KeyCode, Mut, Query, Res, ResMut, Transform, Visibility},
     render::camera::Camera,
+    time::{Time, Timer},
 };
 
 use crate::{

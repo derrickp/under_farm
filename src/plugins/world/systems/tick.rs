@@ -1,6 +1,6 @@
 use bevy::{
-    core::Time,
     prelude::{Mut, Query, Res},
+    time::Time,
 };
 
 use crate::plugins::world::components::{timer::WorldTickTimer, world::World};

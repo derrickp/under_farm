@@ -8,7 +8,12 @@ pub struct PlayerSpriteConfigs {
 
 impl From<&KdlNode> for PlayerSpriteConfigs {
     fn from(node: &KdlNode) -> Self {
-        let options = node.children.iter().map(PlayerSpriteConfig::from).collect();
+        let options = node
+            .children()
+            .iter()
+            .flat_map(|doc| doc.nodes())
+            .map(PlayerSpriteConfig::from)
+            .collect();
         Self { options }
     }
 }
@@ -41,8 +46,13 @@ pub struct SpriteFileConfig {
 
 impl From<&KdlNode> for SpriteFileConfig {
     fn from(node: &KdlNode) -> Self {
-        let sprite = match node.properties.get("sprite") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let sprite = match node.get("sprite") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
@@ -56,8 +66,13 @@ pub struct PlayerInfo {
 
 impl From<&KdlNode> for PlayerInfo {
     fn from(node: &KdlNode) -> Self {
-        let name = match node.properties.get("name") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let name = match node.get("name") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
@@ -76,13 +91,13 @@ impl PlayerConfig {
 
         let info_node = player_nodes
             .iter()
-            .find(|node| node.name.eq_ignore_ascii_case("info"))
+            .find(|node| node.name().value().eq_ignore_ascii_case("info"))
             .unwrap();
         let info = PlayerInfo::from(info_node);
 
         let sprites_node = player_nodes
             .iter()
-            .find(|node| node.name.eq_ignore_ascii_case("sprites"))
+            .find(|node| node.name().value().eq_ignore_ascii_case("sprites"))
             .unwrap();
 
         let sprite_configs = PlayerSpriteConfigs::from(sprites_node);

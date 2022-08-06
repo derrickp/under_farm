@@ -20,23 +20,37 @@ const DEFAULT_CHANCE_TO_ADVANCE: u32 = 10;
 
 impl From<&KdlNode> for CropStageFileConfig {
     fn from(node: &KdlNode) -> Self {
-        let sprite = match node.properties.get("sprite") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let sprite = match node.get("sprite") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
-        let min_ticks = match node.properties.get("min_ticks") {
-            Some(KdlValue::Int(it)) => *it as u32,
+        let min_ticks = match node.get("min_ticks") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10(it) => *it as u32,
+                _ => DEFAULT_MIN_TICK,
+            },
             _ => DEFAULT_MIN_TICK,
         };
 
-        let max_ticks = match node.properties.get("max_ticks") {
-            Some(KdlValue::Int(it)) => *it as u32,
+        let max_ticks = match node.get("max_ticks") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10(it) => *it as u32,
+                _ => DEFAULT_MAX_TICK,
+            },
             _ => DEFAULT_MAX_TICK,
         };
 
-        let advance_chance = match node.properties.get("advance_chance") {
-            Some(KdlValue::Int(it)) => *it as u32,
+        let advance_chance = match node.get("advance_chance") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10(it) => *it as u32,
+                _ => DEFAULT_CHANCE_TO_ADVANCE,
+            },
             _ => DEFAULT_CHANCE_TO_ADVANCE,
         };
 
@@ -98,25 +112,44 @@ impl CropsConfig {
         let configurations: Vec<CropConfiguration> = crop_nodes
             .iter()
             .map(|crop_node| {
-                let name = match crop_node.values.get(0) {
-                    Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+                let name = match crop_node.entries().get(0) {
+                    Some(entry) => match entry.value() {
+                        KdlValue::RawString(it) | KdlValue::String(it) => {
+                            super::kdl_utils::trim(it.clone())
+                        }
+                        _ => "".to_string(),
+                    },
                     _ => "".to_string(),
                 };
-                let key = match crop_node.properties.get("key") {
-                    Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+                let key = match crop_node.get("key") {
+                    Some(entry) => match entry.value() {
+                        KdlValue::RawString(it) | KdlValue::String(it) => {
+                            super::kdl_utils::trim(it.clone())
+                        }
+                        _ => "".to_string(),
+                    },
                     _ => "".to_string(),
                 };
-                let key_code = match crop_node.properties.get("key_code") {
-                    Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+                let key_code = match crop_node.get("key_code") {
+                    Some(entry) => match entry.value() {
+                        KdlValue::RawString(it) | KdlValue::String(it) => {
+                            super::kdl_utils::trim(it.clone())
+                        }
+                        _ => "".to_string(),
+                    },
                     _ => "".to_string(),
                 };
-                let starter = match crop_node.properties.get("starter") {
-                    Some(KdlValue::Boolean(it)) => *it,
+                let starter = match crop_node.get("starter") {
+                    Some(entry) => match entry.value() {
+                        KdlValue::Bool(it) => *it,
+                        _ => false,
+                    },
                     _ => false,
                 };
                 let stages: Vec<CropStage> = crop_node
-                    .children
+                    .children()
                     .iter()
+                    .flat_map(|doc| doc.nodes())
                     .map(|stage_node| CropStage {
                         ticks_per_second: (1.0 / world_tick_time) as u32,
                         sprite_index: None,

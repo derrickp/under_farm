@@ -61,34 +61,56 @@ const DEFAULT_MIN_HEALTH: i32 = 1;
 
 impl From<&KdlNode> for StructureConfig {
     fn from(node: &KdlNode) -> Self {
-        let name = match node.values.get(0) {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let name = match node.entries().get(0) {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
-        let key = match node.properties.get("key") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let key = match node.get("key") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
-        let structure_type = match node.properties.get("type") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let structure_type = match node.get("type") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
-        let starting_health = match node.properties.get("health") {
-            Some(KdlValue::Int(it)) => *it as i32,
+        let starting_health = match node.get("health") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10(it) => *it as i32,
+                _ => DEFAULT_MAX_HEALTH,
+            },
             _ => DEFAULT_MAX_HEALTH,
         };
 
-        let initial_visible: bool = match node.properties.get("visible") {
-            Some(KdlValue::Boolean(it)) => *it,
+        let initial_visible: bool = match node.get("visible") {
+            Some(entry) => match entry.value() {
+                KdlValue::Bool(it) => *it,
+                _ => true,
+            },
             _ => true,
         };
 
         let health_configs = node
-            .children
+            .children()
             .iter()
+            .flat_map(|doc| doc.nodes())
             .map(StructureHealthConfig::from)
             .collect();
 
@@ -115,33 +137,53 @@ pub struct StructureHealthFileConfig {
 
 impl From<&KdlNode> for StructureHealthFileConfig {
     fn from(node: &KdlNode) -> Self {
-        let sprite = match node.properties.get("sprite") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let sprite = match node.get("sprite") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
-        let max_health = match node.properties.get("max_health") {
-            Some(KdlValue::Int(it)) => *it as i32,
+        let max_health = match node.get("max_health") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10(it) => *it as i32,
+                _ => DEFAULT_MAX_HEALTH,
+            },
             _ => DEFAULT_MAX_HEALTH,
         };
 
-        let min_health = match node.properties.get("min_health") {
-            Some(KdlValue::Int(it)) => *it as i32,
+        let min_health = match node.get("min_health") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10(it) => *it as i32,
+                _ => DEFAULT_MIN_HEALTH,
+            },
             _ => DEFAULT_MIN_HEALTH,
         };
 
-        let can_be_broken = match node.properties.get("can_be_broken") {
-            Some(KdlValue::Boolean(it)) => *it,
+        let can_be_broken = match node.get("can_be_broken") {
+            Some(entry) => match entry.value() {
+                KdlValue::Bool(it) => *it,
+                _ => false,
+            },
             _ => false,
         };
 
-        let can_be_walked_on = match node.properties.get("can_be_walked_on") {
-            Some(KdlValue::Boolean(it)) => *it,
+        let can_be_walked_on = match node.get("can_be_walked_on") {
+            Some(entry) => match entry.value() {
+                KdlValue::Bool(it) => *it,
+                _ => false,
+            },
             _ => false,
         };
 
-        let can_be_cleared = match node.properties.get("can_be_cleared") {
-            Some(KdlValue::Boolean(it)) => *it,
+        let can_be_cleared = match node.get("can_be_cleared") {
+            Some(entry) => match entry.value() {
+                KdlValue::Bool(it) => *it,
+                _ => false,
+            },
             _ => false,
         };
 

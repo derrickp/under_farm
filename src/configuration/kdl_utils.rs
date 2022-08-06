@@ -1,7 +1,7 @@
-use std::{fs, io::Error};
+use std::{fs, io::Error, str::FromStr};
 
 use bevy::prelude::KeyCode;
-use kdl::{KdlError, KdlNode};
+use kdl::{KdlDocument, KdlError, KdlNode};
 
 pub fn trim(value: String) -> String {
     value.replace("\"", "").replace("\\", "")
@@ -19,8 +19,13 @@ pub enum LoadError {
 pub fn parse(path: &str) -> Result<Vec<KdlNode>, LoadError> {
     let content = fs::read_to_string(path);
     match content {
-        Ok(it) => match kdl::parse_document(it) {
-            Ok(nodes) => Ok(nodes),
+        Ok(it) => match KdlDocument::from_str(&it) {
+            Ok(doc) => Ok(doc
+                .nodes()
+                .clone()
+                .iter()
+                .map(|item| item.clone())
+                .collect()),
             Err(e) => Err(LoadError::KdlError(e)),
         },
         Err(e) => Err(LoadError::InvalidPathError(InvalidPathError(e))),

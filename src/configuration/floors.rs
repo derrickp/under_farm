@@ -28,14 +28,20 @@ pub struct FloorConfig {
 
 impl From<&KdlNode> for FloorConfig {
     fn from(node: &KdlNode) -> Self {
-        let key = match node.properties.get("key") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let key = match node.get("key") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
         let sprite_options = node
-            .children
+            .children()
             .iter()
+            .flat_map(|doc| doc.nodes())
             .map(|it| FloorSpriteConfig {
                 file_option: FloorFileOption::from(it),
                 sprite_index: None,
@@ -66,8 +72,13 @@ pub struct FloorFileOption {
 
 impl From<&KdlNode> for FloorFileOption {
     fn from(node: &KdlNode) -> Self {
-        let sprite = match node.properties.get("sprite") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let sprite = match node.get("sprite") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 

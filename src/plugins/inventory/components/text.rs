@@ -1,8 +1,7 @@
 use bevy::{
-    math::Rect,
     prelude::{Bundle, Color, Component, Handle, TextBundle},
     text::{Font, Text, TextStyle},
-    ui::{AlignSelf, PositionType, Style, Val},
+    ui::{AlignSelf, PositionType, Style, UiRect, Val},
 };
 
 use super::selection::InventorySelectionHelper;
@@ -37,7 +36,7 @@ impl InventoryTextBundle {
                 style: Style {
                     align_self: AlignSelf::FlexEnd,
                     position_type: PositionType::Absolute,
-                    position: Rect {
+                    position: UiRect {
                         top: Val::Px(top),
                         left: Val::Px(left),
                         ..Default::default()
@@ -45,7 +44,7 @@ impl InventoryTextBundle {
                     ..Default::default()
                 },
                 // Use the `Text::with_section` constructor
-                text: Text::with_section(
+                text: Text::from_section(
                     // Accepts a `String` or any type that converts into a `String`, such as `&str`
                     text,
                     TextStyle {
@@ -54,7 +53,6 @@ impl InventoryTextBundle {
                         color: Color::WHITE,
                     },
                     // Note: You can use `Default::default()` in place of the `TextAlignment`
-                    Default::default(),
                 ),
                 ..Default::default()
             },

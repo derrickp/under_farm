@@ -1,10 +1,12 @@
 mod components;
 mod systems;
-
-use bevy::prelude::{IntoSystem, ParallelSystemDescriptorCoercion, Plugin, SystemSet};
+use bevy::prelude::ParallelSystemDescriptorCoercion;
+use bevy::prelude::SystemLabel;
+use bevy::prelude::{Plugin, SystemSet};
 
 use crate::states::AppState;
 
+use self::systems::camera::remove_ui_camera;
 use self::systems::{
     camera::remove_gameplay_camera,
     input::open_close_inventory_input_system,
@@ -16,34 +18,41 @@ pub struct InventoryPlugin;
 
 impl Plugin for InventoryPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.add_system(open_close_inventory_input_system.system())
+        app.add_system(open_close_inventory_input_system)
             .add_system_set(
-                SystemSet::on_enter(AppState::InGame).with_system(add_current_selection.system()),
+                SystemSet::on_enter(AppState::InGame).with_system(add_current_selection),
             )
             .add_system_set(
                 SystemSet::on_enter(AppState::InventoryScreen)
-                    .with_system(add_text.system())
-                    .with_system(remove_gameplay_camera.system()),
+                    .with_system(add_text)
+                    .with_system(remove_gameplay_camera),
             )
             .add_system_set(
-                SystemSet::on_exit(AppState::InventoryScreen).with_system(remove_text.system()),
+                SystemSet::on_exit(AppState::InventoryScreen)
+                    .with_system(remove_text)
+                    .with_system(remove_ui_camera),
             )
             .add_system_set(
                 SystemSet::on_update(AppState::InventoryScreen)
-                    .with_system(selection_input.system().label("inventory_input"))
+                    .with_system(selection_input.label(Label::InventoryInput))
                     .with_system(
                         select_item
-                            .system()
-                            .after("inventory_input")
-                            .label("select_item"),
+                            .after(Label::InventoryInput)
+                            .label(Label::SelectItem),
                     )
-                    .with_system(update_text_colour.system().after("inventory_input"))
+                    .with_system(update_text_colour.after(Label::InventoryInput))
                     .with_system(
                         reset_selection
-                            .system()
-                            .label("reset_inventory_selection")
-                            .after("select_item"),
+                            .label(Label::ResetInventorySelection)
+                            .after(Label::SelectItem),
                     ),
             );
     }
+}
+
+#[derive(SystemLabel, Debug, Clone, PartialEq, Eq, Hash)]
+enum Label {
+    ResetInventorySelection,
+    SelectItem,
+    InventoryInput,
 }

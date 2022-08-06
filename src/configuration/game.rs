@@ -1,4 +1,4 @@
-use bevy::core::Timer;
+use bevy::time::Timer;
 use kdl::{KdlNode, KdlValue};
 use tdlg::generator::Generator;
 
@@ -71,23 +71,35 @@ impl Default for SpriteConfig {
 
 impl From<&KdlNode> for SpriteConfig {
     fn from(node: &KdlNode) -> Self {
-        let size = match node.properties.get("size") {
-            Some(KdlValue::Float(it)) => *it as f32,
+        let size = match node.get("size") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10Float(it) => *it as f32,
+                _ => SpriteConfig::default().size,
+            },
             _ => SpriteConfig::default().size,
         };
 
-        let crop_scale = match node.properties.get("crop_scale") {
-            Some(KdlValue::Float(it)) => *it as f32,
+        let crop_scale = match node.get("crop_scale") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10Float(it) => *it as f32,
+                _ => SpriteConfig::default().crop_scale,
+            },
             _ => SpriteConfig::default().crop_scale,
         };
 
-        let scale = match node.properties.get("scale") {
-            Some(KdlValue::Float(it)) => *it as f32,
+        let scale = match node.get("scale") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10Float(it) => *it as f32,
+                _ => SpriteConfig::default().scale,
+            },
             _ => SpriteConfig::default().scale,
         };
 
-        let player_scale = match node.properties.get("player_scale") {
-            Some(KdlValue::Float(it)) => *it as f32,
+        let player_scale = match node.get("player_scale") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10Float(it) => *it as f32,
+                _ => SpriteConfig::default().player_scale,
+            },
             _ => SpriteConfig::default().player_scale,
         };
 
@@ -102,8 +114,13 @@ impl From<&KdlNode> for SpriteConfig {
 
 impl From<&KdlNode> for BasicConfig {
     fn from(node: &KdlNode) -> Self {
-        let seed = match node.properties.get("seed") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let seed = match node.get("seed") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
@@ -126,13 +143,13 @@ impl GameConfiguration {
 
         let basic_node = game_config_nodes
             .iter()
-            .find(|node| node.name.eq_ignore_ascii_case("basic"))
+            .find(|node| node.name().value().eq_ignore_ascii_case("basic"))
             .unwrap();
         let basic_config = BasicConfig::from(basic_node);
 
         let sprite_config = game_config_nodes
             .iter()
-            .find(|node| node.name.eq_ignore_ascii_case("sprite_stats"))
+            .find(|node| node.name().value().eq_ignore_ascii_case("sprite_stats"))
             .map_or_else(SpriteConfig::default, SpriteConfig::from);
 
         let crops_config = CropsConfig::load(&crops_config_path, WORLD_TICK_TIME);

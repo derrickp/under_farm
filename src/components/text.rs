@@ -1,8 +1,7 @@
 use bevy::{
-    math::Rect,
     prelude::{AssetServer, Bundle, Color, Component, Res, TextBundle},
     text::{Text, TextStyle},
-    ui::{AlignSelf, PositionType, Style, Val},
+    ui::{AlignSelf, PositionType, Style, UiRect, Val},
     window::Windows,
 };
 use tdlg::coordinate::Coordinate;
@@ -34,7 +33,7 @@ impl PlayerStatsTextBundle {
                 style: Style {
                     align_self: AlignSelf::FlexEnd,
                     position_type: PositionType::Absolute,
-                    position: Rect {
+                    position: UiRect {
                         top: Val::Px(y),
                         left: Val::Px(x),
                         ..Default::default()
@@ -42,7 +41,7 @@ impl PlayerStatsTextBundle {
                     ..Default::default()
                 },
                 // Use the `Text::with_section` constructor
-                text: Text::with_section(
+                text: Text::from_section(
                     // Accepts a `String` or any type that converts into a `String`, such as `&str`
                     format!("Coordinate {}  {}", coordinate.x, coordinate.y),
                     TextStyle {
@@ -50,8 +49,6 @@ impl PlayerStatsTextBundle {
                         font_size: 20.0,
                         color: Color::WHITE,
                     },
-                    // Note: You can use `Default::default()` in place of the `TextAlignment`
-                    Default::default(),
                 ),
                 ..Default::default()
             },

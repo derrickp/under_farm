@@ -2,6 +2,7 @@ use bevy::{
     math::Vec3,
     prelude::{Bundle, Component, SpriteSheetBundle, Transform, Visibility},
     sprite::TextureAtlasSprite,
+    utils::default,
 };
 
 use crate::{configuration::floors::FloorConfig, sprites::Sprites};
@@ -50,12 +51,12 @@ impl GroundTileBundle {
                 transform: Transform {
                     translation: position,
                     scale: Vec3::splat(sprite_scale),
-                    ..Default::default()
+                    ..default()
                 },
                 sprite: TextureAtlasSprite::new(floor_index),
                 texture_atlas: sprites.atlas_handle.clone(),
                 visibility: Visibility { is_visible: false },
-                ..Default::default()
+                ..default()
             },
         }
     }

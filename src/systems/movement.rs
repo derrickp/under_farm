@@ -160,7 +160,7 @@ pub fn camera_movement(
         return;
     }
 
-    let (_, transform, _): (&Player, &Transform, bool) = player_query.single();
+    let (_, transform, _): (&Player, &Transform, ()) = player_query.single();
     let player_x = transform.translation.x;
     let player_y = transform.translation.y;
 

@@ -37,7 +37,7 @@ pub fn load_sprites(
 ) {
     let mut texture_atlas_builder = TextureAtlasBuilder::default();
     for handle in loaded_textures.handles.iter() {
-        let texture = textures.get(handle).unwrap();
+        let texture = textures.get(&handle.typed_weak()).unwrap();
         texture_atlas_builder.add_texture(handle.clone_weak().typed::<Image>(), texture);
     }
 

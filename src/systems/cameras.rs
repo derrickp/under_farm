@@ -1,6 +1,6 @@
-use bevy::prelude::{Commands, OrthographicCameraBundle, Query, UiCameraBundle};
+use bevy::prelude::{Camera2dBundle, Commands, Query};
 
-use crate::components::cameras::{GameCamera, GameCameraState, UiCamera};
+use crate::components::cameras::{GameCamera, GameCameraState};
 
 pub fn add_gameplay_camera(
     mut commands: Commands,
@@ -11,7 +11,7 @@ pub fn add_gameplay_camera(
         return;
     }
 
-    let mut ortho_camera = OrthographicCameraBundle::new_2d();
+    let mut ortho_camera = Camera2dBundle::default();
 
     if !camera_state_query.is_empty() {
         let camera_state = camera_state_query.single();
@@ -21,14 +21,4 @@ pub fn add_gameplay_camera(
     }
 
     commands.spawn_bundle(ortho_camera).insert(GameCamera);
-}
-
-pub fn add_ui_camera(mut commands: Commands, query: Query<&UiCamera>) {
-    if !query.is_empty() {
-        return;
-    }
-
-    commands
-        .spawn_bundle(UiCameraBundle::default())
-        .insert(UiCamera);
 }

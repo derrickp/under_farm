@@ -18,12 +18,12 @@ impl WorldGenerationConfig {
 
         let world_stats = nodes
             .iter()
-            .find(|node| node.name.eq_ignore_ascii_case("world"))
+            .find(|node| node.name().value().eq_ignore_ascii_case("world"))
             .map_or_else(WorldStatsConfig::default, WorldStatsConfig::from);
 
         let room_paths: Vec<RoomPaths> = nodes
             .iter()
-            .filter(|node| node.name.eq_ignore_ascii_case("room_template"))
+            .filter(|node| node.name().value().eq_ignore_ascii_case("room_template"))
             .map(RoomConfig::from)
             .map(|config| config.room_paths())
             .collect();
@@ -79,13 +79,19 @@ impl Default for WorldStatsConfig {
 
 impl From<&KdlNode> for WorldStatsConfig {
     fn from(node: &KdlNode) -> Self {
-        let num_rooms = match node.properties.get("num_rooms") {
-            Some(KdlValue::Int(it)) => *it as usize,
+        let num_rooms = match node.get("num_rooms") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10(it) => *it as usize,
+                _ => WorldStatsConfig::default().num_rooms,
+            },
             _ => WorldStatsConfig::default().num_rooms,
         };
 
-        let map_size = match node.properties.get("map_size") {
-            Some(KdlValue::Int(it)) => *it as usize,
+        let map_size = match node.get("map_size") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10(it) => *it as usize,
+                _ => WorldStatsConfig::default().map_size,
+            },
             _ => WorldStatsConfig::default().map_size,
         };
 
@@ -114,21 +120,37 @@ impl RoomConfig {
 
 impl From<&KdlNode> for RoomConfig {
     fn from(node: &KdlNode) -> Self {
-        let key = match node.properties.get("key") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let key = match node.get("key") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
-        let base_template_path = match node.properties.get("base") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let base_template_path = match node.get("base") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
         let fill_template_paths: Vec<String> = node
-            .children
+            .children()
             .iter()
-            .map(|fill_node| match fill_node.values.get(0) {
-                Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+            .flat_map(|doc| doc.nodes())
+            .map(|fill_node| match fill_node.entries().get(0) {
+                Some(entry) => match entry.value() {
+                    KdlValue::RawString(it) | KdlValue::String(it) => {
+                        super::kdl_utils::trim(it.clone())
+                    }
+                    _ => "".to_string(),
+                },
                 _ => "".to_string(),
             })
             .collect();

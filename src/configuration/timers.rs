@@ -1,4 +1,4 @@
-use bevy::core::Timer;
+use bevy::time::Timer;
 
 pub const CONSTANT_MOVE_WAIT_TIME: f32 = 0.2;
 

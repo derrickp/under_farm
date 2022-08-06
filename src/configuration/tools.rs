@@ -25,43 +25,77 @@ pub struct ToolFileConfig {
 
 impl From<&KdlNode> for ToolFileConfig {
     fn from(node: &KdlNode) -> Self {
-        let name = match node.values.get(0) {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let name = match node.entries().get(0) {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
-        let key = match node.properties.get("key") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let key = match node.get("key") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
-        let key_code = match node.properties.get("key_code") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let key_code = match node.get("key_code") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
-        let starter = match node.properties.get("starter") {
-            Some(KdlValue::Boolean(it)) => *it,
+        let starter = match node.get("starter") {
+            Some(entry) => match entry.value() {
+                KdlValue::Bool(it) => *it,
+                _ => false,
+            },
             _ => false,
         };
 
-        let min_damage = match node.properties.get("min_damage") {
-            Some(KdlValue::Int(it)) => *it as i32,
+        let min_damage = match node.get("min_damage") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10(it) => *it as i32,
+                _ => 0,
+            },
             _ => 0,
         };
 
-        let max_damage = match node.properties.get("max_damage") {
-            Some(KdlValue::Int(it)) => *it as i32,
+        let max_damage = match node.get("max_damage") {
+            Some(entry) => match entry.value() {
+                KdlValue::Base10(it) => *it as i32,
+                _ => 0,
+            },
             _ => 0,
         };
 
-        let tool_type = match node.properties.get("type") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let tool_type = match node.get("type") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
-        let sprite = match node.properties.get("sprite") {
-            Some(KdlValue::String(it)) => super::kdl_utils::trim(it.clone()),
+        let sprite = match node.get("sprite") {
+            Some(entry) => match entry.value() {
+                KdlValue::RawString(it) | KdlValue::String(it) => {
+                    super::kdl_utils::trim(it.clone())
+                }
+                _ => "".to_string(),
+            },
             _ => "".to_string(),
         };
 
