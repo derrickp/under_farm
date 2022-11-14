@@ -1,8 +1,6 @@
 mod components;
 mod systems;
-use bevy::prelude::ParallelSystemDescriptorCoercion;
-use bevy::prelude::SystemLabel;
-use bevy::prelude::{Plugin, SystemSet};
+use bevy::prelude::*;
 
 use crate::states::AppState;
 

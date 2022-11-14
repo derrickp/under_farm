@@ -1,7 +1,7 @@
 use bevy::{
     input::Input,
     math::{Vec2, Vec3},
-    prelude::{Entity, KeyCode, Mut, Query, Res, ResMut, Transform, Visibility},
+    prelude::{Entity, KeyCode, Mut, Query, Res, ResMut, Transform, Visibility, Resource},
     render::camera::Camera,
     time::{Time, Timer},
 };
@@ -20,6 +20,7 @@ use crate::{
     configuration::{game::GameConfiguration, timers::movement_timer},
 };
 
+#[derive(Resource)]
 pub struct MovementInputTimer(pub Timer);
 
 impl Default for MovementInputTimer {

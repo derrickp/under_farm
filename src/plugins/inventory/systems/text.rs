@@ -31,7 +31,7 @@ pub fn add_text(
         &font,
         FONT_SIZE,
     );
-    commands.spawn_bundle(title_bundle);
+    commands.spawn(title_bundle);
     let player_inventory: &PlayerInventory = query.single();
 
     let mut seed_count = 0;
@@ -57,7 +57,7 @@ pub fn add_text(
             &font,
             FONT_SIZE,
         );
-        commands.spawn_bundle(text_bundle);
+        commands.spawn(text_bundle);
 
         total_count += 1;
     }
@@ -79,7 +79,7 @@ pub fn add_text(
             &font,
             FONT_SIZE,
         );
-        commands.spawn_bundle(text_bundle);
+        commands.spawn(text_bundle);
 
         total_count += 1;
     }

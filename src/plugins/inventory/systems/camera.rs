@@ -11,7 +11,7 @@ pub fn remove_gameplay_camera(mut commands: Commands, query: Query<(&GameCamera,
     commands.entity(entity).despawn();
 
     commands
-        .spawn_bundle(Camera2dBundle::default())
+        .spawn(Camera2dBundle::default())
         .insert(UiCamera);
 }
 

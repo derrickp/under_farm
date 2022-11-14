@@ -17,8 +17,8 @@ pub fn add_gameplay_camera(
         let camera_state = camera_state_query.single();
         ortho_camera.transform.scale = camera_state.scale;
     } else {
-        commands.spawn().insert(GameCameraState::default());
+        commands.spawn(GameCameraState::default());
     }
 
-    commands.spawn_bundle(ortho_camera).insert(GameCamera);
+    commands.spawn(ortho_camera).insert(GameCamera);
 }

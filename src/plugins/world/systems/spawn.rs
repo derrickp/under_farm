@@ -15,7 +15,7 @@ pub fn spawn(
     }
 
     let world_timer = WorldTickTimer(game_config.world_tick_timer());
-    commands.spawn().insert(world_timer);
+    commands.spawn(world_timer);
 
-    commands.spawn().insert(World::default());
+    commands.spawn(World::default());
 }

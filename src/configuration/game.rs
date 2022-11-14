@@ -1,4 +1,4 @@
-use bevy::time::Timer;
+use bevy::{time::Timer, prelude::Resource};
 use kdl::{KdlNode, KdlValue};
 use tdlg::generator::Generator;
 
@@ -9,6 +9,7 @@ use super::{
     tools::ToolConfigurations,
 };
 
+#[derive(Resource)]
 pub struct GameConfiguration {
     pub crops_config: CropsConfig,
     pub floors_config: FloorsConfig,
@@ -32,7 +33,7 @@ impl GameConfiguration {
     }
 
     pub fn world_tick_timer(&self) -> Timer {
-        Timer::from_seconds(self.world_tick_time, true)
+        Timer::from_seconds(self.world_tick_time, bevy::time::TimerMode::Repeating)
     }
 
     pub fn generator(&mut self, increment: bool) -> Generator {

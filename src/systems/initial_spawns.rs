@@ -26,7 +26,7 @@ pub fn spawn_player_text(
 
     let coordinate = Coordinate::splat(0);
     let player_text_bundle = PlayerStatsTextBundle::build(&coordinate, &asset_server, &windows);
-    commands.spawn_bundle(player_text_bundle);
+    commands.spawn(player_text_bundle);
 }
 
 pub fn spawn_opening_bundles(
@@ -45,5 +45,5 @@ pub fn spawn_opening_bundles(
         map_spawn: Some(MapSpawn { map }),
         ..Default::default()
     };
-    commands.spawn().insert(spawns);
+    commands.spawn(spawns);
 }

@@ -5,7 +5,7 @@ mod sprites;
 mod states;
 mod systems;
 
-use bevy::{prelude::*, render::texture::ImageSettings};
+use bevy::prelude::*;
 use configuration::game::GameConfiguration;
 use plugins::{inventory::InventoryPlugin, world::WorldPlugin};
 use sprites::{LoadedTextures, Sprites};
@@ -65,7 +65,6 @@ fn main() {
     let game_config = GameConfiguration::load("./assets/config");
 
     App::new()
-        .insert_resource(ImageSettings::default_nearest())
         .insert_resource(ClearColor(Color::rgb(0.05, 0.05, 0.05)))
         .init_resource::<Sprites>()
         .init_resource::<LoadedTextures>()
@@ -73,7 +72,7 @@ fn main() {
         .insert_resource(game_config)
         .init_resource::<MovementInputTimer>()
         .add_state(AppState::Startup)
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugin(InventoryPlugin)
         .add_plugin(WorldPlugin)
         .add_system_set(SystemSet::on_enter(AppState::Startup).with_system(load_textures))

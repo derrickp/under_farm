@@ -37,7 +37,7 @@ pub fn spawn_crops(
     }
 
     for spawn in spawns.crops.iter() {
-        commands.spawn_bundle(CropBundle::build(
+        commands.spawn(CropBundle::build(
             spawn,
             &sprites,
             &spawn.config,
@@ -72,7 +72,7 @@ pub fn spawn_structures(
             _ => continue,
         };
 
-        commands.spawn_bundle(StructureBundle::build(
+        commands.spawn(StructureBundle::build(
             spawn.position,
             &sprites.atlas_handle,
             structure_config,
@@ -168,7 +168,7 @@ pub fn spawn_map(
     );
     if player_query.is_empty() {
         let player_bundle = PlayerBundle::build_main_player(coordinate, &sprites, &game_config);
-        commands.spawn_bundle(player_bundle);
+        commands.spawn(player_bundle);
     } else {
         let (_, mut transform): (&Player, Mut<Transform>) = player_query.single_mut();
         transform.translation.x = coordinate.x;
@@ -190,7 +190,7 @@ pub fn spawn_map(
                         .floors_config
                         .config_by_key("cave_floor")
                         .unwrap();
-                    commands.spawn_bundle(GroundTileBundle::build(
+                    commands.spawn(GroundTileBundle::build(
                         position,
                         &sprites,
                         floor_config,
@@ -203,7 +203,7 @@ pub fn spawn_map(
                         .structures_config
                         .config_by_key("room_wall")
                         .unwrap();
-                    commands.spawn_bundle(StructureBundle::build(
+                    commands.spawn(StructureBundle::build(
                         position,
                         &sprites.atlas_handle,
                         structure_config,
@@ -216,7 +216,7 @@ pub fn spawn_map(
                         .floors_config
                         .config_by_key("room_floor")
                         .unwrap();
-                    commands.spawn_bundle(GroundTileBundle::build(
+                    commands.spawn(GroundTileBundle::build(
                         position,
                         &sprites,
                         config,
@@ -229,7 +229,7 @@ pub fn spawn_map(
                         .floors_config
                         .config_by_key("room_floor")
                         .unwrap();
-                    commands.spawn_bundle(GroundTileBundle::build(
+                    commands.spawn(GroundTileBundle::build(
                         position,
                         &sprites,
                         config,
@@ -242,7 +242,7 @@ pub fn spawn_map(
                         .structures_config
                         .config_by_key("outer_wall")
                         .unwrap();
-                    commands.spawn_bundle(StructureBundle::build(
+                    commands.spawn(StructureBundle::build(
                         position,
                         &sprites.atlas_handle,
                         structure_config,
@@ -255,7 +255,7 @@ pub fn spawn_map(
                         .structures_config
                         .config_by_key("rubble")
                         .unwrap();
-                    commands.spawn_bundle(StructureBundle::build(
+                    commands.spawn(StructureBundle::build(
                         position,
                         &sprites.atlas_handle,
                         structure_config,
@@ -268,7 +268,7 @@ pub fn spawn_map(
                         .structures_config
                         .config_by_key("table")
                         .unwrap();
-                    commands.spawn_bundle(StructureBundle::build(
+                    commands.spawn(StructureBundle::build(
                         position,
                         &sprites.atlas_handle,
                         structure_config,
@@ -303,7 +303,7 @@ pub fn spawn_map(
                                     underground,
                                     ItemType::Tool(tool),
                                 );
-                                commands.spawn_bundle(tool_bundle);
+                                commands.spawn(tool_bundle);
                             }
                         } else if let Some(tool) =
                             game_config.tool_configs.tool_by_type(ToolType::Shovel)
@@ -318,7 +318,7 @@ pub fn spawn_map(
                                 underground,
                                 ItemType::Tool(tool),
                             );
-                            commands.spawn_bundle(tool_bundle);
+                            commands.spawn(tool_bundle);
                             spawned_shovel = true;
                         }
                     }
@@ -341,7 +341,7 @@ pub fn spawn_map(
 
     let structure_config = game_config.structures_config.config_by_key("exit").unwrap();
     let position = Vec3::new(exit_coordinate.x, exit_coordinate.y, 2.0);
-    commands.spawn_bundle(StructureBundle::build(
+    commands.spawn(StructureBundle::build(
         position,
         &sprites.atlas_handle,
         structure_config,
