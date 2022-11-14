@@ -6,8 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = "0.8"
-kdl = "4.4"
+bevy = "0.9"
+kdl = "4.6"
 rand = "0.8"
 walkdir = "2.3"
 tdlg = "0.1.2"
