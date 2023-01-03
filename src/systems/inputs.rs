@@ -1,7 +1,7 @@
 use bevy::{
     input::Input,
     math::{Vec2, Vec3},
-    prelude::{Entity, KeyCode, Mut, Query, Res, ResMut, Transform, Visibility, Resource},
+    prelude::{Entity, KeyCode, Mut, Query, Res, ResMut, Resource, Transform, Visibility},
     render::camera::Camera,
     time::{Time, Timer},
 };

@@ -1,4 +1,4 @@
-use bevy::{time::Timer, prelude::Resource};
+use bevy::{prelude::Resource, time::Timer};
 use kdl::{KdlNode, KdlValue};
 use tdlg::generator::Generator;
 
@@ -133,13 +133,13 @@ pub const WORLD_TICK_TIME: f32 = 0.2;
 
 impl GameConfiguration {
     pub fn load(path: &str) -> Self {
-        let crops_config_path = format!("{}/crops.kdl", path);
-        let floors_config_path = format!("{}/floors.kdl", path);
-        let structures_config_path = format!("{}/structures.kdl", path);
-        let player_config_path = format!("{}/player.kdl", path);
-        let game_config_path = format!("{}/game.kdl", path);
-        let world_config_path = format!("{}/world.kdl", path);
-        let tool_config_path = format!("{}/tools.kdl", path);
+        let crops_config_path = format!("{path}/crops.kdl");
+        let floors_config_path = format!("{path}/floors.kdl");
+        let structures_config_path = format!("{path}/structures.kdl");
+        let player_config_path = format!("{path}/player.kdl");
+        let game_config_path = format!("{path}/game.kdl");
+        let world_config_path = format!("{path}/world.kdl");
+        let tool_config_path = format!("{path}/tools.kdl");
         let game_config_nodes = parse(&game_config_path).unwrap();
 
         let basic_node = game_config_nodes

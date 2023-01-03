@@ -80,7 +80,7 @@ impl From<&StructureHealthConfig> for StructureHealth {
         let health_texture = HealthTextureMap {
             min_health: value.min_health(),
             max_health: value.max_health(),
-            texture_index: value.sprite_index.unwrap() as usize,
+            texture_index: value.sprite_index.unwrap(),
         };
 
         Self {

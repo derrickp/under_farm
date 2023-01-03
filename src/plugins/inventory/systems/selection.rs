@@ -13,8 +13,7 @@ pub fn add_current_selection(mut commands: Commands, query: Query<&CurrentInvent
         return;
     }
 
-    commands
-        .spawn(CurrentInventorySelection::default());
+    commands.spawn(CurrentInventorySelection::default());
 }
 
 pub fn selection_input(

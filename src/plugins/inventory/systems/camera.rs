@@ -10,9 +10,7 @@ pub fn remove_gameplay_camera(mut commands: Commands, query: Query<(&GameCamera,
     let (_, entity): (&GameCamera, Entity) = query.single();
     commands.entity(entity).despawn();
 
-    commands
-        .spawn(Camera2dBundle::default())
-        .insert(UiCamera);
+    commands.spawn(Camera2dBundle::default()).insert(UiCamera);
 }
 
 pub fn remove_ui_camera(mut commands: Commands, query: Query<(&UiCamera, Entity)>) {
