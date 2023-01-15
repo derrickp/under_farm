@@ -4,8 +4,8 @@ use bevy::{
 };
 
 use crate::{
-    components::player::PlayerInventory,
-    plugins::inventory::components::selection::CurrentInventorySelection, states::AppState,
+    components::{inventory::CurrentInventorySelection, player::PlayerInventory},
+    states::AppState,
 };
 
 pub fn add_current_selection(mut commands: Commands, query: Query<&CurrentInventorySelection>) {

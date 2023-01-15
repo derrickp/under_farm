@@ -3,6 +3,7 @@ pub mod cameras;
 pub mod crops;
 pub mod initial_spawns;
 pub mod inputs;
+pub mod inventory;
 pub mod loading;
 pub mod movement;
 pub mod spawns;

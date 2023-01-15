@@ -3,12 +3,11 @@ use bevy::{
     text::{Font, Text},
 };
 
-use crate::{
-    components::player::PlayerInventory,
-    plugins::inventory::components::{
-        selection::{CurrentInventorySelection, InventorySelectionHelper},
-        text::{InventoryText, InventoryTextBundle},
+use crate::components::{
+    inventory::{
+        CurrentInventorySelection, InventorySelectionHelper, InventoryText, InventoryTextBundle,
     },
+    player::PlayerInventory,
 };
 
 const PADDING: f32 = 15.0;

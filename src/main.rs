@@ -7,7 +7,7 @@ mod systems;
 
 use bevy::prelude::*;
 use configuration::game::GameConfiguration;
-use plugins::{inventory::InventoryPlugin, world::WorldPlugin};
+use plugins::world::WorldPlugin;
 use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState};
 use systems::{
@@ -21,6 +21,11 @@ use systems::{
     inputs::{
         action_input_system, movement_input_system, reset_action_input_system,
         toggle_coordinates_system, zoom_camera_system, MovementInputTimer,
+    },
+    inventory::{
+        add_current_selection, add_text, hide_game_sprites, open_close_inventory_input_system,
+        remove_gameplay_camera, remove_text, remove_ui_camera, reset_selection, select_item,
+        selection_input, show_game_sprites, update_text_colour,
     },
     loading::{check_load_state, start_game},
     movement::{
@@ -58,6 +63,9 @@ enum Label {
     SpawnStructures,
     SpawnMap,
     ResetSpawnMap,
+    ResetInventorySelection,
+    SelectItem,
+    InventoryInput,
 }
 
 fn main() {
@@ -73,7 +81,6 @@ fn main() {
         .init_resource::<MovementInputTimer>()
         .add_state(AppState::Startup)
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
-        .add_plugin(InventoryPlugin)
         .add_plugin(WorldPlugin)
         .add_system_set(SystemSet::on_enter(AppState::Startup).with_system(load_textures))
         .add_system_set(
@@ -88,6 +95,35 @@ fn main() {
                 .with_system(spawn_opening_bundles.label(Label::OpeningSpawn))
                 .with_system(spawn_player_text)
                 .with_system(add_gameplay_camera),
+        )
+        .add_system(open_close_inventory_input_system)
+        .add_system_set(SystemSet::on_enter(AppState::InGame).with_system(add_current_selection))
+        .add_system_set(
+            SystemSet::on_enter(AppState::InventoryScreen)
+                .with_system(add_text)
+                .with_system(remove_gameplay_camera)
+                .with_system(hide_game_sprites),
+        )
+        .add_system_set(
+            SystemSet::on_exit(AppState::InventoryScreen)
+                .with_system(remove_text)
+                .with_system(remove_ui_camera)
+                .with_system(show_game_sprites),
+        )
+        .add_system_set(
+            SystemSet::on_update(AppState::InventoryScreen)
+                .with_system(selection_input.label(Label::InventoryInput))
+                .with_system(
+                    select_item
+                        .after(Label::InventoryInput)
+                        .label(Label::SelectItem),
+                )
+                .with_system(update_text_colour.after(Label::InventoryInput))
+                .with_system(
+                    reset_selection
+                        .label(Label::ResetInventorySelection)
+                        .after(Label::SelectItem),
+                ),
         )
         .add_system_set(
             SystemSet::on_update(AppState::InGame)

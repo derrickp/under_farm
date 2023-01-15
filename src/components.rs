@@ -6,6 +6,7 @@ pub mod crop;
 pub mod damage;
 pub mod ground;
 pub mod health;
+pub mod inventory;
 pub mod item;
 pub mod movement;
 pub mod name;
