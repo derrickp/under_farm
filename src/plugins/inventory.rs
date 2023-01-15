@@ -4,7 +4,7 @@ use bevy::prelude::*;
 
 use crate::states::AppState;
 
-use self::systems::camera::remove_ui_camera;
+use self::systems::camera::{hide_game_sprites, remove_ui_camera, show_game_sprites};
 use self::systems::{
     camera::remove_gameplay_camera,
     input::open_close_inventory_input_system,
@@ -23,12 +23,14 @@ impl Plugin for InventoryPlugin {
             .add_system_set(
                 SystemSet::on_enter(AppState::InventoryScreen)
                     .with_system(add_text)
-                    .with_system(remove_gameplay_camera),
+                    .with_system(remove_gameplay_camera)
+                    .with_system(hide_game_sprites),
             )
             .add_system_set(
                 SystemSet::on_exit(AppState::InventoryScreen)
                     .with_system(remove_text)
-                    .with_system(remove_ui_camera),
+                    .with_system(remove_ui_camera)
+                    .with_system(show_game_sprites),
             )
             .add_system_set(
                 SystemSet::on_update(AppState::InventoryScreen)

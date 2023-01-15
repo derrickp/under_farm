@@ -1,6 +1,6 @@
 use bevy::{prelude::Resource, time::Timer};
 use kdl::{KdlNode, KdlValue};
-use tdlg::generator::Generator;
+use tdlg::generation::Generator;
 
 use crate::configuration::{kdl_utils::parse, world::WorldGenerationConfig};
 
@@ -24,7 +24,7 @@ pub struct GameConfiguration {
 }
 
 impl GameConfiguration {
-    pub fn map_size(&self) -> usize {
+    pub fn map_size(&self) -> u16 {
         self.world_config.world_stats.map_size
     }
 

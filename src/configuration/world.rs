@@ -1,14 +1,14 @@
+use std::num::NonZeroU16;
+
 use kdl::{KdlNode, KdlValue};
 use tdlg::{
-    cells::layer::LayerType,
-    generator::{Generator, ItemChance, ItemGeneration},
-    loading::RoomPaths,
+    generation::{builder, Generator, ItemChance, ItemGeneration},
+    map::cells::LayerType,
 };
 
 use super::kdl_utils::parse;
 
 pub struct WorldGenerationConfig {
-    pub room_paths: Vec<RoomPaths>,
     pub world_stats: WorldStatsConfig,
 }
 
@@ -21,51 +21,40 @@ impl WorldGenerationConfig {
             .find(|node| node.name().value().eq_ignore_ascii_case("world"))
             .map_or_else(WorldStatsConfig::default, WorldStatsConfig::from);
 
-        let room_paths: Vec<RoomPaths> = nodes
-            .iter()
-            .filter(|node| node.name().value().eq_ignore_ascii_case("room_template"))
-            .map(RoomConfig::from)
-            .map(|config| config.room_paths())
-            .collect();
-
-        Self {
-            room_paths,
-            world_stats,
-        }
+        Self { world_stats }
     }
 }
 
 impl WorldGenerationConfig {
     pub fn generator(&self, seed: String) -> Generator {
-        Generator {
-            seed,
-            grid_size: self.world_stats.map_size,
-            target_number_rooms: self.world_stats.num_rooms,
-            all_room_paths: self.room_paths.to_vec(),
-            target_hidden_items: Some(ItemGeneration {
+        builder()
+            .seed(&seed)
+            .grid_size(NonZeroU16::new(self.world_stats.map_size).unwrap())
+            .target_number_rooms(NonZeroU16::new(self.world_stats.num_rooms).unwrap())
+            .target_hidden_items(ItemGeneration {
                 target_num_items: 15,
                 item_ranges: vec![ItemChance {
                     layer_type: LayerType::Note,
                     chance: 1..100,
                 }],
-            }),
-            target_items: Some(ItemGeneration {
+            })
+            .target_items(ItemGeneration {
                 target_num_items: 10,
                 item_ranges: vec![ItemChance {
                     layer_type: LayerType::CommonItem,
                     chance: 1..100,
                 }],
-            }),
-        }
+            })
+            .build()
     }
 }
 
-const DEFAULT_NUM_ROOMS: usize = 100;
-const DEFAULT_MAP_SIZE: usize = 150;
+const DEFAULT_NUM_ROOMS: u16 = 100;
+const DEFAULT_MAP_SIZE: u16 = 150;
 
 pub struct WorldStatsConfig {
-    pub num_rooms: usize,
-    pub map_size: usize,
+    pub num_rooms: u16,
+    pub map_size: u16,
 }
 
 impl Default for WorldStatsConfig {
@@ -81,7 +70,7 @@ impl From<&KdlNode> for WorldStatsConfig {
     fn from(node: &KdlNode) -> Self {
         let num_rooms = match node.get("num_rooms") {
             Some(entry) => match entry.value() {
-                KdlValue::Base10(it) => *it as usize,
+                KdlValue::Base10(it) => *it as u16,
                 _ => WorldStatsConfig::default().num_rooms,
             },
             _ => WorldStatsConfig::default().num_rooms,
@@ -89,7 +78,7 @@ impl From<&KdlNode> for WorldStatsConfig {
 
         let map_size = match node.get("map_size") {
             Some(entry) => match entry.value() {
-                KdlValue::Base10(it) => *it as usize,
+                KdlValue::Base10(it) => *it as u16,
                 _ => WorldStatsConfig::default().map_size,
             },
             _ => WorldStatsConfig::default().map_size,
@@ -98,67 +87,6 @@ impl From<&KdlNode> for WorldStatsConfig {
         Self {
             num_rooms,
             map_size,
-        }
-    }
-}
-
-struct RoomConfig {
-    key: String,
-    base_template_path: String,
-    fill_template_paths: Vec<String>,
-}
-
-impl RoomConfig {
-    pub fn room_paths(&self) -> RoomPaths {
-        RoomPaths {
-            name: self.key.clone(),
-            base_template_path: self.base_template_path.clone(),
-            fill_template_paths: self.fill_template_paths.to_vec(),
-        }
-    }
-}
-
-impl From<&KdlNode> for RoomConfig {
-    fn from(node: &KdlNode) -> Self {
-        let key = match node.get("key") {
-            Some(entry) => match entry.value() {
-                KdlValue::RawString(it) | KdlValue::String(it) => {
-                    super::kdl_utils::trim(it.clone())
-                }
-                _ => "".to_string(),
-            },
-            _ => "".to_string(),
-        };
-
-        let base_template_path = match node.get("base") {
-            Some(entry) => match entry.value() {
-                KdlValue::RawString(it) | KdlValue::String(it) => {
-                    super::kdl_utils::trim(it.clone())
-                }
-                _ => "".to_string(),
-            },
-            _ => "".to_string(),
-        };
-
-        let fill_template_paths: Vec<String> = node
-            .children()
-            .iter()
-            .flat_map(|doc| doc.nodes())
-            .map(|fill_node| match fill_node.entries().get(0) {
-                Some(entry) => match entry.value() {
-                    KdlValue::RawString(it) | KdlValue::String(it) => {
-                        super::kdl_utils::trim(it.clone())
-                    }
-                    _ => "".to_string(),
-                },
-                _ => "".to_string(),
-            })
-            .collect();
-
-        Self {
-            key,
-            base_template_path,
-            fill_template_paths,
         }
     }
 }

@@ -7,6 +7,7 @@ pub struct Body {
     pub tile_size: f32,
     pub cell_center: Vec3,
     pub underground: bool,
+    pub visibility_before_inventory: bool,
 }
 
 impl Body {

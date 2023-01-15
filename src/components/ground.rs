@@ -46,6 +46,7 @@ impl GroundTileBundle {
                 tile_size,
                 cell_center: position,
                 underground: false,
+                visibility_before_inventory: false,
             },
             sprite: SpriteSheetBundle {
                 transform: Transform {
@@ -55,7 +56,7 @@ impl GroundTileBundle {
                 },
                 sprite: TextureAtlasSprite::new(floor_index),
                 texture_atlas: sprites.atlas_handle.clone(),
-                visibility: Visibility { is_visible: false },
+                visibility: Visibility { is_visible: true },
                 ..default()
             },
         }

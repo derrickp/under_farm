@@ -41,6 +41,7 @@ impl ItemBundle {
                 tile_size,
                 underground,
                 cell_center: position,
+                visibility_before_inventory: false,
             },
             sprite: SpriteSheetBundle {
                 transform: Transform {
@@ -50,7 +51,7 @@ impl ItemBundle {
                 },
                 sprite: TextureAtlasSprite::new(item_index),
                 texture_atlas: sprites.atlas_handle.clone(),
-                visibility: Visibility { is_visible: false },
+                visibility: Visibility { is_visible: true },
                 ..Default::default()
             },
             item: Item { item_type },

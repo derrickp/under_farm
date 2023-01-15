@@ -147,7 +147,7 @@ pub fn update_player_text(
 
     let section = text.sections.get_mut(0).unwrap();
     let current = player_coordinates.current.unwrap();
-    section.value = format!("Coordinate {}  {}", current.x, current.y);
+    section.value = format!("Coordinate {}  {}", current.x(), current.y());
 }
 
 type GameCameraTransform = (&'static GameCamera, &'static Camera, &'static mut Transform);

@@ -17,7 +17,7 @@ use bevy::{
     prelude::{Bundle, Component, SpriteSheetBundle, Transform},
     sprite::TextureAtlasSprite,
 };
-use tdlg::coordinate::Coordinate;
+use tdlg::map::cells::Coordinate;
 
 #[derive(Component)]
 pub struct PlayerInventory {

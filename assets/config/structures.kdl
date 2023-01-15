@@ -6,20 +6,20 @@ structure "Room Wall" key="room_wall" type="wall" health=22 visible=true {
     health_config sprite="sprites/broken_wall.png" min_health=-99 max_health=0 can_be_broken=false can_be_walked_on=true can_be_cleared=true
 }
 
-structure "Table" key="table" type="table" health=3 visible=false {
+structure "Table" key="table" type="table" health=3 visible=true {
     health_config sprite="sprites/small_table.png" min_health=1 max_health=3 can_be_broken=true can_be_walked_on=false
     health_config sprite="sprites/broken_small_table.png" min_health=-99 max_health=0 can_be_broken=false can_be_walked_on=true
 }
 
-structure "Rubble" key="rubble" type="wall" health=0 {
+structure "Rubble" key="rubble" type="wall" health=0 visible=true {
     health_config sprite="sprites/broken_wall.png" min_health=-99 max_health=0 can_be_broken=false can_be_walked_on=true can_be_cleared=true
 }
 
-structure "Outer Wall" key="outer_wall" type="wall" health=1000 {
+structure "Outer Wall" key="outer_wall" type="wall" health=1000 visible=true {
     health_config sprite="sprites/wall.png" min_health=0 max_health=1000 can_be_broken=false can_be_walked_on=false
 }
 
-structure "Exit Hole" key="exit" type="hole" health=1000 {
+structure "Exit Hole" key="exit" type="hole" health=1000 visible=true {
     health_config sprite="sprites/hole.png" min_health=0 max_health=1000 can_be_broken=false can_be_walked_on=true
 }
 

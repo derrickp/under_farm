@@ -2,8 +2,7 @@ use bevy::{
     prelude::{AssetServer, Commands, Query, Res, ResMut},
     window::Windows,
 };
-
-use tdlg::coordinate::Coordinate;
+use tdlg::map::cells::Coordinate;
 
 use crate::{
     components::{
@@ -24,7 +23,7 @@ pub fn spawn_player_text(
         return;
     }
 
-    let coordinate = Coordinate::splat(0);
+    let coordinate = Coordinate::from(0);
     let player_text_bundle = PlayerStatsTextBundle::build(&coordinate, &asset_server, &windows);
     commands.spawn(player_text_bundle);
 }

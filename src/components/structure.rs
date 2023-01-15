@@ -179,6 +179,7 @@ impl StructureBundle {
                 tile_size,
                 underground: false,
                 cell_center: position,
+                visibility_before_inventory: false,
             },
             sprite: Self::sprite(
                 atlas_handle,

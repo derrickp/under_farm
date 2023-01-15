@@ -2,7 +2,7 @@ use bevy::{
     math::Vec3,
     prelude::{Commands, Entity, Mut, Query, Res, ResMut, Transform},
 };
-use tdlg::cells::layer::LayerType;
+use tdlg::map::cells::LayerType;
 
 use crate::{
     components::{
@@ -160,9 +160,9 @@ pub fn spawn_map(
         _ => return,
     };
 
-    let player_spawn = map_spawn.map.entry_coordinate;
+    let player_spawn = map_spawn.map.entry();
     let coordinate = world_coordinate_from_grid(
-        &player_spawn,
+        player_spawn,
         game_config.world_config.world_stats.map_size,
         game_config.tile_size(),
     );
@@ -176,10 +176,10 @@ pub fn spawn_map(
     }
 
     let mut spawned_shovel = false;
-    for cell in map_spawn.map.grid.cells.values() {
-        for (index, layer) in cell.layers.iter().enumerate() {
+    for cell in map_spawn.map.grid().cells() {
+        for (index, layer) in cell.layers().iter().enumerate() {
             let coordinate = world_coordinate_from_grid(
-                &cell.coordinate,
+                cell.coordinate(),
                 game_config.map_size(),
                 game_config.tile_size(),
             );
@@ -277,21 +277,15 @@ pub fn spawn_map(
                     ));
                 }
                 LayerType::Note => {
-                    println!(
-                        "Note {} {} {}",
-                        index, &cell.coordinate.x, &cell.coordinate.y
-                    );
+                    println!("Note {} {:?}", index, &cell.coordinate());
                 }
                 LayerType::CommonItem => {
-                    println!(
-                        "common item {} {} {}",
-                        index, &cell.coordinate.x, &cell.coordinate.y
-                    );
+                    println!("common item {} {:?}", index, &cell.coordinate());
 
                     let underground = cell.is_layer_underground(layer).unwrap_or(false);
                     if !underground {
                         if spawned_shovel {
-                            println!("spawned hoe {:?}", &cell.coordinate);
+                            println!("spawned hoe {:?}", &cell.coordinate());
                             if let Some(tool) = game_config.tool_configs.tool_by_type(ToolType::Hoe)
                             {
                                 let tool_bundle = ItemBundle::build(
@@ -308,7 +302,7 @@ pub fn spawn_map(
                         } else if let Some(tool) =
                             game_config.tool_configs.tool_by_type(ToolType::Shovel)
                         {
-                            println!("spawned shovel {:?}", &cell.coordinate);
+                            println!("spawned shovel {:?}", &cell.coordinate());
                             let tool_bundle = ItemBundle::build(
                                 position,
                                 &sprites,
@@ -329,15 +323,12 @@ pub fn spawn_map(
     }
 
     let exit_coordinate = world_coordinate_from_grid(
-        &map_spawn.map.exit_coordinate,
+        map_spawn.map.exit(),
         game_config.world_config.world_stats.map_size,
         game_config.tile_size(),
     );
 
-    println!(
-        "{} {}",
-        &map_spawn.map.exit_coordinate.x, &map_spawn.map.exit_coordinate.y
-    );
+    println!("{:?}", map_spawn.map.exit());
 
     let structure_config = game_config.structures_config.config_by_key("exit").unwrap();
     let position = Vec3::new(exit_coordinate.x, exit_coordinate.y, 2.0);
