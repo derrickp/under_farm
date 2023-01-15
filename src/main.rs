@@ -1,13 +1,11 @@
 mod components;
 mod configuration;
-mod plugins;
 mod sprites;
 mod states;
 mod systems;
 
 use bevy::prelude::*;
 use configuration::game::GameConfiguration;
-use plugins::world::WorldPlugin;
 use sprites::{LoadedTextures, Sprites};
 use states::{AppState, GameLoadState};
 use systems::{
@@ -37,6 +35,7 @@ use systems::{
         spawn_map, spawn_structures,
     },
     textures::{check_textures, load_sprites, load_textures},
+    world::{check_world_actions, tick_game_world},
 };
 
 // System labels to enforce a run order of our systems
@@ -66,6 +65,7 @@ enum Label {
     ResetInventorySelection,
     SelectItem,
     InventoryInput,
+    CheckWorldActions,
 }
 
 fn main() {
@@ -81,7 +81,6 @@ fn main() {
         .init_resource::<MovementInputTimer>()
         .add_state(AppState::Startup)
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
-        .add_plugin(WorldPlugin)
         .add_system_set(SystemSet::on_enter(AppState::Startup).with_system(load_textures))
         .add_system_set(
             SystemSet::on_update(AppState::Startup)
@@ -98,6 +97,18 @@ fn main() {
         )
         .add_system(open_close_inventory_input_system)
         .add_system_set(SystemSet::on_enter(AppState::InGame).with_system(add_current_selection))
+        .add_system_set(
+            SystemSet::on_exit(AppState::FinishedLoading).with_system(systems::world::spawn),
+        )
+        .add_system_set(
+            SystemSet::on_update(AppState::InGame)
+                .with_system(tick_game_world.label(Label::TickGameWorld))
+                .with_system(
+                    check_world_actions
+                        .label(Label::CheckWorldActions)
+                        .after(Label::TickGameWorld),
+                ),
+        )
         .add_system_set(
             SystemSet::on_enter(AppState::InventoryScreen)
                 .with_system(add_text)

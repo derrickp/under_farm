@@ -3,7 +3,7 @@ use bevy::{
     time::Time,
 };
 
-use crate::plugins::world::components::{timer::WorldTickTimer, world::World};
+use crate::components::world::{WorldTickTimer, World};
 
 pub fn tick_game_world(time: Res<Time>, mut query: Query<&mut WorldTickTimer>) {
     if query.is_empty() {

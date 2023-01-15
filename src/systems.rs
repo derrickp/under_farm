@@ -8,3 +8,4 @@ pub mod loading;
 pub mod movement;
 pub mod spawns;
 pub mod textures;
+pub mod world;

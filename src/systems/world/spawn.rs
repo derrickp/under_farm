@@ -1,8 +1,7 @@
 use bevy::prelude::{Commands, Query, Res};
 
 use crate::{
-    configuration::game::GameConfiguration,
-    plugins::world::components::{timer::WorldTickTimer, world::World},
+    configuration::game::GameConfiguration, components::world::{WorldTickTimer, World},
 };
 
 pub fn spawn(

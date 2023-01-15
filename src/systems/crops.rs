@@ -8,9 +8,8 @@ use rand::Rng;
 use crate::{
     components::{
         crop::{Crop, CropSpawn, CropStages},
-        spawns::Spawns,
+        spawns::Spawns, world::World,
     },
-    plugins::world::components::world::World,
 };
 
 pub fn grow_crops_system(
